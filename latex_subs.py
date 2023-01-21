@@ -1,6 +1,7 @@
 from Graph import *
 import sympy as sp
 from itertools import product
+from new_matrices import *
 
 def do_latex_subs(graph, x):
     num_nds = graph.num_nds
@@ -97,7 +98,6 @@ def print_all_mats_after_latex_subs(graph):
 
 if __name__ == "__main__":
 
-    from new_matrices import *
     def main():
         dot = "digraph G {\n" \
               "a->b;\n" \

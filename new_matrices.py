@@ -1,4 +1,21 @@
 import sympy as sp
+from itertools import product
+from latex_subs import *
+def print_sympy_matrix_entries(mat, mat_name, graph, latex=False):
+    sp.init_printing()
+    dim = mat.shape[0]
+    for i1, i2 in product(range(dim), range(dim)):
+        nd1 = graph.ord_nodes[i1]
+        nd2 = graph.ord_nodes[i2]
+        print("\n" + mat_name + "[" + str(i1) + ":" + nd1 + ", " +\
+                        str(i2) + ":" + nd2 + "]=")
+        if not latex:
+            print(mat[i1, i2])
+        else:
+            x = mat[i1, i2]
+            x = do_latex_subs(graph, x)
+            print(x)
+            print(sp.latex(x))
 
 def make_mat(dim, mat_str, mat_type="full"):
     rows = []
