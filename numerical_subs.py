@@ -23,7 +23,7 @@ def set_to_zero_gains_without_arrows(graph, x):
     return x
 
 if __name__ == "__main__":
-    from new_matrices import *
+    from core_matrices import *
 
     def main():
         dot = "digraph G {\n" \
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         graph = Graph(path)
         dim = graph.num_nds
 
-        x = sigma_eps_mat(dim)
+        x = sigma_eps_sym_mat(dim)
         print("\n", x)
         x = set_to_one_sigma_eps_mat(graph, x)
         print(x)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
         print(graph.ord_nodes)
         print(graph.edges)
 
-        x = alp_mat(dim)
+        x = alp_sym_mat(dim)
         print("\n", x)
 
         x = set_to_zero_gains_without_arrows(graph, x)
