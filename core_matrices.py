@@ -69,4 +69,6 @@ if __name__ == "__main__":
         print(cov_sym_mat(dim))
         print(rho_sym_mat(dim))
         print(pder_sym_mat(dim))
+        print()
+        print((sp.eye(dim) - alp_sym_mat(dim)).inv())
     main()

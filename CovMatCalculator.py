@@ -51,12 +51,13 @@ if __name__ == "__main__":
               "}"
         with open("tempo13.txt", "w") as file:
             file.write(dot)
-        path = 'tempo13.txt'
+        # path = 'tempo13.txt'
+        path = 'dot_atlas/good_bad_trols_G1.dot'
         graph = Graph(path)
         cal = CovMatCalculator(graph)
         cal.calculate_cov_mat_sym()
-        cal.print_cov_mat_entries(latex=True)
-        cal.print_jacobian_entries(latex=True)
+        cal.print_cov_mat_entries(latex=False)
+        cal.print_jacobian_entries(latex=False)
 
     main()
 
