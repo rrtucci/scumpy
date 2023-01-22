@@ -6,5 +6,5 @@ Luckily, the jupyter project
 offers a service for rendering notebooks found at other websites.
 The link below will show all our notebooks rendered properly.
 
-http://nbviewer.jupyter.org/github/rrtucci/scumpy/blob/master/jupyter_notebooks
+http://nbviewer.jupyter.org/github/rrtucci/scumpy/tree/master/jupyter_notebooks
 

@@ -2,20 +2,29 @@ import sympy as sp
 from itertools import product
 from latex_subs import *
 def print_sympy_matrix_entries(mat, mat_name, graph, latex=False):
-    sp.init_printing()
     dim = mat.shape[0]
     for i1, i2 in product(range(dim), range(dim)):
         nd1 = graph.ord_nodes[i1]
         nd2 = graph.ord_nodes[i2]
-        print("\n" + mat_name + "[" + str(i1) + ":" + nd1 + ", " +\
-                        str(i2) + ":" + nd2 + "]=")
+
+        if mat_name == "cov_mat" and latex:
+            str0 = "\n" + r"\langle\underline{" + nd1 + "}" +\
+                r", \underline{" + nd2 + r"}\rangle="
+        elif mat_name == "jacobian" and latex:
+            str0 = "\n" + r"\frac{\partial\underline{" + nd1 +\
+                r"}}{\partial\underline{" + nd2 + r"}}="
+        else:
+            str0 = "\n" + mat_name + "[" + str(i1) + ":" + nd1 + ", " + \
+               str(i2) + ":" + nd2 + "]="
+
+
         if not latex:
+            print(str0)
             print(mat[i1, i2])
         else:
             x = mat[i1, i2]
             x = do_latex_subs(graph, x)
-            print(x)
-            print(sp.latex(x))
+            print("$$" + str0 + sp.latex(x) + "$$")
 
 def make_mat(dim, mat_str, mat_type="full"):
     rows = []

@@ -11,7 +11,7 @@ class Graph:
         self.num_nds = len(self.ord_nodes)
 
     def draw(self, jupyter):
-        DotTool.draw(self.path, jupyter=False)
+        DotTool.draw(self.path, jupyter)
 
 
 if __name__ == "__main__":

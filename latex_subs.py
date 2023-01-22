@@ -33,7 +33,7 @@ def do_latex_subs(graph, x):
 
         if i2 > i1:
             alp_latex = r"\alpha_{\underline{" + nd2 + \
-                        r"}\;|\;\underline{" + nd1 + r"}}"
+                        r"}|\underline{" + nd1 + r"}}"
             alp_sym = "alp_" + str(i2) + "_L_" + str(i1)
             x = x.subs(sp.Symbol(alp_sym),
                        sp.Symbol(alp_latex))
@@ -59,14 +59,12 @@ def do_latex_subs(graph, x):
     return x
 
 def print_all_mats_after_latex_subs(graph):
-    sp.init_printing()
     dim = graph.num_nds
     x = sigma_eps_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)
     print(sp.latex(x))
 
-    sp.init_printing()
     x = sigma_nd_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)
@@ -77,19 +75,16 @@ def print_all_mats_after_latex_subs(graph):
     print("\n", x)
     print(sp.latex(x))
 
-    sp.init_printing()
     x = cov_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)
     print(sp.latex(x))
 
-    sp.init_printing()
     x = rho_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)
     print(sp.latex(x))
 
-    sp.init_printing()
     x = pder_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)
