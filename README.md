@@ -51,17 +51,18 @@ $$
  Linear SCM are described by 
 a system of linear equations of the form
 
-$$\underline{x}_j = \sum_i \alpha_{j|i}\text{\;} 
+$$\underline{x}_j = \sum_i \alpha_{j|i} 
 \underline{x}_i + \underline{\epsilon}_j$$
 
 where the 
-$x_j$ are the the nodes,
+$x_j$ are the internal nodes,
 the $\alpha_{j|i}$
 are
 the path coefficients 
 (a.k.a. gains), and the
 $\underline{\epsilon}_j$ 
-are the external noise.
+are the external nodes 
+that inject noise into the system.
 The $\underline{\epsilon}_j$ are
 root nodes with
 zero mean,
