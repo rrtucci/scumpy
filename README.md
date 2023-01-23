@@ -1,6 +1,4 @@
 # SCuMpy
 
-Under Construction
+[!Pond SCM](pond-scum.jpg)
 
-test
-$$x^2=5$$
