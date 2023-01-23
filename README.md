@@ -47,5 +47,17 @@ $$\frac{\partial\underline{a}}{
 \underline{a}\rangle}
 $$
 
- 
+ Linear SCM are described by 
+a system of linear equations of the form
+
+$$\underline{x}_j = \sum_i \alpha_{j|i} 
+\underline{x}_i + \underline{\epsilon}_j$$
+
+where the $\underline{x}_j\in \mathbb{R}$ are the nodes,
+the $\alpha{j|i}\in \mathbb{R}$ are
+the path coefficients (a.k.a. gains), and the
+$\underline{\epsilon}_j$ are the external noise
+The $\underline{\epsilon}_j$ are root nodes with zero mean,
+and zero covariance among themselves.
+
 
