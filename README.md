@@ -54,10 +54,27 @@ $$\underline{x}_j = \sum_i \alpha_{j|i}
 \underline{x}_i + \underline{\epsilon}_j$$
 
 where the $\underline{x}_j\in \mathbb{R}$ are the nodes,
-the $\alpha{j|i}\in \mathbb{R}$ are
+the $\alpha_{j|i}\in \mathbb{R}$ are
 the path coefficients (a.k.a. gains), and the
-$\underline{\epsilon}_j$ are the external noise
-The $\underline{\epsilon}_j$ are root nodes with zero mean,
+$\underline{\epsilon}_j\in \mathbb{R}$ 
+are the external noise.
+The $\underline{\epsilon}_j$ are root nodes with
+zero mean,
 and zero covariance among themselves.
+
+We can view this as either
+
+1. a linear system 
+of equations with the unknowns 
+$\underline{x}_j$. We can solve for these
+unknowns using basic Linear Algebra.
+Once we solve for the unknowns,
+we can calculate $\langle\underline{x}_j, 
+\underline{x}_k\rangle$.
+2. a linear system 
+of equations with the
+unknowns $\alpha_{j|i}$. We can solve for these
+unknowns using basic Linear Algebra.
+
 
 
