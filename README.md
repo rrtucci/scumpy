@@ -1,4 +1,4 @@
 # SCuMpy
 
-[!Pond SCM](pond-scum.jpg)
+![Pond SCM](pond-scum.jpg)
 
