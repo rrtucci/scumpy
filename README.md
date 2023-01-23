@@ -1,6 +1,6 @@
 # SCuMpy
 
-![Pond SCM](pond-scum.jpg)
+![Pond SCM](pond-scum.jpg)Pond SCM
 
 Welcome to SCuMpy! The name is intended
 to (1) evoke the name of the amazing 
@@ -40,8 +40,8 @@ $$\text{Correlation}(\underline{a}, \underline{b}) =
 \underline{b}\rangle}
 {\sigma_{\underline{a}}\sigma_{\underline{b}}}$$
 
-$$\frac{\partial\underline{a}}{
-\partial\underline{b}}=
+$$\frac{\partial\underline{b}}{
+\partial\underline{a}}=
 \frac{\langle\underline{a}, 
 \underline{b}\rangle}
 {\langle\underline{a}, 
