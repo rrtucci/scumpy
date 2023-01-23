@@ -91,6 +91,9 @@ in the dot language.
 The dot  language is the language used to
 describe DAGs by
 the graph rendering software GraphViz.
+SCuMpy stores all its dot files in a
+folder entitled "dot_atlas".
+Another word for dot atlas in DAG atlas.
 
 At this point, 
 given a DAG dot file as input,
