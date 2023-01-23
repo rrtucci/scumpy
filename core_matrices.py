@@ -7,9 +7,13 @@ def make_sym_mat(dim, mat_str, mat_type="full"):
     for i in range(dim):
         col = []
         for j in range(dim):
-            if mat_type == "full":
+            if mat_type == "general":
                 col.append(sp.Symbol(mat_str % (i, j)))
-            elif mat_type == "lower_triangular":
+            elif mat_type == "symmetric":
+                # we only use cov_mat[min(i,j), max(i,j)]
+                # because cov_mat[i, j] is symmetric
+                col.append(sp.Symbol(mat_str % (min(i, j), max(i, j))))
+            elif mat_type == "strict_lower_triangular":
                 if i > j:
                     col.append(sp.Symbol(mat_str% (i, j)))
                 else:
@@ -44,19 +48,19 @@ def sigma_nd_sym_mat(dim):
 
 def alp_sym_mat(dim):
     return make_sym_mat(dim, "alp_%d_L_%d",
-                        mat_type="lower_triangular")
+                        mat_type="strict_lower_triangular")
 
 def cov_sym_mat(dim):
     return make_sym_mat(dim, "cov_%d_%d",
-                        mat_type="full")
+                        mat_type="symmetric")
 
 def rho_sym_mat(dim):
     return make_sym_mat(dim, "rho_%d_%d",
-                        mat_type="full")
+                        mat_type="symmetric")
 
 def pder_sym_mat(dim):
     return make_sym_mat(dim, "pder_%d_wrt_%d",
-                        mat_type="full")
+                        mat_type="general")
 
 
 if __name__ == "__main__":

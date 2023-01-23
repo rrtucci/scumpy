@@ -113,7 +113,7 @@ def get_str_for_matrix_entries(mat,
                    r"}}{\partial\underline{" + col_nd + r"}}="
         elif mat_name == "gains" and latex:
             str0 += "\n" + r"\alpha_{\underline{"+ row_nd +\
-                r"}, \underline{" + col_nd + r"}}="
+                r"}| \underline{" + col_nd + r"}}="
         else:
             str0 += "\n" + mat_name + "[" + str(row) + ":" + row_nd + ", " + \
                    str(col) + ":" + col_nd + "]="
