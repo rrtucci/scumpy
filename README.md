@@ -94,6 +94,7 @@ the "G&B-trols" paper:
 A Crash Course in Good and Bad Controls</a>,
 by Carlos Cinelli, Andrew Forney and Judea Pearl
 
+
 In the SCuMpy folder called "jupyter_notebooks",
 you will find 20 notebooks where (1) is done
 symbolically,
