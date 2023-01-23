@@ -36,6 +36,9 @@ $$\text{Standard Deviation of }\underline{a} =
 \underline{a}\rangle}$$
 
 $$\text{Correlation}(\underline{a}, \underline{b}) =
+= \rho_{
+\underline{a}, \underline{b}
+}=
 \frac{\langle\underline{a}, 
 \underline{b}\rangle}
 {\sigma_{\underline{a}}\sigma_{\underline{b}}}$$
