@@ -90,8 +90,7 @@ To test SCuMpy, we used the 20 DAGs
 defined in 
 the "G&B-trols" paper:
 
-<a href=https://ftp.cs.ucla.edu/pub/stat_ser/r493.pdf>
-A Crash Course in Good and Bad Controls</a>,
+> <a href=https://ftp.cs.ucla.edu/pub/stat_ser/r493.pdf>A Crash Course in Good and Bad Controls</a>,
 by Carlos Cinelli, Andrew Forney and Judea Pearl
 
 
