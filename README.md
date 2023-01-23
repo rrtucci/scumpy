@@ -25,7 +25,7 @@ Let $\underline{a}, \underline{b}$ be any 2
 random variables. (I underline random variables instead
 of the usual convention of capitalizing them.) Then
 
-$$\text{Mean Value of} \underline{a}=
+$$\text{Mean Value of } \underline{a}=
 \langle\underline{a}\rangle$$
 
 
@@ -92,7 +92,7 @@ unknowns using basic Linear Algebra.
 SCuMpy
 uses as input DAGs 
 expressed as dot files. A dot file
-is a text file 
+is a text file (usually) 
 describing a single DAG
 in the dot language.
 The dot  language is the language used to
