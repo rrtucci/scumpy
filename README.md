@@ -66,7 +66,8 @@ that inject noise into the system.
 The $\underline{\epsilon}_j$ are
 root nodes with
 zero mean,
-and zero covariance among themselves.
+and zero covariance
+with each other.
 
 We can view this as either
 
@@ -81,7 +82,19 @@ of equations with the
 unknowns $\alpha_{j|i}$. We can solve for these
 unknowns using basic Linear Algebra.
 
-At this point, SCuMpy can 
+SCuMpy
+uses as input DAGs 
+expressed as dot files. A dot file
+is a text file 
+describing a single DAG
+in the dot language.
+The dot  language is the language used to
+describe DAGs by
+the graph rendering software GraphViz.
+
+At this point, 
+given a DAG dot file as input,
+SCuMpy can 
 do (1) and (2), symbolically, using
 the excellent
 Python symbolic manipulator 
