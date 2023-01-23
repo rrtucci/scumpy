@@ -15,7 +15,8 @@ more about linear SCM, explained
 using my notational conventions 
 which are also be SCuMpy’s notational conventions, 
 check out my free, open 
-source book Bayesuvius. 
+source book <a href="https://qbnets.wordpress.com/2020/11/30/my-free-book-bayesuvius-on-bayesian-networks/">
+Bayesuvius</a>. 
 Look under the chapter entitled 
 “Linear Deterministic Bnets with External Noise”.
 
@@ -50,11 +51,11 @@ $$
  Linear SCM are described by 
 a system of linear equations of the form
 
-$$\underline{x}_j = \sum_i \alpha_{j|i} 
+$$\underline{x}_j = \sum_i \alpha_{j|i}\; 
 \underline{x}_i + \underline{\epsilon}_j$$
 
-where the ${\underline{x}_j}$_
-are the the nodes,
+where the 
+$x_j$ are the the nodes,
 the $\alpha_{j|i}$
 are
 the path coefficients 
@@ -78,6 +79,27 @@ we can calculate $\langle\underline{x}_j, \underline{x}_k\rangle$.
 of equations with the
 unknowns $\alpha_{j|i}$. We can solve for these
 unknowns using basic Linear Algebra.
+
+At this point, SCuMpy can 
+do (1) and (2), symbolically, using
+the excellent
+Python symbolic manipulator 
+<a href="https://en.wikipedia.org/wiki/SymPy">SymPy</a>.
+To test SCuMpy, we used the 20 DAGs 
+defined in 
+the "G&B-trols" paper:
+
+<a href=https://ftp.cs.ucla.edu/pub/stat_ser/r493.pdf>
+A Crash Course in Good and Bad Controls</a>,
+by Carlos Cinelli, Andrew Forney and Judea Pearl
+
+In the SCuMpy folder called "jupyter_notebooks",
+you will find 20 notebooks where (1) is done
+symbolically,
+and another 20 notebooks where (2) is done symbolically, 
+for each of the 20 DAGs in the G&B-trols paper. 
+
+
 
 
 
