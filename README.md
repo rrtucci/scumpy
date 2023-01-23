@@ -53,8 +53,8 @@ a system of linear equations of the form
 $$\underline{x}_j = \sum_i \alpha_{j|i} 
 \underline{x}_i + \underline{\epsilon}_j$$
 
-where the 
-$\underline{x}_j$  are the nodes,
+where the ${\underline{x}_j}$_
+are the the nodes,
 the $\alpha_{j|i}$
 are
 the path coefficients 
