@@ -10,7 +10,8 @@ class CovMatCalculator:
 
     def calculate_cov_mat_sym(self):
         dim = self.graph.num_nds
-        A = set_to_zero_gains_without_arrows(self.graph, alp_sym_mat(dim))
+        A = set_to_zero_gains_without_arrows(self.graph,
+                                             alp_sym_mat(dim))
         one_minus_A = A - sp.eye(dim)
         one_minus_A_inv = sp.simplify(one_minus_A.inv())
         sigma_eps_sq = sigma_eps_sym_mat(dim) ** 2
@@ -24,7 +25,7 @@ class CovMatCalculator:
         x = self.cov_mat_sym
         if latex:
             x = do_latex_subs(self.graph, x)
-        str0 = get_str_for_matrix_entries(x, "cov_mat",
+        str0 = get_str_for_matrix_entries(x, "cov",
                                        self.graph, latex)
         if not latex:
             print(str0)
@@ -51,8 +52,8 @@ if __name__ == "__main__":
               "}"
         with open("tempo13.txt", "w") as file:
             file.write(dot)
-        # path = 'tempo13.txt'
-        path = 'dot_atlas/good_bad_trols_G1.dot'
+        path = 'tempo13.txt'
+        # path = 'dot_atlas/good_bad_trols_G1.dot'
         graph = Graph(path)
         cal = CovMatCalculator(graph)
         cal.calculate_cov_mat_sym()

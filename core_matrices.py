@@ -28,10 +28,10 @@ def make_sym_mat(dim, mat_str, mat_type="full"):
     '''
     "sigma_eps_" + str(i)
     "sigma_" + str(i)
-    "alp_" + str(i2) + "_L_" + str(i1)
-    "cov_" + str(i1) + "_" + str(i2)
-    "rho_" + str(i1) + "_" + str(i2)
-    "pder_" + str(i2) + "_wrt_" + str(i1)
+    "alp_" + str(row) + "_L_" + str(col)
+    "cov_" + str(row) + "_" + str(col)
+    "rho_" + str(row) + "_" + str(col)
+    "pder_" + str(row) + "_wrt_" + str(col)
     '''
 
 def sigma_eps_sym_mat(dim):

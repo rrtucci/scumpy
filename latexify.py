@@ -28,32 +28,32 @@ def do_latex_subs(graph, x):
         x = x.subs(sp.Symbol(sigma_nd_sym),
                    sp.Symbol(sigma_nd_latex_str))
 
-    for i1, i2 in product(range(num_nds), range(num_nds)):
-        nd1 = graph.ord_nodes[i1]
-        nd2 = graph.ord_nodes[i2]
+    for row, col in product(range(num_nds), range(num_nds)):
+        row_nd = graph.ord_nodes[row]
+        col_nd = graph.ord_nodes[col]
 
-        if i2 > i1:
-            alp_latex_str = r"\alpha_{\underline{" + nd2 + \
-                        r"}|\underline{" + nd1 + r"}}"
-            alp_sym = "alp_" + str(i2) + "_L_" + str(i1)
+        if row > col:
+            alp_latex_str = r"\alpha_{\underline{" + row_nd + \
+                        r"}|\underline{" + col_nd + r"}}"
+            alp_sym = "alp_" + str(row) + "_L_" + str(col)
             x = x.subs(sp.Symbol(alp_sym),
                        sp.Symbol(alp_latex_str))
 
-        cov_latex_str = r"< \underline{" + nd1 + \
-                    r"},\underline{" + nd2  + "}>"
-        cov_sym = "cov_" + str(i1) + "_" + str(i2)
+        cov_latex_str = r"\left\langle\underline{" + row_nd + \
+                    r"},\underline{" + col_nd  + r"}\right\rangle"
+        cov_sym = "cov_" + str(row) + "_" + str(col)
         x = x.subs(sp.Symbol(cov_sym),
                    sp.Symbol(cov_latex_str))
 
-        rho_latex_str = r"\rho_{\underline{" + nd1 + \
-                    r"},\underline{" + nd2  + r"}}"
-        rho_sym = "rho_" + str(i1) + "_" + str(i2)
+        rho_latex_str = r"\rho_{\underline{" + row_nd + \
+                    r"},\underline{" + col_nd  + r"}}"
+        rho_sym = "rho_" + str(row) + "_" + str(col)
         x = x.subs(sp.Symbol(rho_sym),
                    sp.Symbol(rho_latex_str))
 
-        pder_latex_str = r"\partial_{\underline{" + nd2 + \
-                     r"}}\underline{" + nd1  + r"}"
-        pder_sym = "pder_" + str(i1) + "_wrt_" + str(i2)
+        pder_latex_str = r"\partial_{\underline{" + row_nd + \
+                     r"}}\underline{" + col_nd  + r"}"
+        pder_sym = "pder_" + str(row) + "_wrt_" + str(col)
         x = x.subs(sp.Symbol(pder_sym),
                    sp.Symbol(pder_latex_str))
 
@@ -99,27 +99,31 @@ def get_str_for_matrix_entries(mat,
     str0 = ""
     if latex:
         str0 += r"\begin{array}{l}"
-    for i1, i2 in product(range(dim), range(dim)):
-        nd1 = graph.ord_nodes[i1]
-        nd2 = graph.ord_nodes[i2]
+    for row, col in product(range(dim), range(dim)):
+        row_nd = graph.ord_nodes[row]
+        col_nd = graph.ord_nodes[col]
+        if mat_name == "gains" and col >= row:
+            continue
 
-
-        if mat_name == "cov_mat" and latex:
-            str0 += r"\langle\underline{" + nd1 + "}" + \
-                   r", \underline{" + nd2 + r"}\rangle="
+        if mat_name == "cov" and latex:
+            str0 += "\n" + r"\left\langle\underline{" + row_nd + "}" + \
+                   r", \underline{" + col_nd + r"}\right\rangle="
         elif mat_name == "jacobian" and latex:
-            str0 += "\n" + r"\frac{\partial\underline{" + nd1 + \
-                   r"}}{\partial\underline{" + nd2 + r"}}="
+            str0 += "\n" + r"\frac{\partial\underline{" + row_nd + \
+                   r"}}{\partial\underline{" + col_nd + r"}}="
+        elif mat_name == "gains" and latex:
+            str0 += "\n" + r"\alpha_{\underline{"+ row_nd +\
+                r"}, \underline{" + col_nd + r"}}="
         else:
-            str0 += "\n" + mat_name + "[" + str(i1) + ":" + nd1 + ", " + \
-                   str(i2) + ":" + nd2 + "]="
+            str0 += "\n" + mat_name + "[" + str(row) + ":" + row_nd + ", " + \
+                   str(col) + ":" + col_nd + "]="
 
         if latex:
-            x = mat[i1, i2]
+            x = mat[row, col]
             x = do_latex_subs(graph, x)
             str0 += sp.latex(x) + "\n" + r"\\"
         else:
-            str0 += str(mat[i1, i2]) + "\n"
+            str0 += str(mat[row, col]) + "\n"
     if latex:
         str0 = str0[:-2]  # remove last 2 characters (\\)
         str0 += r"\end{array}"

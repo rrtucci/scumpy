@@ -13,12 +13,12 @@ def set_to_one_sigma_eps_mat(graph, x):
 
 def set_to_zero_gains_without_arrows(graph, x):
     num_nds = graph.num_nds
-    for i1, i2 in product(range(num_nds), range(num_nds)):
-        nd1 = graph.ord_nodes[i1]
-        nd2 = graph.ord_nodes[i2]
+    for row, col in product(range(num_nds), range(num_nds)):
+        row_nd = graph.ord_nodes[row]
+        col_nd = graph.ord_nodes[col]
 
-        if i2 > i1 and (nd1, nd2) not in graph.edges:
-            alp_sym = "alp_" + str(i2) + "_L_" + str(i1)
+        if row > col and (col_nd, row_nd) not in graph.edges:
+            alp_sym = "alp_" + str(row) + "_L_" + str(col)
             x = x.subs({sp.Symbol(alp_sym):0})
     return x
 
