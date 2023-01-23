@@ -53,12 +53,16 @@ a system of linear equations of the form
 $$\underline{x}_j = \sum_i \alpha_{j|i} 
 \underline{x}_i + \underline{\epsilon}_j$$
 
-where the $\underline{x}_j\in \mathbb{R}$ are the nodes,
-the $\alpha_{j|i}\in \mathbb{R}$ are
-the path coefficients (a.k.a. gains), and the
-$\underline{\epsilon}_j\in \mathbb{R}$ 
+where the 
+$\underline{x}_j$  are the nodes,
+the $\alpha_{j|i}$
+are
+the path coefficients 
+(a.k.a. gains), and the
+$\underline{\epsilon}_j$ 
 are the external noise.
-The $\underline{\epsilon}_j$ are root nodes with
+The $\underline{\epsilon}_j$ are
+root nodes with
 zero mean,
 and zero covariance among themselves.
 
@@ -69,8 +73,7 @@ of equations with the unknowns
 $\underline{x}_j$. We can solve for these
 unknowns using basic Linear Algebra.
 Once we solve for the unknowns,
-we can calculate $\langle\underline{x}_j, 
-\underline{x}_k\rangle$.
+we can calculate $\langle\underline{x}_j, \underline{x}_k\rangle$.
 2. a linear system 
 of equations with the
 unknowns $\alpha_{j|i}$. We can solve for these
