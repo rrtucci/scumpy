@@ -44,7 +44,7 @@ $$\frac{\partial\underline{a}}{
 \frac{\langle\underline{a}, 
 \underline{b}\rangle}
 {\langle\underline{a}, 
-\underline{a}\rangle}}
+\underline{a}\rangle}
 $$
 
  
