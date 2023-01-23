@@ -25,6 +25,10 @@ Let $\underline{a}, \underline{b}$ be any 2
 random variables. (I underline random variables instead
 of the usual convention of capitalizing them.) Then
 
+$$\text{Mean Value of} \underline{a}=
+\langle\underline{a}\rangle$$
+
+
 $$\text{Covariance}(\underline{a}, \underline{b})=
 \langle\underline{a}, 
 \underline{b}\rangle$$
@@ -36,7 +40,7 @@ $$\text{Standard Deviation of }\underline{a} =
 \underline{a}\rangle}$$
 
 $$\text{Correlation}(\underline{a}, \underline{b}) =
-= \rho_{
+\rho_{
 \underline{a}, \underline{b}
 }=
 \frac{\langle\underline{a}, 
