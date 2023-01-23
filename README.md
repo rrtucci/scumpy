@@ -13,11 +13,11 @@ whose arrows are labelled by path coefficients
 (a.k.a. gains). If you want to learn 
 more about linear SCM, explained 
 using my notational conventions 
-which are also be SCuMpy’s notational conventions, 
+which are also SCuMpy’s notational conventions, 
 check out my free, open 
 source book <a href="https://qbnets.wordpress.com/2020/11/30/my-free-book-bayesuvius-on-bayesian-networks/">
 Bayesuvius</a>. 
-Look under the chapter entitled 
+Look in the chapter entitled 
 “Linear Deterministic Bnets with External Noise”.
 
 In SCuMpy, we use the following simple notation. 
@@ -51,7 +51,7 @@ $$
  Linear SCM are described by 
 a system of linear equations of the form
 
-$$\underline{x}_j = \sum_i \alpha_{j|i}\; 
+$$\underline{x}_j = \sum_i \alpha_{j|i}\quad 
 \underline{x}_i + \underline{\epsilon}_j$$
 
 where the 
