@@ -37,12 +37,12 @@ $$\text{Standard Deviation of }\underline{a} =
 $$\text{Correlation}(\underline{a}, \underline{b}) =
 \frac{\langle\underline{a}, 
 \underline{b}\rangle}
-{\sigma_{\underline{a}}\sigma_{\underline{b}}$$
+{\sigma_{\underline{a}}\sigma_{\underline{b}}}$$
 
 $$\frac{\partial\underline{a}}{
 \partial\underline{b}}=
 \frac{\langle\underline{a}, 
-\underline{b}\rangle}}
+\underline{b}\rangle}
 {\langle\underline{a}, 
 \underline{a}\rangle}}
 $$
