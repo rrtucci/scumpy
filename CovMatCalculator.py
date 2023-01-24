@@ -21,7 +21,8 @@ class CovMatCalculator:
         self.cov_mat_sym = sp.simplify(cov_mat)
         self.jacobian_sym = sp.simplify(jacobian)
 
-    def print_cov_mat_entries(self, latex=False):
+    def print_cov_mat_entries(self, latex=False,
+                              verbose=False):
         x = self.cov_mat_sym
         if latex:
             x = do_latex_subs(self.graph, x)
@@ -29,9 +30,13 @@ class CovMatCalculator:
                                        self.graph, latex)
         if not latex:
             print(str0)
+
+        if verbose:
+            print("\n", sp.Symbol(str0))
         return sp.Symbol(str0)
 
-    def print_jacobian_entries(self, latex=False):
+    def print_jacobian_entries(self, latex=False,
+                               verbose=False):
         x = self.jacobian_sym
         if latex:
             x = do_latex_subs(self.graph, x)
@@ -58,7 +63,7 @@ if __name__ == "__main__":
         cal = CovMatCalculator(graph)
         cal.calculate_cov_mat_sym()
         cal.print_cov_mat_entries(latex=False)
-        cal.print_jacobian_entries(latex=False)
+        cal.print_jacobian_entries(latex=False, verbose=True)
 
     main()
 

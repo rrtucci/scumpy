@@ -46,14 +46,14 @@ class GainsCalculator:
                self.gains_sym_list.append(
                    sp.Eq(unknowns[i], sol_list[i]))
 
-    def print_gains(self, latex=False):
+    def print_gains(self, latex=False, verbose=False):
         str0 = ""
         x = self.gains_sym_list
         # print("lllj", type(x))
         if not latex:
             for i in range(len(x)):
                 print(str(x[i]), "\n")
-        else:
+        if latex or (verbose and not latex):
             str0 += r"\begin{array}{l}" + "\n"
             for i in range(len(x)):
                 x[i] = sp.latex(do_latex_subs(self.graph, x[i]))
@@ -61,6 +61,8 @@ class GainsCalculator:
             str0 = str0[:-3]
             str0 += r"\end{array}"
             # print("lluj", str0)
+            if verbose:
+                print("\n", str0)
         return sp.Symbol(str0)
 
 if __name__ == "__main__":
@@ -77,8 +79,7 @@ if __name__ == "__main__":
         graph = Graph(path)
         cal = GainsCalculator(graph)
         cal.calculate_gains_sym()
-        cal.print_gains(latex=False)
-
+        cal.print_gains(latex=False, verbose=True)
 
     main()
 

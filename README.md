@@ -100,7 +100,8 @@ describe DAGs by
 the graph rendering software GraphViz.
 SCuMpy stores all its dot files in a
 folder entitled "dot_atlas".
-Another word for dot atlas in DAG atlas.
+Another term for "dot atlas"
+is "DAG atlas".
 
 At this point, 
 given a DAG dot file as input,
