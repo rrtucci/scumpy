@@ -90,10 +90,10 @@ unknowns $\alpha_{j|i}$. We can solve for these
 unknowns using basic Linear Algebra.
 
 SCuMpy
-uses as input DAGs 
+uses as input, DAGs 
 expressed as dot files. A dot file
-is a text file (usually) 
-describing a single DAG
+is a text file 
+describing a single (usually)  DAG
 in the dot language.
 The dot  language is the language used to
 describe DAGs by
