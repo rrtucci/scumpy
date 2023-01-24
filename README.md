@@ -90,8 +90,8 @@ unknowns $\alpha_{j|i}$. We can solve for these
 unknowns using basic Linear Algebra.
 
 SCuMpy
-uses as input, DAGs 
-expressed as dot files. A dot file
+takes as input a DAG 
+expressed as a dot file. A dot file
 is a text file 
 describing a single (usually)  DAG
 in the dot language.
