@@ -6,12 +6,55 @@ from copy import deepcopy
 
 
 class GainsCalculator:
+    """
+    The purpose of this class is to calculate the gains \alpha_{i|j} as a
+    function of the covariances <x_i, x_j>. Note that the nodes are in
+    topological order so x_i happens after x_j if i>j. If the graph has N
+    nodes, and it is fully connected, then gains \alpha_{i|j} will be
+    calculated for all i>j, where i, j = 1, 2 , ..., N. If the graph is not
+    fully connected and is missing M arrows to be fully connected, then
+    there will be M constraints among the covariances.
+
+    Attributes
+    ----------
+    gains_sym_list: list[sp.Equality]
+        list of symbols, where each symbol in the list is an equation of the
+        form:
+
+        \alpha_{i|j} = a function of the covariances
+
+        If the gain \alpha_{i|j} of arrow x_i->x_j is zero because that
+        arrow is missing, then \alpha_{i|j} is replaced in the above
+        equation by <x_i, x_j>, so the equation becomes a constraint on the
+        covariance matrix entries.
+
+    graph: Graph
+
+    """
 
     def __init__(self, graph):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        graph: Graph
+
+        """
         self.graph = graph
         self.gains_sym_list = None
 
     def calculate_gains_sym(self):
+        """
+        This method calculates and stores in 'self.gains_sym_list', a list
+        of symbolic equations. Each equation gives either the value of a
+        gain \alpha_{i|j}, or a constraint on the covariances.
+
+        Returns
+        -------
+        None
+
+        """
         dim = self.graph.num_nds
         A = set_to_zero_gains_without_arrows(self.graph,
                                              alp_sym_mat(dim))
@@ -48,6 +91,22 @@ class GainsCalculator:
                    sp.Eq(unknowns[i], sol_list[i]))
 
     def print_gains(self, verbose=False):
+        """
+        This method renders in latex, in a jupyter notebook, an equation for
+        the value of each gain \alpha_{i|j} of arrow x_i->x_j, or, if that
+        gain is zero, a constraint for <x_i, x_j>. Iff verbose=True, it also
+        prints the same thing in ASCI, in both the console and jupyter
+        notebook.
+
+        Parameters
+        ----------
+        verbose: Bool
+
+        Returns
+        -------
+        sp.Symbol
+
+        """
         str0 = ""
         x = self.gains_sym_list
         x_copy = deepcopy(x)
@@ -64,6 +123,9 @@ class GainsCalculator:
         # print("lluj", str0)
         if verbose:
             print("\n", str0)
+        # this return prints nothing on the console, but, if
+        # inserted as the last line of a jupyter cell, it renders
+        # the latex in str0
         return sp.Symbol(str0)
 
 if __name__ == "__main__":

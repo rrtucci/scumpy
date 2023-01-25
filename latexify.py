@@ -9,8 +9,8 @@ def do_latex_subs(graph, x):
 
     Parameters
     ----------
-    graph
-    x
+    graph: Graph
+    x: sp.Symbol
 
     Returns
     -------
@@ -75,10 +75,11 @@ def print_all_mats_after_latex_subs(graph):
 
     Parameters
     ----------
-    graph
+    graph: Graph
 
     Returns
     -------
+    None
 
     """
     dim = graph.num_nds
@@ -107,7 +108,7 @@ def print_all_mats_after_latex_subs(graph):
     print("\n", x)
     print(sp.latex(x))
 
-    x = pder_sym_mat(dim)
+    x = jacobian_sym_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)
     print(sp.latex(x))
@@ -119,10 +120,10 @@ def get_str_for_matrix_entries(mat,
     """
     Parameters
     ----------
-    mat
-    mat_name
-    graph
-    latex
+    mat: sp.Symbol
+    mat_name: str
+    graph: Graph
+    latex: bool
 
     Returns
     -------

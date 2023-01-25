@@ -4,21 +4,29 @@ from copy import deepcopy
 
 class CovMatCalculator:
     """
-    
+    The purpose of this class is to calculate and store a symbolic
+    expression for the covariance matrix C and the Jacobian matrix J. We
+    define C_{j,k} = <x_j, x_k>, where x_j are the internal nodes and
+    \epsilon_j are the external ones. We define J_{i, j}= partial of x_i
+    with respect to x_j
+
     Attributes
     ----------
-    cov_mat_sym:
-    graph:
-    jacobian:
+    cov_mat_sym: sp.Matrix
+        a symbol containing the covariance matrix C.
+    graph: Graph
+    jacobian_sym: sp.Matrix
+        a symbol containing the Jacobian matrix J.
     
     """
     
     def __init__(self, graph):
         """
+        Constructor
         
         Parameters
         ----------
-        graph
+        graph: Graph
         """
         self.graph = graph
         self.cov_mat_sym = None
@@ -26,9 +34,15 @@ class CovMatCalculator:
 
     def calculate_cov_mat_sym(self):
         """
+        This method calculates and stores in 'self.cov_mat_sym', a symbolic
+        expression for each of the entries C_{i,j} =<x_i, x_j>  of the
+        covariance matrix C. It also calculates and stores in
+        self.jacobian_sym', a symbolic expression for each of the entries
+        J_{i,j} of the Jacobian matrix J.
         
         Returns
         -------
+        None
 
         """
         dim = self.graph.num_nds
@@ -46,13 +60,18 @@ class CovMatCalculator:
     def print_cov_mat_entries(self, latex=False,
                               verbose=False):
         """
+        This method renders in latex, in a jupyter notebook, the entries,
+        one at a time, of the covariance matrix stored in
+        'self.cov_mat_sym'. Iff verbose=True, it also prints the same thing
+        in ASCI, in both the console and jupyter notebook.
         
         Parameters
         ----------
-        verbose
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         x = self.cov_mat_sym
@@ -66,17 +85,25 @@ class CovMatCalculator:
                                        self.graph, latex=True)
         if verbose:
             print(str0)
+        # this return prints nothing on the console, but, if
+        # inserted as the last line of a jupyter cell, it renders
+        # the latex in str0
         return sp.Symbol(str0)
 
     def print_jacobian_entries(self, verbose=False):
         """
+        This method renders in latex, in a jupyter notebook, the entries,
+        one at a time, of the Jacobian matrix J. Iff verbose=True, it also
+        prints the same thing in ASCI, in both the console and jupyter
+        notebook.
         
         Parameters
         ----------
-        verbose
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         x = self.jacobian_sym
@@ -90,6 +117,9 @@ class CovMatCalculator:
                                           self.graph, latex=True)
         if verbose:
             print(str0)
+        # this return prints nothing on the console, but, if
+        # inserted as the last line of a jupyter cell, it renders
+        # the latex in str0
         return sp.Symbol(str0)
 
 

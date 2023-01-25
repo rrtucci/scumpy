@@ -3,18 +3,28 @@ import networkx as nx
 
 class Graph:
     """
-    This class stores the path to a dot file. It also creates/sores a
-    networkx graph from that dot file, and it asks networkx to do a
-    topological sort of the nodes. The sorted node are stored in
-    self.ord_nodes.
+    The purpose of this class is to store information related to a DAG.This
+    information is derived from a dot file located at 'dot_file_path'.
+
+    A dot file is a text file that describes a single (usually) DAG in the
+    dot language. The dot language is the language used by the graph
+    rendering language GraphViz.
 
     Attributes
     ----------
-    edges:
-    num_nds:
-    nx_graph:
-    ord_nds:
+    edges: list[(str, str)]
+        This is a list of string tuples such as ('a', 'b'), which indicates
+        that an arrow points from 'a' to 'b'.
+    num_nds: int
+        number of nodes
+    nx_graph: nx.DiGraph
+            networkx graph.
+    ord_nds: list[str]
+        Ordered nodes. A list of the node names in topological order. Root
+        nodes first.
     path:
+        path to a dot file. Such files are usually placed in the "dot_atlas'
+        directory
 
     """
     def __init__(self, dot_file_path):
@@ -23,7 +33,7 @@ class Graph:
 
         Parameters
         ----------
-        dot_file_path
+        dot_file_path: str
         """
         self.path = dot_file_path
         nx_graph = DotTool.nx_graph_from_dot_file(dot_file_path)
@@ -34,12 +44,16 @@ class Graph:
 
     def draw(self, jupyter):
         """
+        This method draws the graph either on the console (jupyter=False) or
+        in a jupyter notebook (jupyter=True)
+
         Parameters
         ----------
-        jupyter
+        jupyter: bool
 
         Returns
         -------
+        None
 
         """
         DotTool.draw(self.path, jupyter)

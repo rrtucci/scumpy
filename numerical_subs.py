@@ -2,16 +2,25 @@ from Graph import *
 import sympy as sp
 from itertools import product
 
+"""
+
+The functions in this file substitute (i.e. replace) a sp.Symbol by a 
+numerical value in an input x, where x is usually a sp.Matrix.
+
+"""
+
 def set_to_one_sigma_eps_mat(graph, x):
     """
+    This method substitutes \sigma_{\epsilon_j}$ by 0 in x.
 
     Parameters
     ----------
-    graph
-    x
+    graph: Graph
+    x: sp.Matrix or sp.Symbol
 
     Returns
     -------
+    type(x)
 
     """
     num_nds = graph.num_nds
@@ -24,14 +33,17 @@ def set_to_one_sigma_eps_mat(graph, x):
 
 def set_to_zero_gains_without_arrows(graph, x):
     """
+    This method substitutes \sigma_{x_j}$ by 0 in x.
+
+
     Parameters
     ----------
-    graph
-    x
+    graph: Graph
+    x: sp.Matrix or sp.Symbol
 
     Returns
     -------
-
+    type(x)
     """
     num_nds = graph.num_nds
     for row, col in product(range(num_nds), range(num_nds)):
