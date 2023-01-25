@@ -4,11 +4,11 @@ from copy import deepcopy
 
 class CovMatCalculator:
     """
-    The purpose of this class is to calculate and store a symbolic
-    expression for the covariance matrix C and the Jacobian matrix J. We
-    define C_{j,k} = <x_j, x_k>, where x_j are the internal nodes and
-    \epsilon_j are the external ones. We define J_{i, j}= partial of x_i
-    with respect to x_j
+    The purpose of this class is to calculate/store the covariance matrix C
+    and the Jacobian matrix J, expressed symbolically as a function of the
+    gains \alpha_{i,j}. We define C_{j,k} = <x_j, x_k>, where x_j are the
+    internal nodes and \epsilon_j are the external ones. We define J_{i,
+    j}= partial of x_i with respect to x_j
 
     Attributes
     ----------
@@ -37,7 +37,7 @@ class CovMatCalculator:
         This method calculates and stores in 'self.cov_mat_sym', a symbolic
         expression for each of the entries C_{i,j} =<x_i, x_j>  of the
         covariance matrix C. It also calculates and stores in
-        self.jacobian_sym', a symbolic expression for each of the entries
+        'self.jacobian_sym', a symbolic expression for each of the entries
         J_{i,j} of the Jacobian matrix J.
         
         Returns
@@ -60,10 +60,10 @@ class CovMatCalculator:
     def print_cov_mat_entries(self, latex=False,
                               verbose=False):
         """
-        This method renders in latex, in a jupyter notebook, the entries,
-        one at a time, of the covariance matrix stored in
-        'self.cov_mat_sym'. Iff verbose=True, it also prints the same thing
-        in ASCI, in both the console and jupyter notebook.
+        This method renders in latex, in a jupyter notebook (but not in the
+        console), the entries, one at a time, of the covariance matrix
+        stored in 'self.cov_mat_sym'. Iff verbose=True, it also prints the
+        same thing in ASCII, in both the console and jupyter notebook.
         
         Parameters
         ----------
@@ -92,10 +92,10 @@ class CovMatCalculator:
 
     def print_jacobian_entries(self, verbose=False):
         """
-        This method renders in latex, in a jupyter notebook, the entries,
-        one at a time, of the Jacobian matrix J. Iff verbose=True, it also
-        prints the same thing in ASCI, in both the console and jupyter
-        notebook.
+        This method renders in latex, in a jupyter notebook (but not in the
+        console), the entries, one at a time, of the Jacobian matrix J. Iff
+        verbose=True, it also prints the same thing in ASCII, in both the
+        console and jupyter notebook.
         
         Parameters
         ----------

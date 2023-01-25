@@ -4,14 +4,14 @@ from itertools import product
 
 """
 
-The functions in this file substitute (i.e. replace) a sp.Symbol by a 
-numerical value in an input x, where x is usually a sp.Matrix.
+The functions in this file return their input x after performing some 
+numerical substitutions of some of the symbols in x. x is usually a sp.Matrix.
 
 """
 
 def set_to_one_sigma_eps_mat(graph, x):
     """
-    This method substitutes \sigma_{\epsilon_j}$ by 0 in x.
+    This method substitutes \sigma_{\epsilon_j} by 0 for all j.
 
     Parameters
     ----------
@@ -33,8 +33,7 @@ def set_to_one_sigma_eps_mat(graph, x):
 
 def set_to_zero_gains_without_arrows(graph, x):
     """
-    This method substitutes \sigma_{x_j}$ by 0 in x.
-
+    This method substitutes \sigma_{x_j} by 0 for all j.
 
     Parameters
     ----------

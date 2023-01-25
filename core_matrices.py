@@ -19,7 +19,7 @@ The names of the entries of the matrices created by this file, are as follows:
 
 """
 
-def make_sym_mat(dim, mat_str, mat_type="full"):
+def make_sym_mat(dim, mat_str, mat_type="general"):
     """
     This method returns a matrix of type sp.Matrix.
 
@@ -31,7 +31,7 @@ def make_sym_mat(dim, mat_str, mat_type="full"):
         the name of the matrix being returned. For example, if mat_str='cov',
         the returned matrix has entries cov[i, j].
     mat_type: str
-        This flag must be one of these: "general", "symmetric",
+        This flag must be one of the following: "general", "symmetric",
         "strict_lower_triangular", "diagonal"
 
 
@@ -68,8 +68,9 @@ def make_sym_mat(dim, mat_str, mat_type="full"):
 
 def sigma_eps_sym_mat(dim):
     """
-    This method returns a diagonal matrix (of type sp.Matrix) with the
-    standard deviations \sigma_{\epsilon_j} of \epsilon_j along its diagonal.
+    This method returns a diagonal matrix (of type sp.Matrix) with diagonal
+    entries equal to the standard deviations \sigma_{\epsilon_j} of
+    \epsilon_j for each j.
 
     Parameters
     ----------
@@ -86,8 +87,9 @@ def sigma_eps_sym_mat(dim):
 
 def sigma_nd_sym_mat(dim):
     """
-    This method returns a diagonal matrix (of type sp.Matrix) with the
-    standard deviations \sigma_{ x_j} of node x_j along its diagonal.
+    This method returns a diagonal matrix (of type sp.Matrix) with diagonal
+    enties equal to the standard deviations \sigma_{x_j} of node x_j for
+    each j.
 
 
     Parameters
@@ -113,7 +115,6 @@ def alp_sym_mat(dim):
     dim: int
         dimension of square matrix = number of nodes in graph.
 
-
     Returns
     -------
     sp.Matrix
@@ -124,7 +125,7 @@ def alp_sym_mat(dim):
 
 def cov_sym_mat(dim):
     """
-    This method returns the covariance matrix C (of type sp.Matrix)with C_{
+    This method returns the covariance matrix C (of type sp.Matrix) with C_{
     i,j} = <x_i, x_j>
 
     Parameters
@@ -143,8 +144,8 @@ def cov_sym_mat(dim):
 
 def rho_sym_mat(dim):
     """
-    This method returns the correlation matrix (of type sp.Matrix) \rho
-    with \rho_{i, j}.
+    This method returns the correlation matrix \rho (of type sp.Matrix) with
+    \rho_{i, j}.
 
     Parameters
     ----------
@@ -162,14 +163,13 @@ def rho_sym_mat(dim):
 
 def jacobian_sym_mat(dim):
     """
-    This method returns the Jacobian matrix J matrix (of type sp.Matrix)
-    with the J_{i,j} = partial derivative of x_i with respect to x_j.
+    This method returns the Jacobian matrix J (of type sp.Matrix) with J_{i,
+    j} = partial derivative of x_i with respect to x_j.
 
     Parameters
     ----------
     dim: int
         dimension of square matrix = number of nodes in graph.
-
 
     Returns
     -------

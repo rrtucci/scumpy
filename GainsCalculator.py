@@ -7,13 +7,13 @@ from copy import deepcopy
 
 class GainsCalculator:
     """
-    The purpose of this class is to calculate the gains \alpha_{i|j} as a
-    function of the covariances <x_i, x_j>. Note that the nodes are in
-    topological order so x_i happens after x_j if i>j. If the graph has N
-    nodes, and it is fully connected, then gains \alpha_{i|j} will be
-    calculated for all i>j, where i, j = 1, 2 , ..., N. If the graph is not
-    fully connected and is missing M arrows to be fully connected, then
-    there will be M constraints among the covariances.
+    The purpose of this class is to calculate/store the gains \alpha_{i|j}
+    expressed symbolically as a function of the covariances <x_i, x_j>. Note
+    that the nodes are in topological order so x_i happens after x_j if i>j.
+    If the graph has N nodes, and it is fully connected, then gains \alpha_{
+    i|j} will be calculated for all i>j, where i, j = 1, 2 , ..., N. If the
+    graph is not fully connected and is missing M arrows for it to be fully
+    connected, then there will be M constraints among the covariances.
 
     Attributes
     ----------
@@ -24,9 +24,9 @@ class GainsCalculator:
         \alpha_{i|j} = a function of the covariances
 
         If the gain \alpha_{i|j} of arrow x_i->x_j is zero because that
-        arrow is missing, then \alpha_{i|j} is replaced in the above
-        equation by <x_i, x_j>, so the equation becomes a constraint on the
-        covariance matrix entries.
+        arrow is missing, then \alpha_{i|j} on the left hand side of the
+        above equation is replaced by <x_i, x_j>, so the equation becomes a
+        constraint on the covariance matrix entries.
 
     graph: Graph
 
@@ -92,11 +92,11 @@ class GainsCalculator:
 
     def print_gains(self, verbose=False):
         """
-        This method renders in latex, in a jupyter notebook, an equation for
-        the value of each gain \alpha_{i|j} of arrow x_i->x_j, or, if that
-        gain is zero, a constraint for <x_i, x_j>. Iff verbose=True, it also
-        prints the same thing in ASCI, in both the console and jupyter
-        notebook.
+        This method renders in latex, in a jupyter notebook (but not on the
+        console), an equation for the value of each gain \alpha_{i|j} of
+        arrow x_i->x_j, or, if that gain is zero, a constraint for <x_i,
+        x_j>. Iff verbose=True, it also prints the same thing in ASCII,
+        in both the console and jupyter notebook.
 
         Parameters
         ----------

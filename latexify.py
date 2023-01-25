@@ -4,27 +4,38 @@ from itertools import product
 from core_matrices import *
 from numerical_subs import *
 
+"""
+
+The functions in this file return their input x after performing some 
+symbolic substitutions of some of the symbols in x. x is usually a sp.Matrix.
+
+"""
+
 def do_latex_subs(graph, x):
     """
+    This method substitutes
+
+    sp.Symbol("sigma_eps_" + str(i))
+    sp.Symbol("sigma_" + str(i))
+    sp.Symbol("alp_" + str(row) + "_L_" + str(col))
+    sp.Symbol("cov_" + str(row) + "_" + str(col))
+    sp.Symbol("rho_" + str(row) + "_" + str(col))
+    sp.Symbol("pder_" + str(row) + "_wrt_" + str(col))
+
+    by their latex counterparts, str(i), str(row) and str(col) are all
+    replaced by a node name from the list graph.ord_nodes
 
     Parameters
     ----------
     graph: Graph
-    x: sp.Symbol
+    x: sp.Symbol or sp.Matrix
 
     Returns
     -------
+    type(x)
 
     """
     num_nds = graph.num_nds
-    for i in range(num_nds):
-        nd = graph.ord_nodes[i]
-
-        sigma_eps_latex_str = r"\sigma_{\underline{\epsilon}" + \
-                          r"_{\underline{" + nd + r"}}}"
-        sigma_eps_sym = "sigma_eps_" + str(i)
-        x = x.subs(sp.Symbol(sigma_eps_sym), sp.Symbol(sigma_eps_latex_str))
-
     for i in range(num_nds):
         nd = graph.ord_nodes[i]
 
@@ -72,6 +83,10 @@ def do_latex_subs(graph, x):
 
 def print_all_mats_after_latex_subs(graph):
     """
+    This method is for debugging 'do_latex_subs()'. It creates the core
+    matrices built by the functions in file core_matrices.py. Then it passes
+    those core matrices through 'do_latex_subs()'. Finally, it prints the
+    changed core matrices.
 
     Parameters
     ----------
@@ -118,15 +133,34 @@ def get_str_for_matrix_entries(mat,
                                graph,
                                latex=False):
     """
+    If latex=True, this method returns a string which is a well formed latex
+    expression for a latex array with one column. For each i, j, there is
+    one column entry of the form
+
+    mat[i, j]= EXP
+
+    where mat is the input sp.Matrix and EXP is a string coming from a
+    symbolic expression.  Both mat[i,j] and EXP have been fully latexified
+    and the integers i, j have been replaced by node names.
+
+    If latex=False, this method outputs a line mat[i, j]= EXP for each i,
+    j. The lines are not fully latexified and don't have the integers i,
+    j replaced by node names.
+
+    'mat_name' can be either "cov", "jacobian", "gains", or anything else.
+    The left hand side mat[i,j] of the equation in each line depends on what
+    we submit for 'mat_name"
+
     Parameters
     ----------
-    mat: sp.Symbol
+    mat: sp.Matrix
     mat_name: str
     graph: Graph
     latex: bool
 
     Returns
     -------
+    str
 
     """
     dim = mat.shape[0]
