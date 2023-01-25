@@ -1,0 +1,3 @@
+digraph LR3 {
+    m->x_1, x_2, x_3
+}
