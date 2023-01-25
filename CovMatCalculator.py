@@ -1,14 +1,36 @@
 from core_matrices import *
 from numerical_subs import *
+from copy import deepcopy
 
 class CovMatCalculator:
+    """
+    
+    Attributes
+    ----------
+    cov_mat_sym:
+    graph:
+    jacobian:
+    
+    """
     
     def __init__(self, graph):
+        """
+        
+        Parameters
+        ----------
+        graph
+        """
         self.graph = graph
         self.cov_mat_sym = None
         self.jacobian_sym = None
 
     def calculate_cov_mat_sym(self):
+        """
+        
+        Returns
+        -------
+
+        """
         dim = self.graph.num_nds
         A = set_to_zero_gains_without_arrows(self.graph,
                                              alp_sym_mat(dim))
@@ -23,26 +45,50 @@ class CovMatCalculator:
 
     def print_cov_mat_entries(self, latex=False,
                               verbose=False):
-        x = self.cov_mat_sym
-        if latex:
-            x = do_latex_subs(self.graph, x)
-        str0 = get_str_for_matrix_entries(x, "cov",
-                                       self.graph, latex)
-        if not latex:
-            print(str0)
+        """
+        
+        Parameters
+        ----------
+        verbose
 
+        Returns
+        -------
+
+        """
+        x = self.cov_mat_sym
+        x_copy = deepcopy(x)
         if verbose:
-            print("\n", sp.Symbol(str0))
+            print(get_str_for_matrix_entries(x_copy, "cov",
+                                       self.graph, latex=False))
+
+        x_copy = do_latex_subs(self.graph, x_copy)
+        str0 = get_str_for_matrix_entries(x_copy, "cov",
+                                       self.graph, latex=True)
+        if verbose:
+            print(str0)
         return sp.Symbol(str0)
 
-    def print_jacobian_entries(self, latex=False,
-                               verbose=False):
+    def print_jacobian_entries(self, verbose=False):
+        """
+        
+        Parameters
+        ----------
+        verbose
+
+        Returns
+        -------
+
+        """
         x = self.jacobian_sym
-        if latex:
-            x = do_latex_subs(self.graph, x)
-        str0 = get_str_for_matrix_entries(x, "jacobian",
-                                       self.graph, latex)
-        if not latex:
+        x_copy = deepcopy(x)
+        if verbose:
+            print(get_str_for_matrix_entries(x_copy, "jacobian",
+                                             self.graph, latex=False))
+
+        x_copy = do_latex_subs(self.graph, x_copy)
+        str0 = get_str_for_matrix_entries(x_copy, "jacobian",
+                                          self.graph, latex=True)
+        if verbose:
             print(str0)
         return sp.Symbol(str0)
 
@@ -62,8 +108,8 @@ if __name__ == "__main__":
         graph = Graph(path)
         cal = CovMatCalculator(graph)
         cal.calculate_cov_mat_sym()
-        cal.print_cov_mat_entries(latex=False)
-        cal.print_jacobian_entries(latex=False, verbose=True)
+        cal.print_cov_mat_entries(verbose=True)
+        cal.print_jacobian_entries(verbose=True)
 
     main()
 

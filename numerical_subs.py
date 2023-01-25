@@ -3,6 +3,17 @@ import sympy as sp
 from itertools import product
 
 def set_to_one_sigma_eps_mat(graph, x):
+    """
+
+    Parameters
+    ----------
+    graph
+    x
+
+    Returns
+    -------
+
+    """
     num_nds = graph.num_nds
     for i in range(num_nds):
         nd = graph.ord_nodes[i]
@@ -12,6 +23,16 @@ def set_to_one_sigma_eps_mat(graph, x):
     return x
 
 def set_to_zero_gains_without_arrows(graph, x):
+    """
+    Parameters
+    ----------
+    graph
+    x
+
+    Returns
+    -------
+
+    """
     num_nds = graph.num_nds
     for row, col in product(range(num_nds), range(num_nds)):
         row_nd = graph.ord_nodes[row]

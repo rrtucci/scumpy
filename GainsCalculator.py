@@ -1,6 +1,7 @@
 from core_matrices import *
 from numerical_subs import *
 from sympy.solvers.solveset import linsolve
+from copy import deepcopy
 
 
 
@@ -46,23 +47,23 @@ class GainsCalculator:
                self.gains_sym_list.append(
                    sp.Eq(unknowns[i], sol_list[i]))
 
-    def print_gains(self, latex=False, verbose=False):
+    def print_gains(self, verbose=False):
         str0 = ""
         x = self.gains_sym_list
+        x_copy = deepcopy(x)
         # print("lllj", type(x))
-        if not latex:
+        if verbose:
             for i in range(len(x)):
                 print(str(x[i]), "\n")
-        if latex or (verbose and not latex):
-            str0 += r"\begin{array}{l}" + "\n"
-            for i in range(len(x)):
-                x[i] = sp.latex(do_latex_subs(self.graph, x[i]))
-                str0 += x[i] + "\n" + r"\\" + "\n"
-            str0 = str0[:-3]
-            str0 += r"\end{array}"
-            # print("lluj", str0)
-            if verbose:
-                print("\n", str0)
+        str0 += r"\begin{array}{l}" + "\n"
+        for i in range(len(x)):
+            x_copy[i] = sp.latex(do_latex_subs(self.graph, x_copy[i]))
+            str0 += x_copy[i] + "\n" + r"\\" + "\n"
+        str0 = str0[:-3]
+        str0 += r"\end{array}"
+        # print("lluj", str0)
+        if verbose:
+            print("\n", str0)
         return sp.Symbol(str0)
 
 if __name__ == "__main__":
@@ -79,7 +80,7 @@ if __name__ == "__main__":
         graph = Graph(path)
         cal = GainsCalculator(graph)
         cal.calculate_gains_sym()
-        cal.print_gains(latex=False, verbose=True)
+        cal.print_gains(verbose=True)
 
     main()
 

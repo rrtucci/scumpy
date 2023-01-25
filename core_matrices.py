@@ -3,6 +3,18 @@ from itertools import product
 from latexify import *
 
 def make_sym_mat(dim, mat_str, mat_type="full"):
+    """
+
+    Parameters
+    ----------
+    dim
+    mat_str
+    mat_type
+
+    Returns
+    -------
+
+    """
     rows = []
     for i in range(dim):
         col = []
@@ -39,26 +51,86 @@ def make_sym_mat(dim, mat_str, mat_type="full"):
     '''
 
 def sigma_eps_sym_mat(dim):
+    """
+
+    Parameters
+    ----------
+    dim
+
+    Returns
+    -------
+
+    """
     return make_sym_mat(dim, "sigma_eps_%d",
                         mat_type="diagonal")
 
 def sigma_nd_sym_mat(dim):
+    """
+
+    Parameters
+    ----------
+    dim
+
+    Returns
+    -------
+
+    """
     return make_sym_mat(dim, "sigma_%d",
                         mat_type="diagonal")
 
 def alp_sym_mat(dim):
+    """
+
+    Parameters
+    ----------
+    dim
+
+    Returns
+    -------
+
+    """
     return make_sym_mat(dim, "alp_%d_L_%d",
                         mat_type="strict_lower_triangular")
 
 def cov_sym_mat(dim):
+    """
+
+    Parameters
+    ----------
+    dim
+
+    Returns
+    -------
+
+    """
     return make_sym_mat(dim, "cov_%d_%d",
                         mat_type="symmetric")
 
 def rho_sym_mat(dim):
+    """
+
+    Parameters
+    ----------
+    dim
+
+    Returns
+    -------
+
+    """
     return make_sym_mat(dim, "rho_%d_%d",
                         mat_type="symmetric")
 
 def pder_sym_mat(dim):
+    """
+
+    Parameters
+    ----------
+    dim
+
+    Returns
+    -------
+
+    """
     return make_sym_mat(dim, "pder_%d_wrt_%d",
                         mat_type="general")
 

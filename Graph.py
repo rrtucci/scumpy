@@ -2,7 +2,29 @@ from DotTool import *
 import networkx as nx
 
 class Graph:
+    """
+    This class stores the path to a dot file. It also creates/sores a
+    networkx graph from that dot file, and it asks networkx to do a
+    topological sort of the nodes. The sorted node are stored in
+    self.ord_nodes.
+
+    Attributes
+    ----------
+    edges:
+    num_nds:
+    nx_graph:
+    ord_nds:
+    path:
+
+    """
     def __init__(self, dot_file_path):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        dot_file_path
+        """
         self.path = dot_file_path
         nx_graph = DotTool.nx_graph_from_dot_file(dot_file_path)
         self.nx_graph = nx_graph
@@ -11,6 +33,15 @@ class Graph:
         self.num_nds = len(self.ord_nodes)
 
     def draw(self, jupyter):
+        """
+        Parameters
+        ----------
+        jupyter
+
+        Returns
+        -------
+
+        """
         DotTool.draw(self.path, jupyter)
 
 

@@ -5,6 +5,17 @@ from core_matrices import *
 from numerical_subs import *
 
 def do_latex_subs(graph, x):
+    """
+
+    Parameters
+    ----------
+    graph
+    x
+
+    Returns
+    -------
+
+    """
     num_nds = graph.num_nds
     for i in range(num_nds):
         nd = graph.ord_nodes[i]
@@ -60,6 +71,16 @@ def do_latex_subs(graph, x):
     return x
 
 def print_all_mats_after_latex_subs(graph):
+    """
+
+    Parameters
+    ----------
+    graph
+
+    Returns
+    -------
+
+    """
     dim = graph.num_nds
     x = sigma_eps_sym_mat(dim)
     x = do_latex_subs(graph, x)
@@ -95,6 +116,18 @@ def get_str_for_matrix_entries(mat,
                                mat_name,
                                graph,
                                latex=False):
+    """
+    Parameters
+    ----------
+    mat
+    mat_name
+    graph
+    latex
+
+    Returns
+    -------
+
+    """
     dim = mat.shape[0]
     str0 = ""
     if latex:
