@@ -72,8 +72,7 @@ are the external nodes
 that inject noise into the system.
 The $\underline{\epsilon}_j$ are
 root nodes with
-zero mean,
-and zero covariance
+zero covariance
 with each other.
 
 We can view this as either
