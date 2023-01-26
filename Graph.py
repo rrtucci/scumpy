@@ -1,6 +1,7 @@
 from DotTool import *
 import networkx as nx
 
+
 class Graph:
     """
     The purpose of this class is to store information related to a DAG.This
@@ -19,7 +20,7 @@ class Graph:
         number of nodes
     nx_graph: nx.DiGraph
             networkx graph.
-    ord_nds: list[str]
+    ord_nodes: list[str]
         Ordered nodes. A list of the node names in topological order. Root
         nodes first.
     path:

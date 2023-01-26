@@ -2,6 +2,7 @@ from core_matrices import *
 from numerical_subs import *
 from copy import deepcopy
 
+
 class CovMatCalculator:
     """
     The purpose of this class is to calculate/store the covariance matrix C
@@ -51,14 +52,13 @@ class CovMatCalculator:
         one_minus_A = A - sp.eye(dim)
         one_minus_A_inv = sp.simplify(one_minus_A.inv())
         sigma_eps_sq = sigma_eps_sym_mat(dim) ** 2
-        cov_mat = one_minus_A_inv * sigma_eps_sq * (one_minus_A_inv.T)
+        cov_mat = one_minus_A_inv * sigma_eps_sq * one_minus_A_inv.T
         sigma_nd_sq_inv = (sigma_nd_sym_mat(dim) ** 2).inv()
         jacobian = cov_mat * sigma_nd_sq_inv
         self.cov_mat_sym = sp.simplify(cov_mat)
         self.jacobian_sym = sp.simplify(jacobian)
 
-    def print_cov_mat_entries(self, latex=False,
-                              verbose=False):
+    def print_cov_mat_entries(self, verbose=False):
         """
         This method renders in latex, in a jupyter notebook (but not in the
         console), the entries, one at a time, of the covariance matrix

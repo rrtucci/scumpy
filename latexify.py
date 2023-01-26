@@ -11,6 +11,7 @@ symbolic substitutions of some of the symbols in x. x is usually a sp.Matrix.
 
 """
 
+
 def do_latex_subs(graph, x):
     """
     This method substitutes
@@ -62,24 +63,25 @@ def do_latex_subs(graph, x):
                        sp.Symbol(alp_latex_str))
 
         cov_latex_str = r"\left\langle\underline{" + row_nd + \
-                    r"},\underline{" + col_nd  + r"}\right\rangle"
+                    r"},\underline{" + col_nd + r"}\right\rangle"
         cov_sym = "cov_" + str(row) + "_" + str(col)
         x = x.subs(sp.Symbol(cov_sym),
                    sp.Symbol(cov_latex_str))
 
         rho_latex_str = r"\rho_{\underline{" + row_nd + \
-                    r"},\underline{" + col_nd  + r"}}"
+                    r"},\underline{" + col_nd + r"}}"
         rho_sym = "rho_" + str(row) + "_" + str(col)
         x = x.subs(sp.Symbol(rho_sym),
                    sp.Symbol(rho_latex_str))
 
         pder_latex_str = r"\partial_{\underline{" + row_nd + \
-                     r"}}\underline{" + col_nd  + r"}"
+                     r"}}\underline{" + col_nd + r"}"
         pder_sym = "pder_" + str(row) + "_wrt_" + str(col)
         x = x.subs(sp.Symbol(pder_sym),
                    sp.Symbol(pder_latex_str))
 
     return x
+
 
 def print_all_mats_after_latex_subs(graph):
     """
@@ -128,12 +130,13 @@ def print_all_mats_after_latex_subs(graph):
     print("\n", x)
     print(sp.latex(x))
 
+
 def get_str_for_matrix_entries(mat,
                                mat_name,
                                graph,
                                latex=False):
     """
-    If latex=True, this method returns a string which is a well formed latex
+    If latex=True, this method returns a string which is a well-formed latex
     expression for a latex array with one column. For each i, j, there is
     one column entry of the form
 
@@ -149,7 +152,7 @@ def get_str_for_matrix_entries(mat,
 
     'mat_name' can be either "cov", "jacobian", "gains", or anything else.
     The left hand side mat[i,j] of the equation in each line depends on what
-    we submit for 'mat_name"
+    we submit for 'mat_name'
 
     Parameters
     ----------
@@ -180,7 +183,7 @@ def get_str_for_matrix_entries(mat,
             str0 += "\n" + r"\frac{\partial\underline{" + row_nd + \
                    r"}}{\partial\underline{" + col_nd + r"}}="
         elif mat_name == "gains" and latex:
-            str0 += "\n" + r"\alpha_{\underline{"+ row_nd +\
+            str0 += "\n" + r"\alpha_{\underline{" + row_nd +\
                 r"}| \underline{" + col_nd + r"}}="
         else:
             str0 += "\n" + mat_name + "[" + str(row) + ":" + row_nd + ", " + \
@@ -197,6 +200,7 @@ def get_str_for_matrix_entries(mat,
         str0 += r"\end{array}"
 
     return str0
+
 
 if __name__ == "__main__":
 

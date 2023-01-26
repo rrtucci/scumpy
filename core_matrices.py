@@ -19,6 +19,7 @@ The names of the entries of the matrices created by this file, are as follows:
 
 """
 
+
 def make_sym_mat(dim, mat_str, mat_type="general"):
     """
     This method returns a matrix of type sp.Matrix.
@@ -52,19 +53,20 @@ def make_sym_mat(dim, mat_str, mat_type="general"):
                 col.append(sp.Symbol(mat_str % (min(i, j), max(i, j))))
             elif mat_type == "strict_lower_triangular":
                 if i > j:
-                    col.append(sp.Symbol(mat_str% (i, j)))
+                    col.append(sp.Symbol(mat_str % (i, j)))
                 else:
                     col.append(0)
             elif mat_type == "diagonal":
                 if i == j:
-                    col.append(sp.Symbol(mat_str% i ))
+                    col.append(sp.Symbol(mat_str % i))
                 else:
                     col.append(0)
             else:
-                assert(False)
+                assert False
 
         rows.append(col)
     return sp.Matrix(rows)
+
 
 def sigma_eps_sym_mat(dim):
     """
@@ -84,6 +86,7 @@ def sigma_eps_sym_mat(dim):
     """
     return make_sym_mat(dim, "sigma_eps_%d",
                         mat_type="diagonal")
+
 
 def sigma_nd_sym_mat(dim):
     """
@@ -105,6 +108,7 @@ def sigma_nd_sym_mat(dim):
     return make_sym_mat(dim, "sigma_%d",
                         mat_type="diagonal")
 
+
 def alp_sym_mat(dim):
     """
     This method returns a matrix (of type sp.Matrix) of gains M with M_{ i,
@@ -122,6 +126,7 @@ def alp_sym_mat(dim):
     """
     return make_sym_mat(dim, "alp_%d_L_%d",
                         mat_type="strict_lower_triangular")
+
 
 def cov_sym_mat(dim):
     """
@@ -142,6 +147,7 @@ def cov_sym_mat(dim):
     return make_sym_mat(dim, "cov_%d_%d",
                         mat_type="symmetric")
 
+
 def rho_sym_mat(dim):
     """
     This method returns the correlation matrix \rho (of type sp.Matrix) with
@@ -160,6 +166,7 @@ def rho_sym_mat(dim):
     """
     return make_sym_mat(dim, "rho_%d_%d",
                         mat_type="symmetric")
+
 
 def jacobian_sym_mat(dim):
     """
@@ -193,3 +200,4 @@ if __name__ == "__main__":
         print()
         print((sp.eye(dim) - alp_sym_mat(dim)).inv())
     main()
+

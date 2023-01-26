@@ -4,7 +4,6 @@ from sympy.solvers.solveset import linsolve
 from copy import deepcopy
 
 
-
 class GainsCalculator:
     """
     The purpose of this class is to calculate/store the gains \alpha_{i|j}
@@ -69,8 +68,8 @@ class GainsCalculator:
             # A[row, 0:row] = cov_prod.T
             # # print("eedr", A)
             cov_mat = cov_sym_mat(dim)
-            eqs_mat = cov_mat[0:row, 0:row]*\
-                      (A[row, 0:row].T)-cov_mat[0:row, row]
+            eqs_mat = cov_mat[0:row, 0:row] * \
+                      A[row, 0:row].T-cov_mat[0:row, row]
             eqs = [eqs_mat[i, 0] for i in range(row)]
             unknowns = []
             # sympy can't solve overdetermined system
@@ -87,7 +86,7 @@ class GainsCalculator:
             sol_list, = linsolve(eqs, unknowns)
             # print(str(sol_list))
             for i in range(row):
-               self.gains_sym_list.append(
+                self.gains_sym_list.append(
                    sp.Eq(unknowns[i], sol_list[i]))
 
     def print_gains(self, verbose=False):
@@ -127,6 +126,7 @@ class GainsCalculator:
         # inserted as the last line of a jupyter cell, it renders
         # the latex in str0
         return sp.Symbol(str0)
+
 
 if __name__ == "__main__":
     def main():

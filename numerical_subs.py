@@ -9,6 +9,7 @@ numerical substitutions of some of the symbols in x. x is usually a sp.Matrix.
 
 """
 
+
 def set_to_one_sigma_eps_mat(graph, x):
     """
     This method substitutes \sigma_{\epsilon_j} by 0 for all j.
@@ -25,15 +26,14 @@ def set_to_one_sigma_eps_mat(graph, x):
     """
     num_nds = graph.num_nds
     for i in range(num_nds):
-        nd = graph.ord_nodes[i]
-
         sigma_eps_sym = "sigma_eps_" + str(i)
         x = x.subs({sp.Symbol(sigma_eps_sym): 1})
     return x
 
+
 def set_to_zero_gains_without_arrows(graph, x):
     """
-    This method substitutes \sigma_{x_j} by 0 for all j.
+    This method substitutes \alpha_{i|j} by 0 for all i,j.
 
     Parameters
     ----------
@@ -51,8 +51,9 @@ def set_to_zero_gains_without_arrows(graph, x):
 
         if row > col and (col_nd, row_nd) not in graph.edges:
             alp_sym = "alp_" + str(row) + "_L_" + str(col)
-            x = x.subs({sp.Symbol(alp_sym):0})
+            x = x.subs({sp.Symbol(alp_sym): 0})
     return x
+
 
 if __name__ == "__main__":
     from core_matrices import *
