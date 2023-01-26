@@ -52,11 +52,14 @@ class CovMatCalculator:
         one_minus_A = A - sp.eye(dim)
         one_minus_A_inv = sp.simplify(one_minus_A.inv())
         sigma_eps_sq = sigma_eps_sym_mat(dim) ** 2
-        cov_mat = one_minus_A_inv * sigma_eps_sq * one_minus_A_inv.T
-        sigma_nd_sq_inv = (sigma_nd_sym_mat(dim) ** 2).inv()
-        jacobian = cov_mat * sigma_nd_sq_inv
-        self.cov_mat_sym = sp.simplify(cov_mat)
-        self.jacobian_sym = sp.simplify(jacobian)
+        cov_mat = sp.simplify(one_minus_A_inv * sigma_eps_sq *
+                              one_minus_A_inv.T)
+        sigma_nd_sq_inv = sp.zeros(dim)
+        for i in range(dim):
+            sigma_nd_sq_inv[i, i] = 1/cov_mat[i, i]
+        jacobian = sp.simplify(cov_mat * sigma_nd_sq_inv)
+        self.cov_mat_sym = cov_mat
+        self.jacobian_sym = jacobian
 
     def print_cov_mat_entries(self, verbose=False):
         """
