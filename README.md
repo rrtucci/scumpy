@@ -124,7 +124,8 @@ symbolically,
 and another 20 notebooks where (2) is done symbolically, 
 for each of the 20 DAGs in the G&B-trols paper. 
 
-
+## Installation Instructions
+See [this blog post](https://qbnets.wordpress.com/2023/01/26/first-version-of-scumpy-released-and-how-to-install-it-for-python-beginners/) of mine.
 
 
 
