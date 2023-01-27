@@ -11,8 +11,9 @@ class GainsCalculator:
     that the nodes are in topological order so x_i happens after x_j if i>j.
     If the graph has N nodes, and it is fully connected, then gains \alpha_{
     i|j} will be calculated for all i>j, where i, j = 1, 2 , ..., N. If the
-    graph is not fully connected, and is missing M arrows for it to be fully
-    connected, then there will be M constraints among the covariances.
+    graph is not fully connected, then for each missing arrow x_j->x_i with
+    \alpha_{ i|j}=0, instead of the equation \alpha{i|j}=0, there will be a
+    constraint among the covariances.
 
     Attributes
     ----------
