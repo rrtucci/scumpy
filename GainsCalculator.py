@@ -11,7 +11,7 @@ class GainsCalculator:
     that the nodes are in topological order so x_i happens after x_j if i>j.
     If the graph has N nodes, and it is fully connected, then gains \alpha_{
     i|j} will be calculated for all i>j, where i, j = 1, 2 , ..., N. If the
-    graph is not fully connected and is missing M arrows for it to be fully
+    graph is not fully connected, and is missing M arrows for it to be fully
     connected, then there will be M constraints among the covariances.
 
     Attributes
@@ -22,7 +22,7 @@ class GainsCalculator:
 
         \alpha_{i|j} = a function of the covariances
 
-        If the gain \alpha_{i|j} of arrow x_i->x_j is zero because that
+        If the gain \alpha_{i|j} of arrow x_j->x_i is zero because that
         arrow is missing, then \alpha_{i|j} on the left hand side of the
         above equation is replaced by <x_i, x_j>, so the equation becomes a
         constraint on the covariance matrix entries.
@@ -60,26 +60,23 @@ class GainsCalculator:
         self.gains_sym_list = []
         for row in range(1, dim):
             # cov_mat = cov_sym_mat(dim)
-            # #print("dfgh", cov_mat)
             # cov_prod = cov_mat[0:row, 0:row].inv()*cov_mat[0:row, row]
-            # # print("zxcv", cov_mat[0:row, row])
             # cov_prod = sp.simplify(cov_prod)
-            # # print("llkj", cov_prod)
             # A[row, 0:row] = cov_prod.T
-            # # print("eedr", A)
+
+            # sympy can't solve overdetermined system
+            # of linear equations so fix it this way
             cov_mat = cov_sym_mat(dim)
             eqs_mat = cov_mat[0:row, 0:row] * \
                       A[row, 0:row].T-cov_mat[0:row, row]
             eqs = [eqs_mat[i, 0] for i in range(row)]
             unknowns = []
-            # sympy can't solve overdetermined system
-            # of linear equations so fix it this way
             for i in range(row):
                 if str(A[row, i]) == '0':
                     # we only use cov_mat[min(i,j), max(i,j)]
-                    # because cov_mat[i, j] is symmetric
-                    # Since this system is overdetermined
-                    # make some of the correlations unknowns
+                    # because cov_mat[i, j] is symmetric.
+                    # Since this system is overdetermined,
+                    # make some of the covariances unknowns
                     unknowns.append(cov_mat[min(row, i), max(row, i)])
                 else:
                     unknowns.append(A[row, i])
@@ -93,7 +90,7 @@ class GainsCalculator:
         """
         This method renders in latex, in a jupyter notebook (but not on the
         console), an equation for the value of each gain \alpha_{i|j} of
-        arrow x_i->x_j, or, if that gain is zero, a constraint for <x_i,
+        arrow x_j->x_i, or, if that gain is zero, a constraint for <x_i,
         x_j>. Iff verbose=True, it also prints the same thing in ASCII,
         in both the console and jupyter notebook.
 
