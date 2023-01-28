@@ -13,6 +13,11 @@ class Graph:
 
     Attributes
     ----------
+    amputated_edges: list[(str,  str)]
+        This is a list of edges to be amputated from edges in input dot
+        file. We check that 'amputated_edges' is inside the list
+        'full_edges' of edges obtained from reading the input dot file.
+        'self.edges' is 'full_edges' minus 'amputated_edges'.
     edges: list[(str, str)]
         This is a list of string tuples such as ('a', 'b'), which indicates
         that an arrow points from 'a' to 'b'.
@@ -28,19 +33,24 @@ class Graph:
         directory
 
     """
-    def __init__(self, dot_file_path):
+    def __init__(self, dot_file_path,
+                 amputated_edges=[]):
         """
         Constructor
 
         Parameters
         ----------
         dot_file_path: str
+        amputated_edges: list[(str,str)]
         """
         self.path = dot_file_path
-        nx_graph = DotTool.nx_graph_from_dot_file(dot_file_path)
-        self.nx_graph = nx_graph
-        self.ord_nodes = list(nx.topological_sort(nx_graph))
-        self.edges = list(nx_graph.edges)
+        self.amputated_edges = amputated_edges
+        nodes, all_edges = DotTool.read_dot_file(self.path)
+        assert set(amputated_edges).issubset(set(all_edges))
+        self.edges = [ed for ed in all_edges if ed not in amputated_edges]
+        self.nx_graph = nx.DiGraph()
+        self.nx_graph.add_edges_from(self.edges)
+        self.ord_nodes = list(nx.topological_sort(self.nx_graph))
         self.num_nds = len(self.ord_nodes)
 
     def draw(self, jupyter):
@@ -57,7 +67,34 @@ class Graph:
         None
 
         """
-        DotTool.draw(self.path, jupyter)
+        if len(self.amputated_edges) == 0:
+            DotTool.draw(self.path, jupyter)
+            return
+
+        new_dot = ""
+        with open(self.path) as f:
+            in_lines = f.readlines()
+            for line in in_lines:
+                if "->" not in line:
+                    new_dot += line
+                else:
+                    split_list = line.split(sep="->")
+                    # print("ffgg", split_list)
+                    pa = split_list[0].strip()
+                    ch_list = split_list[1].split(",")
+                    ch_list = [x.strip().strip(";").strip() for x in ch_list]
+                    # print("ffgg", pa)
+                    # print("ffgg", ch_list)
+                    for ch in ch_list:
+                        ed = (pa, ch)
+                        if ed in self.amputated_edges:
+                            new_dot += ed[0] + " -> " + ed[1] + \
+                                   " [color=red];\n"
+                        else:
+                            new_dot += ed[0] + " -> " + ed[1] + ";\n"
+        with open("tempo1389.dot", "w") as file:
+            file.write(new_dot)
+        DotTool.draw('tempo1389.dot', jupyter)
 
 
 if __name__ == "__main__":
@@ -67,18 +104,24 @@ if __name__ == "__main__":
               "a->b;\n" \
               "a->s;\n" \
               "n->s,a,b;\n" \
-              "b->s\n" \
+              "b->s;\n" \
+            "b[style = filled, color = yellow];\n"\
               "}"
         with open("tempo13.txt", "w") as file:
             file.write(dot)
         path = 'tempo13.txt'
-        g = Graph(path)
-        print("nodes in topological order:")
-        print(g.ord_nodes)
-        print("edges")
-        print(g.edges)
-        if draw:
-            g.draw(jupyter=False)
+        full_g = Graph(path)
+        amp_g = Graph(path,
+                      amputated_edges=[('b', 's')])
+        for g in [full_g, amp_g]:
+            print("++++++++++++++++++++++++++++++++++++")
+            print("nodes in topological order:")
+            print(g.ord_nodes)
+            print("edges")
+            print(g.edges)
+            if draw:
+                g.draw(jupyter=False)
+
 
     main(True)
 
