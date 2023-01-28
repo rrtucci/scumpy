@@ -1,0 +1,9 @@
+digraph G {
+  h_1->x,y;
+  h_2->m_1,y;
+  x->m_1, m_2;
+  m_2->y;
+  m_1->y;
+  h_1[style=dashed];
+  h_2[style=dashed];
+}
