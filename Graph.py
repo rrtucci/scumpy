@@ -13,7 +13,7 @@ class Graph:
 
     Attributes
     ----------
-    amputated_edges: list[(str,  str)]
+    amputated_edges: None or list[(str,  str)]
         This is a list of edges to be amputated from edges in input dot
         file. We check that 'amputated_edges' is inside the list
         'full_edges' of edges obtained from reading the input dot file.
@@ -34,20 +34,24 @@ class Graph:
 
     """
     def __init__(self, dot_file_path,
-                 amputated_edges=[]):
+                 amputated_edges=None):
         """
         Constructor
 
         Parameters
         ----------
         dot_file_path: str
-        amputated_edges: list[(str,str)]
+        amputated_edges: None or list[(str,str)]
         """
         self.path = dot_file_path
-        self.amputated_edges = amputated_edges
         nodes, all_edges = DotTool.read_dot_file(self.path)
-        assert set(amputated_edges).issubset(set(all_edges))
-        self.edges = [ed for ed in all_edges if ed not in amputated_edges]
+        if amputated_edges is None:
+            self.amputated_edges = []
+            self.edges = all_edges
+        else:
+            self.amputated_edges = amputated_edges
+            assert set(amputated_edges).issubset(set(all_edges))
+            self.edges = [ed for ed in all_edges if ed not in amputated_edges]
         self.nx_graph = nx.DiGraph()
         self.nx_graph.add_edges_from(self.edges)
         self.ord_nodes = list(nx.topological_sort(self.nx_graph))
