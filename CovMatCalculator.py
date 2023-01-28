@@ -49,7 +49,7 @@ class CovMatCalculator:
         dim = self.graph.num_nds
         A = set_to_zero_gains_without_arrows(self.graph,
                                              alp_sym_mat(dim))
-        one_minus_A = A - sp.eye(dim)
+        one_minus_A = sp.eye(dim)-A
         one_minus_A_inv = sp.simplify(one_minus_A.inv())
         sigma_eps_sq = sigma_eps_sym_mat(dim) ** 2
         cov_mat = sp.simplify(one_minus_A_inv * sigma_eps_sq *
