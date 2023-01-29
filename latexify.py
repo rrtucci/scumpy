@@ -63,7 +63,10 @@ def do_latex_subs(graph, x):
             x = x.subs(sp.Symbol(alp_sb),
                        sp.Symbol(alp_latex_str))
 
-        cov_latex_str = r"\left\langle\underline{" + row_nd + \
+        if row_nd == col_nd:
+            cov_latex_str = r"\sigma^2_{\underline{" + row_nd + r"}}"
+        else:
+            cov_latex_str = r"\left\langle\underline{" + row_nd + \
                     r"},\underline{" + col_nd + r"}\right\rangle"
         cov_sb = "cov_" + str(row) + "_" + str(col)
         x = x.subs(sp.Symbol(cov_sb),
