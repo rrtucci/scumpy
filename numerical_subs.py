@@ -26,8 +26,8 @@ def set_to_one_sigma_eps_mat(graph, x):
     """
     num_nds = graph.num_nds
     for i in range(num_nds):
-        sigma_eps_sym = "sigma_eps_" + str(i)
-        x = x.subs({sp.Symbol(sigma_eps_sym): 1})
+        sigma_eps_sb = "sigma_eps_" + str(i)
+        x = x.subs({sp.Symbol(sigma_eps_sb): 1})
     return x
 
 
@@ -50,8 +50,8 @@ def set_to_zero_gains_without_arrows(graph, x):
         col_nd = graph.ord_nodes[col]
 
         if row > col and (col_nd, row_nd) not in graph.edges:
-            alp_sym = "alp_" + str(row) + "_L_" + str(col)
-            x = x.subs({sp.Symbol(alp_sym): 0})
+            alp_sb = "alp_" + str(row) + "_L_" + str(col)
+            x = x.subs({sp.Symbol(alp_sb): 0})
     return x
 
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         graph = Graph(path)
         dim = graph.num_nds
 
-        x = sigma_eps_sym_mat(dim)
+        x = sigma_eps_sb_mat(dim)
         print("\n", x)
         x = set_to_one_sigma_eps_mat(graph, x)
         print(x)
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         print(graph.ord_nodes)
         print(graph.edges)
 
-        x = alp_sym_mat(dim)
+        x = alp_sb_mat(dim)
         print("\n", x)
 
         x = set_to_zero_gains_without_arrows(graph, x)

@@ -17,7 +17,7 @@ class GainsCalculator:
 
     Attributes
     ----------
-    gains_sym_list: list[sp.Equality]
+    gains_sb_list: list[sp.Equality]
         list of symbols, where each symbol in the list is an equation of the
         form:
 
@@ -42,11 +42,11 @@ class GainsCalculator:
 
         """
         self.graph = graph
-        self.gains_sym_list = None
+        self.gains_sb_list = None
 
-    def calculate_gains_sym(self):
+    def calculate_gains_sb(self):
         """
-        This method calculates and stores in 'self.gains_sym_list', a list
+        This method calculates and stores in 'self.gains_sb_list', a list
         of symbolic equations. Each equation gives either the value of a
         gain \alpha_{i|j}, or a constraint on the covariances.
 
@@ -57,17 +57,17 @@ class GainsCalculator:
         """
         dim = self.graph.num_nds
         A = set_to_zero_gains_without_arrows(self.graph,
-                                             alp_sym_mat(dim))
-        self.gains_sym_list = []
+                                             alp_sb_mat(dim))
+        self.gains_sb_list = []
         for row in range(1, dim):
-            # cov_mat = cov_sym_mat(dim)
+            # cov_mat = cov_sb_mat(dim)
             # cov_prod = cov_mat[0:row, 0:row].inv()*cov_mat[0:row, row]
             # cov_prod = sp.simplify(cov_prod)
             # A[row, 0:row] = cov_prod.T
 
             # sympy can't solve overdetermined system
             # of linear equations so fix it this way
-            cov_mat = cov_sym_mat(dim)
+            cov_mat = cov_sb_mat(dim)
             eqs_mat = cov_mat[0:row, 0:row] * \
                       A[row, 0:row].T-cov_mat[0:row, row]
             eqs = [eqs_mat[i, 0] for i in range(row)]
@@ -84,7 +84,7 @@ class GainsCalculator:
             sol_list, = linsolve(eqs, unknowns)
             # print(str(sol_list))
             for i in range(row):
-                self.gains_sym_list.append(
+                self.gains_sb_list.append(
                    sp.Eq(unknowns[i], sol_list[i]))
 
     def print_gains(self, verbose=False):
@@ -105,7 +105,7 @@ class GainsCalculator:
 
         """
         str0 = ""
-        x = self.gains_sym_list
+        x = self.gains_sb_list
         x_copy = deepcopy(x)
         # print("lllj", type(x))
         if verbose:
@@ -139,7 +139,7 @@ if __name__ == "__main__":
         # path = 'dot_atlas/good_bad_trols_G1.dot'
         graph = Graph(path)
         cal = GainsCalculator(graph)
-        cal.calculate_gains_sym()
+        cal.calculate_gains_sb()
         cal.print_gains(verbose=True)
 
     main()

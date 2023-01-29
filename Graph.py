@@ -60,7 +60,8 @@ class Graph:
     def draw(self, jupyter):
         """
         This method draws the graph either on the console (jupyter=False) or
-        in a jupyter notebook (jupyter=True)
+        in a jupyter notebook (jupyter=True). Amputated arrows are drawn in
+        red, non-amputated ones in black.
 
         Parameters
         ----------
@@ -99,6 +100,25 @@ class Graph:
         with open("tempo1389.dot", "w") as file:
             file.write(new_dot)
         DotTool.draw('tempo1389.dot', jupyter)
+
+    def node_position(self, nd_name):
+        """
+        This method returns the position of the string 'nd_name' in the
+        list 'self.ordered_nds'.
+
+        Parameters
+        ----------
+        nd_name: str
+
+        Returns
+        -------
+        int
+
+        """
+        for i, nd in enumerate(self.ord_nodes):
+            if nd == nd_name:
+                return i
+        assert False, nd_name + " is not in " + str(self.ord_nodes)
 
 
 if __name__ == "__main__":

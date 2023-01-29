@@ -14,15 +14,16 @@ The names of the entries of the matrices created by this file, are as follows:
     "sigma_" + str(i)
     "alp_" + str(row) + "_L_" + str(col)
     "cov_" + str(row) + "_" + str(col)
+    "eps_" + str(row) + "_" + str(col)
     "rho_" + str(row) + "_" + str(col)
     "pder_" + str(row) + "_wrt_" + str(col)
 
 """
 
 
-def make_sym_mat(dim, mat_str, mat_type="general"):
+def make_sb_mat(dim, mat_str, mat_type="general"):
     """
-    This method returns a matrix of type sp.Matrix.
+    This method returns a symbolic (sb) matrix of type sp.Matrix.
 
     Parameters
     ----------
@@ -68,7 +69,7 @@ def make_sym_mat(dim, mat_str, mat_type="general"):
     return sp.Matrix(rows)
 
 
-def sigma_eps_sym_mat(dim):
+def sigma_eps_sb_mat(dim):
     """
     This method returns a diagonal matrix (of type sp.Matrix) with diagonal
     entries equal to the standard deviations \sigma_{\epsilon_j} of
@@ -84,11 +85,11 @@ def sigma_eps_sym_mat(dim):
     sp.Matrix
 
     """
-    return make_sym_mat(dim, "sigma_eps_%d",
+    return make_sb_mat(dim, "sigma_eps_%d",
                         mat_type="diagonal")
 
 
-def sigma_nd_sym_mat(dim):
+def sigma_nd_sb_mat(dim):
     """
     This method returns a diagonal matrix (of type sp.Matrix) with diagonal
     enties equal to the standard deviations \sigma_{x_j} of node x_j for
@@ -105,11 +106,11 @@ def sigma_nd_sym_mat(dim):
     sp.Matrix
 
     """
-    return make_sym_mat(dim, "sigma_%d",
+    return make_sb_mat(dim, "sigma_%d",
                         mat_type="diagonal")
 
 
-def alp_sym_mat(dim):
+def alp_sb_mat(dim):
     """
     This method returns a matrix (of type sp.Matrix) of gains M with M_{ i,
     j} = \alpha_{i|j}
@@ -124,14 +125,14 @@ def alp_sym_mat(dim):
     sp.Matrix
 
     """
-    return make_sym_mat(dim, "alp_%d_L_%d",
+    return make_sb_mat(dim, "alp_%d_L_%d",
                         mat_type="strict_lower_triangular")
 
 
-def cov_sym_mat(dim):
+def cov_sb_mat(dim):
     """
     This method returns the covariance matrix C (of type sp.Matrix) with C_{
-    i,j} = <x_i, x_j>
+    i,j} = <x_i, x_j> = cov_i_j
 
     Parameters
     ----------
@@ -144,11 +145,32 @@ def cov_sym_mat(dim):
     sp.Matrix
 
     """
-    return make_sym_mat(dim, "cov_%d_%d",
+    return make_sb_mat(dim, "cov_%d_%d",
+                        mat_type="symmetric")
+
+def eps_sb_mat(dim):
+    """
+
+    This method returns the epsilon covariance matrix E (of type sp.Matrix)
+    with E_{ i,j} = <eps_i, eps_j> = eps_i_j
+
+    Parameters
+    ----------
+    dim: int
+        dimension of square matrix = number of nodes in graph.
+
+
+    Returns
+    -------
+    sp.Matrix
+
+    """
+    return make_sb_mat(dim, "eps_%d_%d",
                         mat_type="symmetric")
 
 
-def rho_sym_mat(dim):
+
+def rho_sb_mat(dim):
     """
     This method returns the correlation matrix \rho (of type sp.Matrix) with
     \rho_{i, j}.
@@ -164,11 +186,11 @@ def rho_sym_mat(dim):
     sp.Matrix
 
     """
-    return make_sym_mat(dim, "rho_%d_%d",
+    return make_sb_mat(dim, "rho_%d_%d",
                         mat_type="symmetric")
 
 
-def jacobian_sym_mat(dim):
+def jacobian_sb_mat(dim):
     """
     This method returns the Jacobian matrix J (of type sp.Matrix) with J_{i,
     j} = partial derivative of x_i with respect to x_j.
@@ -183,7 +205,7 @@ def jacobian_sym_mat(dim):
     sp.Matrix
 
     """
-    return make_sym_mat(dim, "pder_%d_wrt_%d",
+    return make_sb_mat(dim, "pder_%d_wrt_%d",
                         mat_type="general")
 
 
@@ -191,13 +213,14 @@ if __name__ == "__main__":
 
     def main():
         dim = 3
-        print(sigma_eps_sym_mat(dim))
-        print(sigma_nd_sym_mat(dim))
-        print(alp_sym_mat(dim))
-        print(cov_sym_mat(dim))
-        print(rho_sym_mat(dim))
-        print(jacobian_sym_mat(dim))
+        print(sigma_eps_sb_mat(dim))
+        print(sigma_nd_sb_mat(dim))
+        print(alp_sb_mat(dim))
+        print(cov_sb_mat(dim))
+        print(eps_sb_mat(dim))
+        print(rho_sb_mat(dim))
+        print(jacobian_sb_mat(dim))
         print()
-        print((sp.eye(dim) - alp_sym_mat(dim)).inv())
+        print((sp.eye(dim) - alp_sb_mat(dim)).inv())
     main()
 
