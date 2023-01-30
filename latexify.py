@@ -135,6 +135,11 @@ def print_all_mats_after_latex_subs(graph):
     print("\n", x)
     print(sp.latex(x))
 
+    x = eps_sb_mat(dim)
+    x = do_latex_subs(graph, x)
+    print("\n", x)
+    print(sp.latex(x))
+
     x = rho_sb_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)

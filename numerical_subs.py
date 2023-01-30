@@ -33,7 +33,8 @@ def set_to_one_sigma_eps_mat(graph, x):
 
 def set_to_zero_gains_without_arrows(graph, x):
     """
-    This method substitutes \alpha_{i|j} by 0 for all i,j.
+    This method substitutes \alpha_{i|j} by 0 for all i,j such that there is
+    no arrow x_j->x_i.
 
     Parameters
     ----------

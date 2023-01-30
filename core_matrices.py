@@ -36,7 +36,6 @@ def make_sb_mat(dim, mat_str, mat_type="general"):
         This flag must be one of the following: "general", "symmetric",
         "strict_lower_triangular", "diagonal"
 
-
     Returns
     -------
     sp.Matrix
@@ -92,7 +91,7 @@ def sigma_eps_sb_mat(dim):
 def sigma_nd_sb_mat(dim):
     """
     This method returns a diagonal matrix (of type sp.Matrix) with diagonal
-    enties equal to the standard deviations \sigma_{x_j} of node x_j for
+    entries equal to the standard deviations \sigma_{x_j} of node x_j for
     each j.
 
 
@@ -112,7 +111,7 @@ def sigma_nd_sb_mat(dim):
 
 def alp_sb_mat(dim):
     """
-    This method returns a matrix (of type sp.Matrix) of gains M with M_{ i,
+    This method returns a matrix (of type sp.Matrix) of gains A with A_{ i,
     j} = \alpha_{i|j}
 
     Parameters
@@ -150,7 +149,6 @@ def cov_sb_mat(dim):
 
 def eps_sb_mat(dim):
     """
-
     This method returns the epsilon covariance matrix E (of type sp.Matrix)
     with E_{ i,j} = <eps_i, eps_j> = eps_i_j
 
@@ -158,7 +156,6 @@ def eps_sb_mat(dim):
     ----------
     dim: int
         dimension of square matrix = number of nodes in graph.
-
 
     Returns
     -------
@@ -179,7 +176,6 @@ def rho_sb_mat(dim):
     ----------
     dim: int
         dimension of square matrix = number of nodes in graph.
-
 
     Returns
     -------

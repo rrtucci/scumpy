@@ -9,10 +9,20 @@ class CovMatCalculator:
     and the Jacobian matrix J, expressed symbolically as a function of the
     gains \alpha_{i,j}. We define C_{j,k} = <x_j, x_k>, where x_j are the
     internal nodes and \epsilon_j are the external ones. We define J_{i,
-    j}= partial of x_i with respect to x_j
+    j}= partial of x_i with respect to x_j.
+
+    If self.conditioned_nds = None, we assume <epsilon_i, epsilon_j> =0
+    for $i \neq j$.
+
+    If list self.conditioned_nds is non-empty, we allow some non-diagonal
+    <\epsilon_i, \epsilon_j> to be nonzero, because if we are conditioning
+    on a collider, this can introduce a non-blocked path between two
+    of the \epsilon_j.
 
     Attributes
     ----------
+    condiitioned_nds: list[str]
+        List of the nodes that we want to condition on
     cov_mat_sb: sp.Matrix
         a symbol containing the covariance matrix C.
     graph: Graph
@@ -29,6 +39,7 @@ class CovMatCalculator:
         ----------
         graph: Graph
         conditioned_nds: None or list[str]
+            Nodes that are bring conditioned on (a.k.a the "controls")
         """
         self.graph = graph
         if conditioned_nds is None:
@@ -154,11 +165,16 @@ if __name__ == "__main__":
               "}"
         with open("tempo13.txt", "w") as file:
             file.write(dot)
-        # path = 'tempo13.txt'
-        path = 'dot_atlas/good_bad_trols_G1.dot'
+        conditioned = True
+        if not conditioned:
+            path = 'tempo13.txt'
+            conditioned_nds = None
+        else:
+            path = 'dot_atlas/good_bad_trols_G1.dot'
+            conditioned_nds = ["Z"]
         graph = Graph(path)
         cal = CovMatCalculator(graph,
-                               conditioned_nds=["Z"])
+                               conditioned_nds=conditioned_nds)
         cal.calculate_cov_mat_sb()
         cal.print_cov_mat_entries(verbose=True)
         cal.print_jacobian_entries(verbose=True)
