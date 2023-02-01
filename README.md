@@ -132,7 +132,7 @@ requires as input a file which
 contains a dataset with the node 
 names as column labels, and with 
 instances of the node values as rows.
-![This notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
+[This notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
 describes how to do this.
 ## Installation Instructions
 See [this blog post](https://qbnets.wordpress.com/2023/01/26/first-version-of-scumpy-released-and-how-to-install-it-for-python-beginners/) of mine.
