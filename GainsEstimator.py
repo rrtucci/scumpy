@@ -16,6 +16,8 @@ class GainsEstimator:
         self.gains_sb_list = deepcopy(gains_calculator.gains_sb_list)
         assert self.gains_sb_list is not None
         dim = graph.num_nds
+        self.alp_mat_estimate = np.zeros((dim, dim))
+        self.cum_err = 0
         for i in range(len(self.gains_sb_list)):
             eq = self.gains_sb_list[i]
             str0 = str(eq.args[0])
@@ -32,6 +34,14 @@ class GainsEstimator:
                                        str(row) + "_" + str(col))
                     eq = eq.subs({cov_sb :self.cov_mat[row, col]})
             self.gains_sb_list[i] = eq
+            str1 = str(eq.args[1])
+            if str0[0:3] == "alp":
+                row_str, col_str = str0[4:len(str0)].split("_L_")
+                row, col = int(row_str), int(col_str)
+                self.alp_mat_estimate[row, col] = float(str1)
+            else:
+                self.cum_err += abs(float(str1))
+
 
     def print_gains(self, true_alp_mat=None):
         for eq in self.gains_sb_list:
@@ -71,5 +81,7 @@ if __name__ == "__main__":
         calc.calculate_gains_sb()
         gest = GainsEstimator(graph, data_path, calc)
         gest.print_gains(true_alp_mat=dmaker.alp_mat)
+        print("alp_mat_estimate=\n", gest.alp_mat_estimate)
+        print("cum_err=", gest.cum_err)
 
     main()
