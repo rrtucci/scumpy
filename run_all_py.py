@@ -1,7 +1,7 @@
 import os
 from subprocess import Popen, PIPE, call
 
-'''
+''' 
 
 This script tries to run all files, in all folders, that end in .py and have 
 a main() at the end.

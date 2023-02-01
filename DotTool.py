@@ -153,9 +153,9 @@ if __name__ == "__main__":
               "n->s,a,b;\n" \
               "b->s\n" \
               "}"
-        with open("tempo13.txt", "w") as file:
+        with open("./tempo13.txt", "w") as file:
             file.write(dot)
-        path = 'tempo13.txt'
+        path = './tempo13.txt'
         DotTool.draw(path, jupyter=False)
         nx_graph = DotTool.nx_graph_from_dot_file(path)
         nx.draw(nx_graph, with_labels=True, node_color='white')

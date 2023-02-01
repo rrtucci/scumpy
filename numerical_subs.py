@@ -45,8 +45,8 @@ def set_to_zero_gains_without_arrows(graph, x):
     -------
     type(x)
     """
-    num_nds = graph.num_nds
-    for row, col in product(range(num_nds), range(num_nds)):
+    dim = graph.num_nds
+    for row, col in product(range(dim), range(dim)):
         row_nd = graph.ord_nodes[row]
         col_nd = graph.ord_nodes[col]
 
