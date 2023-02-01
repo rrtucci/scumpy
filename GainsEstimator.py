@@ -45,6 +45,7 @@ class GainsEstimator:
         gains_calculator: GainsCalculator
         """
         df = pd.read_csv(path)
+        assert list(df.columns) == graph.ord_nodes
         self.cov_mat = df.cov().to_numpy()
         # print("ddfgh", df.cov())
         self.gains_sb_list = deepcopy(gains_calculator.gains_sb_list)
