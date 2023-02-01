@@ -124,7 +124,8 @@ and another 20 notebooks where (2) is done symbolically,
 for each of the 20 DAGs in the G&B-trols paper. 
 
 SCuMpy can also do some numeric 
-calculations. It can calculate the arrow
+calculations. It can calculate
+numerically the arrow
 gain $\alpha_{j|i}$ for each arrow 
 $\underline{x}_j\rightarrow\underline{x}_i$
 of the DAG. The estimation algorithm 
