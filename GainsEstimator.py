@@ -98,10 +98,9 @@ class GainsEstimator:
             if str(eq.args[0])[0:3] != "alp" or true_alp_mat is None:
                 print("\n", str01)
             else:
-
-                # print("kkjg", str0[4:len(str0)].split("_L_"))
                 row_str, col_str = str0[4:len(str0)].split("_L_")
-                true = true_alp_mat[int(row_str), int(col_str)]
+                row, col = int(row_str), int(col_str)
+                true = true_alp_mat[row, col]
                 true_str = "%.6f" % true
                 print("\n", str01, ", true=", true_str)
 
