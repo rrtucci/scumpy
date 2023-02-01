@@ -123,6 +123,17 @@ symbolically,
 and another 20 notebooks where (2) is done symbolically, 
 for each of the 20 DAGs in the G&B-trols paper. 
 
+SCuMpy can also do some numeric 
+calculations. It can calculate the arrow
+gain $\alpha_{j|i}$ for each arrow 
+$\underline{x}_j\rightarrow\underline{x}_i$
+of the DAG. The estimation algorithm 
+requires as input a file which 
+contains a dataset with the node 
+names as column labels, and with 
+instances of the node values as rows.
+![This notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
+describes how to do this.
 ## Installation Instructions
 See [this blog post](https://qbnets.wordpress.com/2023/01/26/first-version-of-scumpy-released-and-how-to-install-it-for-python-beginners/) of mine.
 
