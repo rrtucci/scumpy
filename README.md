@@ -85,7 +85,7 @@ Once we solve for the unknowns,
 we can calculate $\langle\underline{x}_i, \underline{x}_k\rangle$.
 2. a linear system 
 of equations with the
-unknowns $\alpha_{j|i}$. We can solve for these
+unknowns $\alpha_{i|j}$. We can solve for these
 unknowns using basic Linear Algebra.
 
 SCuMpy
