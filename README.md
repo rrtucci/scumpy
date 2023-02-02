@@ -123,6 +123,15 @@ symbolically,
 and another 20 notebooks where (2) is done symbolically, 
 for each of the 20 DAGs in the G&B-trols paper. 
 
+SCuMpy can be used to prove rigorously,
+from its symbolic output,
+whether a do-query is identifiable
+for a particular DAG. It can do this without
+using the fairly complicated
+Do Calculus rules, which is the most general
+way of doing this. [See this notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/unconfounded-children.ipynb)
+
+
 SCuMpy can also do some numeric 
 calculations. It can calculate
 numerically the arrow
@@ -133,8 +142,8 @@ requires as input a file which
 contains a dataset with the node 
 names as column labels, and with 
 instances of the node values as rows.
-[This notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
-describes how to do this.
+[See this notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
+
 ## Installation Instructions
 See [this blog post](https://qbnets.wordpress.com/2023/01/26/first-version-of-scumpy-released-and-how-to-install-it-for-python-beginners/) of mine.
 
