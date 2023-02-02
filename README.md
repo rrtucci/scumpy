@@ -58,19 +58,19 @@ $$
  Linear SCM are described by 
 a system of linear equations of the form
 
-$$\underline{x}_j = \sum_i \alpha_{j|i} 
-\underline{x}_i + \underline{\epsilon}_j$$
+$$\underline{x}_i = \sum_j \alpha_{i|j} 
+\underline{x}_j + \underline{\epsilon}_i$$
 
 where the 
-$x_j$ are the internal nodes,
-the $\alpha_{j|i}$
+$x_i$ are the internal nodes,
+the $\alpha_{i|j}$
 are
 the path coefficients 
 (a.k.a. gains), and the
-$\underline{\epsilon}_j$ 
+$\underline{\epsilon}_i$ 
 are the external nodes 
 that inject noise into the system.
-The $\underline{\epsilon}_j$ are
+The $\underline{\epsilon}_i$ are
 root nodes with
 zero covariance
 with each other.
@@ -79,10 +79,10 @@ We can view this as either
 
 1. a linear system 
 of equations with the unknowns 
-$\underline{x}_j$. We can solve for these
+$\underline{x}_i$. We can solve for these
 unknowns using basic Linear Algebra.
 Once we solve for the unknowns,
-we can calculate $\langle\underline{x}_j, \underline{x}_k\rangle$.
+we can calculate $\langle\underline{x}_i, \underline{x}_k\rangle$.
 2. a linear system 
 of equations with the
 unknowns $\alpha_{j|i}$. We can solve for these
@@ -136,7 +136,7 @@ SCuMpy can also do some numeric
 calculations. It can calculate
 numerically the arrow
 gain $\alpha_{i|j}$ for each arrow 
-$\underline{x}_j\rightarrow\underline{x}_i$
+$\underline{x}_i\rightarrow\underline{x}_i$
 of the DAG. The estimation algorithm 
 requires as input a file which 
 contains a dataset with the node 
