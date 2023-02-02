@@ -136,7 +136,7 @@ SCuMpy can also do some numeric
 calculations. It can calculate
 numerically the arrow
 gain $\alpha_{i|j}$ for each arrow 
-$\underline{x}_i\rightarrow\underline{x}_i$
+$\underline{x}_j\rightarrow\underline{x}_i$
 of the DAG. The estimation algorithm 
 requires as input a file which 
 contains a dataset with the node 
