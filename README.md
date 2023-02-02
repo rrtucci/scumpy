@@ -128,8 +128,8 @@ from its symbolic output,
 whether a do-query is identifiable
 for a particular DAG. It can do this without
 using the fairly complicated
-Do Calculus rules, which is the most general
-way of doing this. [See this notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/unconfounded-children.ipynb)
+Do Calculus rules, which are the most general
+way of establishing identifiability. [See this notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/unconfounded-children.ipynb)
 
 
 SCuMpy can also do some numeric 
