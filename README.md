@@ -123,7 +123,7 @@ symbolically,
 and another 20 notebooks where (2) is done symbolically, 
 for each of the 20 DAGs in the G&B-trols paper. 
 
-SCuMpy can be used to prove rigorously,
+SCuMpy can also be used to prove rigorously,
 from its symbolic output,
 whether a do-query is identifiable
 for a particular DAG. It can do this without
