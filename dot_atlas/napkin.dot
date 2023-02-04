@@ -1,0 +1,8 @@
+digraph napkin {
+w->z;
+z->x;
+x->y;
+h_1->w,y;
+h_2->w,x;
+h_1, h_2[style=dashed]
+}

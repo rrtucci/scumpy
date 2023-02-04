@@ -1,0 +1,5 @@
+digraph backdoor {
+    x->y;
+    z->x,y;
+    z;
+}

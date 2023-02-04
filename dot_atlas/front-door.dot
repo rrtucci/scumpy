@@ -1,0 +1,6 @@
+digraph frontdoor {
+x->m;
+m->y;
+h->x,y;
+h[style=dashed]
+}
