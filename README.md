@@ -123,6 +123,15 @@ symbolically,
 and another 20 notebooks where (2) is done symbolically, 
 for each of the 20 DAGs in the G&B-trols paper. 
 
+In addition, we have notebooks
+for the 
+[back door](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/back-door.ipynb), 
+[front door](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/front-door.ipynb) 
+and 
+[napkin](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/napkin.ipynb) 
+examples in
+Pearl's the "Book of Why".
+
 SCuMpy can also be used to prove rigorously,
 from its symbolic output,
 whether a do-query is identifiable
