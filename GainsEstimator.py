@@ -14,6 +14,10 @@ class GainsEstimator:
     input file that contains a dataset. The dataset has the node names
     graph.ord_nodes as column labels, and instances of node values in each row.
 
+    The input dataset column labels must include ALL node names, but these
+    column labels need not be in topological order (as they are in
+    self.ord_nodes).
+
     A list of hidden nodes is an argument of the class constructor with None
     as default value. Columns of the input dataset corresponding to hidden
     nodes will be ignored. Hence, these column entries can be any number.
@@ -59,7 +63,9 @@ class GainsEstimator:
         """
         self.graph = graph
         df = pd.read_csv(path)
-        assert list(df.columns) == graph.ord_nodes
+        assert set(df.columns) == set(graph.ord_nodes)
+        # put columns in same order as graph.ord_nodes
+        df = df[graph.ord_nodes]
         self.cov_mat = df.cov().to_numpy()
         # print("ddfgh", df.cov())
         self.gains_sb_list = deepcopy(gains_calculator.gains_sb_list)
