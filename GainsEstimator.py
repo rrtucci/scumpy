@@ -14,9 +14,9 @@ class GainsEstimator:
     input file that contains a dataset. The dataset has the node names
     graph.ord_nodes as column labels, and instances of node values in each row.
 
-    The input dataset column labels must include ALL node names, but these
-    column labels need not be in topological order (as they are in
-    self.ord_nodes).
+    The input dataset column labels must include ALL node names, and nothing
+    else, but these column labels need not be in topological order (as they
+    are in self.ord_nodes).
 
     A list of hidden nodes is an argument of the class constructor with None
     as default value. Columns of the input dataset corresponding to hidden
