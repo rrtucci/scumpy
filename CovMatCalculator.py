@@ -21,13 +21,15 @@ class CovMatCalculator:
 
     Attributes
     ----------
-    condiitioned_nds: list[str]
+    conditioned_nds: list[str]
         List of the nodes that we want to condition on
     cov_mat_sb: sp.Matrix
         a symbol containing the covariance matrix C.
     graph: Graph
     jacobian_sb: sp.Matrix
         a symbol containing the Jacobian matrix J.
+    one_minus_A_inv_sb: sp.Matrix
+        (1-A).inv(), where A is the matrix of gains \alpha_{i|j}
 
     """
 
@@ -50,6 +52,7 @@ class CovMatCalculator:
 
         self.cov_mat_sb = None
         self.jacobian_sb = None
+        self.one_minus_A_inv_sb = None
 
     def calculate_cov_mat_sb(self):
         """
@@ -59,16 +62,17 @@ class CovMatCalculator:
         'self.jacobian_sb', a symbolic expression for each of the entries
         J_{i,j} of the Jacobian matrix J.
 
+
         Returns
         -------
         None
 
         """
         dim = self.graph.num_nds
-        A = set_to_zero_gains_without_arrows(self.graph,
+        mat_A = set_to_zero_gains_without_arrows(self.graph,
                                              alp_sb_mat(dim))
-        one_minus_A = sp.eye(dim) - A
-        one_minus_A_inv = one_minus_A.inv()
+        one_minus_A = sp.eye(dim) - mat_A
+        self.one_minus_A_inv_sb = one_minus_A.inv()
 
         eps_cov = eps_sb_mat(dim)
         for row, col in product(range(dim), range(dim)):
@@ -82,8 +86,8 @@ class CovMatCalculator:
                         col_nd in self.conditioned_nds):
                     eps_cov = eps_cov.subs({eps_cov[row, col]: 0})
 
-        cov_mat = sp.simplify(one_minus_A_inv * eps_cov *
-                              one_minus_A_inv.T)
+        cov_mat = sp.simplify(self.one_minus_A_inv_sb * eps_cov *
+                              self.one_minus_A_inv_sb.T)
         sigma_nd_sq_inv = sp.zeros(dim)
         for i in range(dim):
             sigma_nd_sq_inv[i, i] = 1 / cov_mat[i, i]
@@ -110,8 +114,8 @@ class CovMatCalculator:
         x = self.cov_mat_sb
         x_copy = deepcopy(x)
         if verbose:
-            print(get_str_for_matrix_entries(x_copy, "cov",
-                                             self.graph, latex=False))
+            print(get_str_for_matrix_entries(x_copy, "cov", self.graph,
+                                             latex=False))
 
         x_copy = do_latex_subs(self.graph, x_copy)
         str0 = get_str_for_matrix_entries(x_copy, "cov",

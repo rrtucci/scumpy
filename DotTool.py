@@ -76,11 +76,13 @@ class DotTool:
 
         """
         nodes = []
-        edges = []
+        arrows = []
         with open(dot_file_path) as f:
             in_lines = f.readlines()
             for line in in_lines:
                 if "->" in line:
+                    # ignore arrow attributes
+                    line = line.split(sep="[")[0]
                     split_list = line.split(sep="->")
                     # print("ffgg", split_list)
                     pa = split_list[0].strip()
@@ -91,11 +93,11 @@ class DotTool:
                     # print("ffgg", pa)
                     # print("ffgg", ch_list)
                     for ch in ch_list:
-                        edges.append((pa, ch))
+                        arrows.append((pa, ch))
                         if ch not in nodes:
                             nodes.append(ch)
 
-        return nodes, edges
+        return nodes, arrows
 
     @staticmethod
     def nx_graph_from_dot_file(dot_file_path):
@@ -118,9 +120,9 @@ class DotTool:
         # this does not understand dot statements like X->Y,Z;
         # nx_graph = nx.nx_pydot.read_dot(dot_file_path)
 
-        nodes, edges = DotTool.read_dot_file(dot_file_path)
+        nodes, arrows = DotTool.read_dot_file(dot_file_path)
         g = nx.DiGraph()
-        g.add_edges_from(edges)
+        g.add_arrows_from(arrows)
 
         return g
 

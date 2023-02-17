@@ -74,7 +74,7 @@ class RandomDataMaker:
         for row, col in product(range(dim), range(dim)):
             row_nd = self.graph.ord_nodes[row]
             col_nd = self.graph.ord_nodes[col]
-            if row > col and (col_nd, row_nd) in self.graph.edges:
+            if row > col and (col_nd, row_nd) in self.graph.arrows:
                 alp_mat[row, col] = np.random.uniform(-alp_bound, alp_bound)
         return alp_mat
 

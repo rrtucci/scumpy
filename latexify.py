@@ -19,6 +19,7 @@ def do_latex_subs(graph, x):
     sp.Symbol("sigma_eps_" + str(i))
     sp.Symbol("sigma_" + str(i))
     sp.Symbol("alp_" + str(row) + "_L_" + str(col))
+    sp.Symbol("beta_" + str(row) + "_L_" + str(col))
     sp.Symbol("cov_" + str(row) + "_" + str(col))
     sp.Symbol("eps_" + str(row) + "_" + str(col))
     sp.Symbol("rho_" + str(row) + "_" + str(col))
@@ -62,6 +63,12 @@ def do_latex_subs(graph, x):
             alp_sb = "alp_" + str(row) + "_L_" + str(col)
             x = x.subs(sp.Symbol(alp_sb),
                        sp.Symbol(alp_latex_str))
+
+        beta_latex_str = r"\beta_{\underline{" + row_nd + \
+                    r"}|\underline{" + col_nd + r"}}"
+        beta_sb = "beta_" + str(row) + "_L_" + str(col)
+        x = x.subs(sp.Symbol(beta_sb),
+                   sp.Symbol(beta_latex_str))
 
         if row_nd == col_nd:
             cov_latex_str = r"\sigma^2_{\underline{" + row_nd + r"}}"
@@ -154,7 +161,8 @@ def print_all_mats_after_latex_subs(graph):
 def get_str_for_matrix_entries(mat,
                                mat_name,
                                graph,
-                               latex=False):
+                               latex=False,
+                               tilde=False):
     """
     If latex=True, this method returns a string which is a well-formed latex
     expression for a latex array with one column. For each i, j, there is
@@ -180,6 +188,8 @@ def get_str_for_matrix_entries(mat,
     mat_name: str
     graph: Graph
     latex: bool
+    tilde: bool
+        True iff put tilde over names of nodes
 
     Returns
     -------
@@ -193,6 +203,9 @@ def get_str_for_matrix_entries(mat,
     for row, col in product(range(dim), range(dim)):
         row_nd = graph.ord_nodes[row]
         col_nd = graph.ord_nodes[col]
+        if tilde:
+            row_nd = r"\widetilde{" + row_nd + r"}"
+            col_nd = r"\widetilde{" + col_nd + r"}"
         if mat_name == "gains" and col >= row:
             continue
 
@@ -206,8 +219,9 @@ def get_str_for_matrix_entries(mat,
             str0 += "\n" + r"\alpha_{\underline{" + row_nd +\
                 r"}| \underline{" + col_nd + r"}}="
         else:
-            str0 += "\n" + mat_name + "[" + str(row) + ":" + row_nd + ", " + \
-                   str(col) + ":" + col_nd + "]="
+            str0 += "\n" + mat_name + r"[" + str(row) + r":\underline{" + \
+                    row_nd + r"}," + str(col) + r":\underline{" + \
+                    col_nd + r"}]="
 
         if latex:
             x = mat[row, col]

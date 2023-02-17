@@ -13,6 +13,7 @@ The names of the entries of the matrices created by this file, are as follows:
     "sigma_eps_" + str(i)
     "sigma_" + str(i)
     "alp_" + str(row) + "_L_" + str(col)
+    "beta_" + str(row) + "_L_" + str(col)
     "cov_" + str(row) + "_" + str(col)
     "eps_" + str(row) + "_" + str(col)
     "rho_" + str(row) + "_" + str(col)
@@ -128,6 +129,25 @@ def alp_sb_mat(dim):
                         mat_type="strict_lower_triangular")
 
 
+def beta_sb_mat(dim):
+    """
+    This method returns a matrix (of type sp.Matrix) of feedback gains B
+    with B_{ i, j} = \beta_{i|j}
+
+    Parameters
+    ----------
+    dim: int
+        dimension of square matrix = number of nodes in graph.
+
+    Returns
+    -------
+    sp.Matrix
+
+    """
+    return make_sb_mat(dim, "beta_%d_L_%d",
+                        mat_type="general")
+
+
 def cov_sb_mat(dim):
     """
     This method returns the covariance matrix C (of type sp.Matrix) with C_{
@@ -147,6 +167,7 @@ def cov_sb_mat(dim):
     return make_sb_mat(dim, "cov_%d_%d",
                         mat_type="symmetric")
 
+
 def eps_sb_mat(dim):
     """
     This method returns the epsilon covariance matrix E (of type sp.Matrix)
@@ -164,7 +185,6 @@ def eps_sb_mat(dim):
     """
     return make_sb_mat(dim, "eps_%d_%d",
                         mat_type="symmetric")
-
 
 
 def rho_sb_mat(dim):

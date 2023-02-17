@@ -1,0 +1,7 @@
+digraph fback_2nodes {
+x->y;
+x->y[color=green, style=dashed];
+y->x[color=green, style=dashed];
+y->y[color=green, style=dashed];
+x->x[color=green, style=dashed];
+}

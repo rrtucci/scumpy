@@ -13,12 +13,12 @@ class Graph:
 
     Attributes
     ----------
-    amputated_edges: None or list[(str,  str)]
-        This is a list of edges to be amputated from edges in input dot
-        file. We check that 'amputated_edges' is inside the list
-        'full_edges' of edges obtained from reading the input dot file.
-        'self.edges' is 'full_edges' minus 'amputated_edges'.
-    edges: list[(str, str)]
+    amputated_arrows: None or list[(str,  str)]
+        This is a list of arrows to be amputated from arrows in input dot
+        file. We check that 'amputated_arrows' is inside the list
+        'full_arrows' of arrows obtained from reading the input dot file.
+        'self.arrows' is 'full_arrows' minus 'amputated_arrows'.
+    arrows: list[(str, str)]
         This is a list of string tuples such as ('a', 'b'), which indicates
         that an arrow points from 'a' to 'b'.
     num_nds: int
@@ -33,31 +33,65 @@ class Graph:
         directory
 
     """
-    def __init__(self, dot_file_path,
-                 amputated_edges=None):
+    def __init__(self,
+                 dot_file_path,
+                 amputated_arrows=None,
+                 is_DAG=True):
         """
         Constructor
 
         Parameters
         ----------
         dot_file_path: str
-        amputated_edges: None or list[(str,str)]
+        amputated_arrows: None or list[(str,str)]
+        is_DAG: bool
+            Whether the graph is a DAG (directed acyclic graph)
         """
         self.path = dot_file_path
-        nodes, all_edges = DotTool.read_dot_file(self.path)
-        if amputated_edges is None:
-            self.amputated_edges = []
-            self.edges = all_edges
-        else:
-            self.amputated_edges = amputated_edges
-            assert set(amputated_edges).issubset(set(all_edges))
-            self.edges = [ed for ed in all_edges if ed not in amputated_edges]
-        self.nx_graph = nx.DiGraph()
-        self.nx_graph.add_edges_from(self.edges)
-        self.ord_nodes = list(nx.topological_sort(self.nx_graph))
-        self.num_nds = len(self.ord_nodes)
+        nodes, all_arrows = DotTool.read_dot_file(self.path)
+        self.num_nds = len(nodes)
 
-    def draw(self, jupyter):
+        if amputated_arrows is None:
+            self.amputated_arrows = []
+            self.arrows = all_arrows
+        else:
+            self.amputated_arrows = amputated_arrows
+            assert set(amputated_arrows).issubset(set(all_arrows))
+            self.arrows = [ed for ed in all_arrows if ed not in amputated_arrows]
+
+        self.nx_graph = None
+        self.ord_nodes = None
+        if is_DAG:
+            self.nx_graph = nx.DiGraph()
+            self.nx_graph.add_arrows_from(self.arrows)
+            # this bombs if not DAG
+            self.ord_nodes = list(nx.topological_sort(self.nx_graph))
+
+    @staticmethod
+    def get_pa_and_ch_list(line):
+        """
+        This is an internal utility function that extracts the name of a
+        parent and its children from the string 'line'.
+
+        Parameters
+        ----------
+        line: str
+
+        Returns
+        -------
+        str, list[str]
+
+        """
+        # get rid of arrow attributes
+        line = line.split(sep="[")[0]
+        split_list = line.split(sep="->")
+        # pa=parent, ch=children
+        pa = split_list[0].strip()
+        ch_list = split_list[1].split(",")
+        ch_list = [x.strip().strip(";").strip() for x in ch_list]
+        return pa, ch_list
+
+    def draw(self, jupyter=False):
         """
         This method draws the graph either on the console (jupyter=False) or
         in a jupyter notebook (jupyter=True). Amputated arrows are drawn in
@@ -72,10 +106,6 @@ class Graph:
         None
 
         """
-        if len(self.amputated_edges) == 0:
-            DotTool.draw(self.path, jupyter)
-            return
-
         new_dot = ""
         with open(self.path) as f:
             in_lines = f.readlines()
@@ -83,20 +113,13 @@ class Graph:
                 if "->" not in line:
                     new_dot += line
                 else:
-                    split_list = line.split(sep="->")
-                    # print("ffgg", split_list)
-                    pa = split_list[0].strip()
-                    ch_list = split_list[1].split(",")
-                    ch_list = [x.strip().strip(";").strip() for x in ch_list]
-                    # print("ffgg", pa)
-                    # print("ffgg", ch_list)
+                    pa, ch_list = Graph.get_pa_and_ch_list(line)
                     for ch in ch_list:
-                        ed = (pa, ch)
-                        if ed in self.amputated_edges:
-                            new_dot += ed[0] + " -> " + ed[1] + \
-                                   " [color=red];\n"
+                        new_dot += pa + " -> " + ch
+                        if (pa, ch) in self.amputated_arrows:
+                            new_dot += " [color=red];\n"
                         else:
-                            new_dot += ed[0] + " -> " + ed[1] + ";\n"
+                            new_dot += ";\n"
         with open("tempo1389.dot", "w") as file:
             file.write(new_dot)
         DotTool.draw('tempo1389.dot', jupyter)
@@ -136,13 +159,13 @@ if __name__ == "__main__":
         path = 'tempo13.txt'
         full_g = Graph(path)
         amp_g = Graph(path,
-                      amputated_edges=[('b', 's')])
+                      amputated_arrows=[('b', 's')])
         for g in [full_g, amp_g]:
             print("++++++++++++++++++++++++++++++++++++")
             print("nodes in topological order:")
             print(g.ord_nodes)
-            print("edges")
-            print(g.edges)
+            print("arrows")
+            print(g.arrows)
             if draw:
                 g.draw(jupyter=False)
 
