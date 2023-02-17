@@ -63,7 +63,7 @@ class Graph:
         self.ord_nodes = None
         if is_DAG:
             self.nx_graph = nx.DiGraph()
-            self.nx_graph.add_arrows_from(self.arrows)
+            self.nx_graph.add_edges_from(self.arrows)
             # this bombs if not DAG
             self.ord_nodes = list(nx.topological_sort(self.nx_graph))
 

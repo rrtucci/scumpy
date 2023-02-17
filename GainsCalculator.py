@@ -44,11 +44,16 @@ class GainsCalculator:
         self.graph = graph
         self.gains_sb_list = None
 
-    def calculate_gains_sb(self):
+    def calculate_gains_sb(self, mat_K=None):
         """
         This method calculates and stores in 'self.gains_sb_list', a list
         of symbolic equations. Each equation gives either the value of a
         gain \alpha_{i|j}, or a constraint on the covariances.
+
+        Parameters
+        ----------
+        mat_K: sp.Matrix
+            K matrix used only for linear SCM with feedback loops
 
         Returns
         -------
@@ -56,6 +61,8 @@ class GainsCalculator:
 
         """
         dim = self.graph.num_nds
+        if mat_K is None:
+            mat_K = sp.zeros(dim)
         A = set_to_zero_gains_without_arrows(self.graph,
                                              alp_sb_mat(dim))
         self.gains_sb_list = []
@@ -69,7 +76,8 @@ class GainsCalculator:
             # of linear equations so fix it this way
             cov_mat = cov_sb_mat(dim)
             eqs_mat = cov_mat[0:row, 0:row] * \
-                      A[row, 0:row].T-cov_mat[0:row, row]
+                      A[row, 0:row].T - \
+                      (cov_mat[0:row, row] - mat_K[0:row, row])
             eqs = [eqs_mat[i, 0] for i in range(row)]
             unknowns = []
             for i in range(row):

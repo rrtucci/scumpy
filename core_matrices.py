@@ -128,6 +128,24 @@ def alp_sb_mat(dim):
     return make_sb_mat(dim, "alp_%d_L_%d",
                         mat_type="strict_lower_triangular")
 
+def k_sb_mat(dim):
+    """
+    This method returns a strictly lower triangular K matrix (of type
+    sp.Matrix) with K_{ i, j} = K_{i|j}
+
+    Parameters
+    ----------
+    dim: int
+        dimension of square matrix = number of nodes in graph.
+
+    Returns
+    -------
+    sp.Matrix
+
+    """
+    return make_sb_mat(dim, "K_%d_L_%d",
+                        mat_type="strict_lower_triangular")
+
 
 def beta_sb_mat(dim):
     """

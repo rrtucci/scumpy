@@ -122,7 +122,7 @@ class DotTool:
 
         nodes, arrows = DotTool.read_dot_file(dot_file_path)
         g = nx.DiGraph()
-        g.add_arrows_from(arrows)
+        g.add_edges_from(arrows)
 
         return g
 
