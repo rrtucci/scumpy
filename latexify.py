@@ -21,7 +21,11 @@ def do_latex_subs(graph, x):
     sp.Symbol("sigma_" + str(i))
     sp.Symbol("alp_" + str(row) + "_L_" + str(col))
     sp.Symbol("beta_" + str(row) + "_L_" + str(col))
+    sp.Symbol("K_" + str(row) + "_" + str(col))
     sp.Symbol("cov_" + str(row) + "_" + str(col))
+    sp.Symbol("cov_one_" + str(row) + "_" + str(col))
+    sp.Symbol("cov_n_" + str(row) + "_" + str(col))
+    sp.Symbol("cov_n_plus_one_" + str(row) + "_" + str(col))
     sp.Symbol("eps_" + str(row) + "_" + str(col))
     sp.Symbol("rho_" + str(row) + "_" + str(col))
     sp.Symbol("pder_" + str(row) + "_wrt_" + str(col))
@@ -71,14 +75,28 @@ def do_latex_subs(graph, x):
         x = x.subs(sp.Symbol(beta_sb),
                    sp.Symbol(beta_latex_str))
 
-        if row_nd == col_nd:
-            cov_latex_str = r"\sigma^2_{\underline{" + row_nd + r"}}"
-        else:
-            cov_latex_str = r"\left\langle\underline{" + row_nd + \
-                    r"},\underline{" + col_nd + r"}\right\rangle"
-        cov_sb = "cov_" + str(row) + "_" + str(col)
-        x = x.subs(sp.Symbol(cov_sb),
-                   sp.Symbol(cov_latex_str))
+        k_latex_str = r"K_{\underline{" + row_nd + \
+                    r"},\underline{" + col_nd + r"}}"
+        k_sb = "K_" + str(row) + "_" + str(col)
+        x = x.subs(sp.Symbol(k_sb),
+                   sp.Symbol(k_latex_str))
+
+        for time in [None, "one", "n", "n_plus_one"]:
+            superscript = time_superscript(time)
+            if row_nd == col_nd:
+                cov_latex_str = r"\sigma^2_{\underline{" + row_nd + \
+                                r"}" + superscript + r"}"
+            else:
+                cov_latex_str = r"\left\langle\underline{" + row_nd + \
+                        r"}" + superscript + r",\underline{" + col_nd + \
+                        r"}" + superscript + r"\right\rangle"
+            if time is None:
+                cov_sb = "cov_"
+            else:
+                cov_sb = "cov_" + time + "_"
+            cov_sb += str(row) + "_" + str(col)
+            x = x.subs(sp.Symbol(cov_sb),
+                       sp.Symbol(cov_latex_str))
 
         if row_nd == col_nd:
             eps_latex_str = r"\sigma^2_{\underline{\epsilon}" + \
@@ -159,6 +177,20 @@ def print_all_mats_after_latex_subs(graph):
     print(sp.latex(x))
 
 
+def time_superscript(time):
+    if time is None:
+        superscript = ""
+    elif time == "one":
+        superscript = r"^{[1]}"
+    elif time == "n":
+        superscript = r"^{[n]}"
+    elif time == "n_plus_one":
+        superscript = r"^{[n+1]}"
+    else:
+        assert False
+    return superscript
+
+
 def get_str_for_matrix_entries(mat,
                                mat_name,
                                graph,
@@ -210,18 +242,9 @@ def get_str_for_matrix_entries(mat,
             if time != "":
                 # this removes underscore at beginning
                 time = time[1:]
-            superscript = ""
-            # print("vvbbn", time)
-            if time == "":
-                superscript = ""
-            elif time == "one":
-                superscript = r"^{[1]}"
-            elif time == "n":
-                superscript = r"^{[n]}"
-            elif time == "n_plus_one":
-                superscript = r"^{[n+1]}"
             else:
-                assert False
+                time = None
+            superscript = time_superscript(time)
             str0 += "\n" + r"\left\langle\underline{" + row_nd + r"}" + \
                     superscript + r", \underline{" + col_nd + r"}" + \
                     superscript + r"\right\rangle="

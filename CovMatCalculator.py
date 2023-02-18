@@ -113,9 +113,13 @@ class CovMatCalculator:
         sp.Symbol
 
         """
+        if time is None:
+            mat_str = "cov"
+        else:
+            mat_str = "cov_" + time
         return print_matrix_sb_entries(
                                 self.cov_mat_sb,
-                                "cov",
+                                mat_str,
                                 self.graph,
                                 verbose=verbose)
 

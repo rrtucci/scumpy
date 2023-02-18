@@ -131,7 +131,7 @@ def alp_sb_mat(dim):
 
 def k_sb_mat(dim):
     """
-    This method returns a strictly lower triangular K matrix (of type
+    This method returns a K matrix (of type
     sp.Matrix) with K_{ i, j} = K_{i|j}
 
     Parameters
@@ -144,8 +144,8 @@ def k_sb_mat(dim):
     sp.Matrix
 
     """
-    return make_sb_mat(dim, "K_%d_L_%d",
-                        mat_type="strict_lower_triangular")
+    return make_sb_mat(dim, "K_%d_%d",
+                        mat_type="general")
 
 
 def beta_sb_mat(dim):

@@ -49,21 +49,11 @@ class FBackCovMatCalculator(CovMatCalculator):
         sp.Symbol
 
         """
-        x = self.growth_mat_sb
-        x_copy = deepcopy(x)
-        if verbose:
-            print(get_str_for_matrix_entries(x_copy, "G", self.graph,
-                                             latex=False))
-
-        x_copy = do_latex_subs(self.graph, x_copy)
-        str0 = get_str_for_matrix_entries(x_copy, "G",
-                                          self.graph, latex=True)
-        if verbose:
-            print(str0)
-        # this return prints nothing on the console, but, if
-        # inserted as the last line of a jupyter cell, it renders
-        # the latex in str0
-        return sp.Symbol(str0)
+        return print_matrix_sb_entries(
+                                self.growth_mat_sb,
+                                "G",
+                                self.graph,
+                                verbose=verbose)
 
 
 if __name__ == "__main__":
