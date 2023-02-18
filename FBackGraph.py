@@ -1,5 +1,6 @@
 from Graph import *
 
+
 class FBackGraph(Graph):
     """
 
@@ -91,14 +92,14 @@ class FBackGraph(Graph):
                                 new_dot += " [color=green, style=dashed];\n"
                             else:
                                 new_dot += ";\n"
-                        elif slices>1:
+                        elif slices > 1:
                             for sli in range(slices):
-                                long_pa = pa + "[" + str(sli) + "]"
+                                long_pa = pa + "[" + str(sli+1) + "]"
                                 long_pa = '"' + long_pa + '"'
                                 if green_arrow:
-                                    long_ch = ch + "[" + str(sli + 1) + "]"
+                                    long_ch = ch + "[" + str(sli + 2) + "]"
                                 else:
-                                    long_ch = ch + "[" + str(sli) + "]"
+                                    long_ch = ch + "[" + str(sli+1) + "]"
                                 long_ch = '"' + long_ch + '"'
                                 if green_arrow:
                                     if sli != slices-1:
@@ -112,6 +113,8 @@ class FBackGraph(Graph):
         with open("tempo1389.dot", "w") as file:
             file.write(new_dot)
         DotTool.draw('tempo1389.dot', jupyter)
+
+
 if __name__ == "__main__":
 
     def main(draw):

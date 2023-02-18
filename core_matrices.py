@@ -128,6 +128,7 @@ def alp_sb_mat(dim):
     return make_sb_mat(dim, "alp_%d_L_%d",
                         mat_type="strict_lower_triangular")
 
+
 def k_sb_mat(dim):
     """
     This method returns a strictly lower triangular K matrix (of type
@@ -166,15 +167,17 @@ def beta_sb_mat(dim):
                         mat_type="general")
 
 
-def cov_sb_mat(dim):
+def cov_sb_mat(dim, time=None):
     """
-    This method returns the covariance matrix C (of type sp.Matrix) with C_{
-    i,j} = <x_i, x_j> = cov_i_j
+    This method returns the covariance matrix at time t, C^t (of type
+    sp.Matrix) with C^t_{ i,j} = <x^t_i, x^t_j> = cov_t_i_j.
+    $t$ can be None, "one", "n" or "n_plus_one"
 
     Parameters
     ----------
     dim: int
         dimension of square matrix = number of nodes in graph.
+    time: None or str
 
 
     Returns
@@ -182,8 +185,12 @@ def cov_sb_mat(dim):
     sp.Matrix
 
     """
-    return make_sb_mat(dim, "cov_%d_%d",
-                        mat_type="symmetric")
+    assert time in [None, "one", "n", "n_plus_one"]
+    if time is None:
+        mat_str = "cov_%d_%d"
+    else:
+        mat_str = "cov_" + time + "_%d_%d"
+    return make_sb_mat(dim, mat_str, mat_type="symmetric")
 
 
 def eps_sb_mat(dim):
@@ -250,6 +257,8 @@ if __name__ == "__main__":
         print(sigma_eps_sb_mat(dim))
         print(sigma_nd_sb_mat(dim))
         print(alp_sb_mat(dim))
+        print(k_sb_mat(dim))
+        print(beta_sb_mat(dim))
         print(cov_sb_mat(dim))
         print(eps_sb_mat(dim))
         print(rho_sb_mat(dim))

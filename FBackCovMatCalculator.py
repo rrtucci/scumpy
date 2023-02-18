@@ -25,11 +25,13 @@ class FBackCovMatCalculator(CovMatCalculator):
                                              beta_sb_mat(dim))
         self.growth_mat_sb = sp.simplify(self.one_minus_A_inv_sb*mat_B)
 
-    def print_cov_mat_entries(self, verbose=False):
+    def print_cov_mat_entries(self, verbose=False, time=None):
         print("Do you mean 'print_initial_cov_mat_entries()'?")
 
     def print_initial_cov_mat_entries(self, verbose=False):
-        return CovMatCalculator.print_cov_mat_entries(self, verbose=verbose)
+        return CovMatCalculator.print_cov_mat_entries(self,
+                                                      verbose=verbose,
+                                                      time="one")
 
     def print_growth_mat_entries(self, verbose=False):
         """

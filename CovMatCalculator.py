@@ -95,7 +95,7 @@ class CovMatCalculator:
         self.cov_mat_sb = cov_mat
         self.jacobian_sb = jacobian
 
-    def print_cov_mat_entries(self, verbose=False):
+    def print_cov_mat_entries(self, verbose=False, time=None):
         """
         This method renders in latex, in a jupyter notebook (but not in the
         console), the entries, one at a time, of the covariance matrix
@@ -105,27 +105,19 @@ class CovMatCalculator:
         Parameters
         ----------
         verbose: bool
+        time: None or str
+            must be either None, "one", "n" or "n_plus_one"
 
         Returns
         -------
         sp.Symbol
 
         """
-        x = self.cov_mat_sb
-        x_copy = deepcopy(x)
-        if verbose:
-            print(get_str_for_matrix_entries(x_copy, "cov", self.graph,
-                                             latex=False))
-
-        x_copy = do_latex_subs(self.graph, x_copy)
-        str0 = get_str_for_matrix_entries(x_copy, "cov",
-                                          self.graph, latex=True)
-        if verbose:
-            print(str0)
-        # this return prints nothing on the console, but, if
-        # inserted as the last line of a jupyter cell, it renders
-        # the latex in str0
-        return sp.Symbol(str0)
+        return print_matrix_sb_entries(
+                                self.cov_mat_sb,
+                                "cov",
+                                self.graph,
+                                verbose=verbose)
 
     def print_jacobian_entries(self, verbose=False):
         """
@@ -143,21 +135,11 @@ class CovMatCalculator:
         sp.Symbol
 
         """
-        x = self.jacobian_sb
-        x_copy = deepcopy(x)
-        if verbose:
-            print(get_str_for_matrix_entries(x_copy, "jacobian",
-                                             self.graph, latex=False))
-
-        x_copy = do_latex_subs(self.graph, x_copy)
-        str0 = get_str_for_matrix_entries(x_copy, "jacobian",
-                                          self.graph, latex=True)
-        if verbose:
-            print(str0)
-        # this return prints nothing on the console, but, if
-        # inserted as the last line of a jupyter cell, it renders
-        # the latex in str0
-        return sp.Symbol(str0)
+        return print_matrix_sb_entries(
+                                self.jacobian_sb,
+                                "jacobian",
+                                self.graph,
+                                verbose=verbose)
 
 
 if __name__ == "__main__":

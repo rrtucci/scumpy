@@ -3,6 +3,7 @@ import sympy as sp
 from itertools import product
 from core_matrices import *
 from numerical_subs import *
+from copy import deepcopy
 
 """
 
@@ -161,8 +162,7 @@ def print_all_mats_after_latex_subs(graph):
 def get_str_for_matrix_entries(mat,
                                mat_name,
                                graph,
-                               latex=False,
-                               tilde=False):
+                               latex=False):
     """
     If latex=True, this method returns a string which is a well-formed latex
     expression for a latex array with one column. For each i, j, there is
@@ -188,8 +188,6 @@ def get_str_for_matrix_entries(mat,
     mat_name: str
     graph: Graph
     latex: bool
-    tilde: bool
-        True iff put tilde over names of nodes
 
     Returns
     -------
@@ -203,15 +201,30 @@ def get_str_for_matrix_entries(mat,
     for row, col in product(range(dim), range(dim)):
         row_nd = graph.ord_nodes[row]
         col_nd = graph.ord_nodes[col]
-        if tilde:
-            row_nd = r"\widetilde{" + row_nd + r"}"
-            col_nd = r"\widetilde{" + col_nd + r"}"
+
         if mat_name == "gains" and col >= row:
             continue
 
-        if mat_name == "cov" and latex:
-            str0 += "\n" + r"\left\langle\underline{" + row_nd + "}" + \
-                   r", \underline{" + col_nd + r"}\right\rangle="
+        if mat_name[0:3] == "cov" and latex:
+            time = mat_name[3:]
+            if time != "":
+                # this removes underscore at beginning
+                time = time[1:]
+            superscript = ""
+            # print("vvbbn", time)
+            if time == "":
+                superscript = ""
+            elif time == "one":
+                superscript = r"^{[1]}"
+            elif time == "n":
+                superscript = r"^{[n]}"
+            elif time == "n_plus_one":
+                superscript = r"^{[n+1]}"
+            else:
+                assert False
+            str0 += "\n" + r"\left\langle\underline{" + row_nd + r"}" + \
+                    superscript + r", \underline{" + col_nd + r"}" + \
+                    superscript + r"\right\rangle="
         elif mat_name == "jacobian" and latex:
             str0 += "\n" + r"\frac{\partial\underline{" + row_nd + \
                    r"}}{\partial\underline{" + col_nd + r"}}="
@@ -219,9 +232,9 @@ def get_str_for_matrix_entries(mat,
             str0 += "\n" + r"\alpha_{\underline{" + row_nd +\
                 r"}| \underline{" + col_nd + r"}}="
         else:
-            str0 += "\n" + mat_name + r"[" + str(row) + r":\underline{" + \
-                    row_nd + r"}," + str(col) + r":\underline{" + \
-                    col_nd + r"}]="
+            str0 += "\n" + mat_name + r"_{" + str(row) + r"=\underline{" + \
+                    row_nd + r"}," + str(col) + r"=\underline{" + \
+                    col_nd + r"}}="
 
         if latex:
             x = mat[row, col]
@@ -234,6 +247,42 @@ def get_str_for_matrix_entries(mat,
         str0 += r"\end{array}"
 
     return str0
+
+
+def print_matrix_sb_entries(mat, mat_name, graph, verbose=False):
+    """
+    This method renders in latex, in a jupyter notebook (but not in the
+    console), the entries, one at a time, of the symbolic matrix 'mat' named
+    'mat_name'. Iff verbose=True, it also prints the same thing in ASCII,
+    in both the console and jupyter notebook.
+
+    Parameters
+    ----------
+    mat: sp.Matrix
+    mat_name: str
+    graph: Graph
+    verbose: bool
+
+    Returns
+    -------
+    sp.Symbol
+
+    """
+    x = mat
+    x_copy = deepcopy(x)
+    if verbose:
+        print(get_str_for_matrix_entries(x_copy, mat_name,
+                                         graph, latex=False))
+
+    x_copy = do_latex_subs(graph, x_copy)
+    str0 = get_str_for_matrix_entries(x_copy, mat_name,
+                                      graph, latex=True)
+    if verbose:
+        print(str0)
+    # this return prints nothing on the console, but, if
+    # inserted as the last line of a jupyter cell, it renders
+    # the latex in str0
+    return sp.Symbol(str0)
 
 
 if __name__ == "__main__":
