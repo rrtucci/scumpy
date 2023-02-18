@@ -11,11 +11,15 @@ sp.Symbol instances.
 The names of the entries of the matrices created by this file, are as follows:
 
     "sigma_eps_" + str(i)
-    "sigma_" + str(i)
+    "sigma_nd_" + str(i)
     "alp_" + str(row) + "_L_" + str(col)
     "beta_" + str(row) + "_L_" + str(col)
+    "K_" + str(row) + "_" + str(col)
     "cov_" + str(row) + "_" + str(col)
-    "eps_" + str(row) + "_" + str(col)
+    "cov_one_" + str(row) + "_" + str(col)
+    "cov_n_" + str(row) + "_" + str(col)
+    "cov_n_plus_one" + str(row) + "_" + str(col)
+    "ee_" + str(row) + "_" + str(col)
     "rho_" + str(row) + "_" + str(col)
     "pder_" + str(row) + "_wrt_" + str(col)
 
@@ -72,8 +76,8 @@ def make_sb_mat(dim, mat_str, mat_type="general"):
 def sigma_eps_sb_mat(dim):
     """
     This method returns a diagonal matrix (of type sp.Matrix) with diagonal
-    entries equal to the standard deviations \sigma_{\epsilon_j} of
-    \epsilon_j for each j.
+    entries equal to the standard deviations sigma_eps_j=\sigma_{\epsilon_j}
+    of \epsilon_j for each j.
 
     Parameters
     ----------
@@ -92,8 +96,8 @@ def sigma_eps_sb_mat(dim):
 def sigma_nd_sb_mat(dim):
     """
     This method returns a diagonal matrix (of type sp.Matrix) with diagonal
-    entries equal to the standard deviations \sigma_{x_j} of node x_j for
-    each j.
+    entries equal to the standard deviations sigma_nd_j = \sigma_{x_j} of
+    node x_j for each j.
 
 
     Parameters
@@ -106,14 +110,14 @@ def sigma_nd_sb_mat(dim):
     sp.Matrix
 
     """
-    return make_sb_mat(dim, "sigma_%d",
+    return make_sb_mat(dim, "sigma_nd_%d",
                         mat_type="diagonal")
 
 
 def alp_sb_mat(dim):
     """
-    This method returns a matrix (of type sp.Matrix) of gains A with A_{ i,
-    j} = \alpha_{i|j}
+    This method returns a matrix (of type sp.Matrix) of gains A with entries
+    A_{ i, j} = alp_i_L_j=\alpha_{i|j}
 
     Parameters
     ----------
@@ -129,29 +133,10 @@ def alp_sb_mat(dim):
                         mat_type="strict_lower_triangular")
 
 
-def k_sb_mat(dim):
-    """
-    This method returns a K matrix (of type
-    sp.Matrix) with K_{ i, j} = K_{i|j}
-
-    Parameters
-    ----------
-    dim: int
-        dimension of square matrix = number of nodes in graph.
-
-    Returns
-    -------
-    sp.Matrix
-
-    """
-    return make_sb_mat(dim, "K_%d_%d",
-                        mat_type="general")
-
-
 def beta_sb_mat(dim):
     """
     This method returns a matrix (of type sp.Matrix) of feedback gains B
-    with B_{ i, j} = \beta_{i|j}
+    with  entries B_{ i, j} = beta_i_L_j = \beta_{i|j}
 
     Parameters
     ----------
@@ -167,11 +152,30 @@ def beta_sb_mat(dim):
                         mat_type="general")
 
 
+def k_sb_mat(dim):
+    """
+    This method returns a K matrix (of type sp.Matrix) with entries K_{ i,
+    j}=K_i_j
+
+    Parameters
+    ----------
+    dim: int
+        dimension of square matrix = number of nodes in graph.
+
+    Returns
+    -------
+    sp.Matrix
+
+    """
+    return make_sb_mat(dim, "K_%d_%d",
+                        mat_type="general")
+
+
 def cov_sb_mat(dim, time=None):
     """
     This method returns the covariance matrix at time t, C^t (of type
-    sp.Matrix) with C^t_{ i,j} = <x^t_i, x^t_j> = cov_t_i_j.
-    $t$ can be None, "one", "n" or "n_plus_one"
+    sp.Matrix) with entries C^t_{i,j}=<x^t_i, x^t_j> = cov_t_i_j. $t$ can be
+    None, "one", "n" or "n_plus_one"
 
     Parameters
     ----------
@@ -193,10 +197,10 @@ def cov_sb_mat(dim, time=None):
     return make_sb_mat(dim, mat_str, mat_type="symmetric")
 
 
-def eps_sb_mat(dim):
+def ee_sb_mat(dim):
     """
-    This method returns the epsilon covariance matrix E (of type sp.Matrix)
-    with E_{ i,j} = <eps_i, eps_j> = eps_i_j
+    This method returns the epsilon covariance matrix ee (of type sp.Matrix)
+    with entries ee_i_j = <eps_i, eps_j>
 
     Parameters
     ----------
@@ -208,14 +212,14 @@ def eps_sb_mat(dim):
     sp.Matrix
 
     """
-    return make_sb_mat(dim, "eps_%d_%d",
+    return make_sb_mat(dim, "ee_%d_%d",
                         mat_type="symmetric")
 
 
 def rho_sb_mat(dim):
     """
     This method returns the correlation matrix \rho (of type sp.Matrix) with
-    \rho_{i, j}.
+    entries rho_i_j=\rho_{i, j}.
 
     Parameters
     ----------
@@ -233,8 +237,10 @@ def rho_sb_mat(dim):
 
 def jacobian_sb_mat(dim):
     """
-    This method returns the Jacobian matrix J (of type sp.Matrix) with J_{i,
-    j} = partial derivative of x_i with respect to x_j.
+    This method returns the Jacobian matrix J (of type sp.Matrix) with
+    enties J_{i, j} = jacobian_i_j = partial derivative of x_i with respect
+    to x_j
+
 
     Parameters
     ----------
@@ -257,10 +263,11 @@ if __name__ == "__main__":
         print(sigma_eps_sb_mat(dim))
         print(sigma_nd_sb_mat(dim))
         print(alp_sb_mat(dim))
-        print(k_sb_mat(dim))
         print(beta_sb_mat(dim))
-        print(cov_sb_mat(dim))
-        print(eps_sb_mat(dim))
+        print(k_sb_mat(dim))
+        print(cov_sb_mat(dim, time=None))
+        print(cov_sb_mat(dim, time="one"))
+        print(ee_sb_mat(dim))
         print(rho_sb_mat(dim))
         print(jacobian_sb_mat(dim))
         print()

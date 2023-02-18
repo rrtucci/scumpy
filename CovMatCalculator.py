@@ -5,11 +5,11 @@ from copy import deepcopy
 
 class CovMatCalculator:
     """
-    The purpose of this class is to calculate/store the covariance matrix C
-    and the Jacobian matrix J, expressed symbolically as a function of the
-    gains \alpha_{i,j}. We define C_{j,k} = <x_j, x_k>, where x_j are the
-    internal nodes and \epsilon_j are the external ones. We define J_{i,
-    j}= partial of x_i with respect to x_j.
+    The purpose of this class is to calculate/store a symbolic
+    representation of the covariance matrix C and the Jacobian matrix J,
+    expressed as a function of the gains \alpha_{i,j}. We define C_{j,
+    k} = <x_j, x_k>, where x_j are the internal nodes and \epsilon_j are the
+    external ones. We define J_{i, j}= partial of x_i with respect to x_j.
 
     If self.conditioned_nds = None, we assume <epsilon_i, epsilon_j> =0
     for $i \neq j$.
@@ -41,7 +41,7 @@ class CovMatCalculator:
         ----------
         graph: Graph
         conditioned_nds: None or list[str]
-            Nodes that are bring conditioned on (a.k.a the "controls")
+            Nodes that are being conditioned on (a.k.a the "controls")
         """
         self.graph = graph
         if conditioned_nds is None:
@@ -58,9 +58,14 @@ class CovMatCalculator:
         """
         This method calculates and stores in 'self.cov_mat_sb', a symbolic
         expression for each of the entries C_{i,j} =<x_i, x_j>  of the
-        covariance matrix C. It also calculates and stores in
-        'self.jacobian_sb', a symbolic expression for each of the entries
-        J_{i,j} of the Jacobian matrix J.
+        covariance matrix C.
+
+        It also calculates and stores in 'self.jacobian_sb', a symbolic
+        expression for each of the entries J_{i,j} of the Jacobian matrix J.
+
+        It also calculates and stores in 'self.one_minus_A_inv_sb',
+        a symbolic expression for (1-A).inv(), where A is the strictly lower
+        diagonal matrix of gains \alpha_{i|j}.
 
 
         Returns
@@ -74,7 +79,7 @@ class CovMatCalculator:
         one_minus_A = sp.eye(dim) - mat_A
         self.one_minus_A_inv_sb = one_minus_A.inv()
 
-        eps_cov = eps_sb_mat(dim)
+        eps_cov = ee_sb_mat(dim)
         for row, col in product(range(dim), range(dim)):
             row_nd = self.graph.ord_nodes[row]
             col_nd = self.graph.ord_nodes[col]

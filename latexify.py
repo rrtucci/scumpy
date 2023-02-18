@@ -54,7 +54,7 @@ def do_latex_subs(graph, x):
                    sp.Symbol(sigma_eps_latex_str))
 
         sigma_nd_latex_str = r"\sigma_{\underline{" + nd + r"}}"
-        sigma_nd_sb = "sigma_" + str(i)
+        sigma_nd_sb = "sigma_nd_" + str(i)
         x = x.subs(sp.Symbol(sigma_nd_sb),
                    sp.Symbol(sigma_nd_latex_str))
 
@@ -99,15 +99,15 @@ def do_latex_subs(graph, x):
                        sp.Symbol(cov_latex_str))
 
         if row_nd == col_nd:
-            eps_latex_str = r"\sigma^2_{\underline{\epsilon}" + \
+            ee_latex_str = r"\sigma^2_{\underline{\epsilon}" + \
               r"_{\underline{" + row_nd + r"}}}"
         else:
-            eps_latex_str = r"\left\langle\underline{\epsilon}_\underline{" + \
+            ee_latex_str = r"\left\langle\underline{\epsilon}_\underline{" + \
                             row_nd + r"},\underline{\epsilon}_\underline{" + \
                             col_nd + r"}\right\rangle"
-        eps_sb = "eps_" + str(row) + "_" + str(col)
-        x = x.subs(sp.Symbol(eps_sb),
-                   sp.Symbol(eps_latex_str))
+        ee_sb = "ee_" + str(row) + "_" + str(col)
+        x = x.subs(sp.Symbol(ee_sb),
+                   sp.Symbol(ee_latex_str))
 
         rho_latex_str = r"\rho_{\underline{" + row_nd + \
                     r"},\underline{" + col_nd + r"}}"
@@ -161,7 +161,7 @@ def print_all_mats_after_latex_subs(graph):
     print("\n", x)
     print(sp.latex(x))
 
-    x = eps_sb_mat(dim)
+    x = ee_sb_mat(dim)
     x = do_latex_subs(graph, x)
     print("\n", x)
     print(sp.latex(x))
