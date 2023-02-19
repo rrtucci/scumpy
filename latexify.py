@@ -21,7 +21,7 @@ def do_latex_subs(graph, x):
     sp.Symbol("sigma_" + str(i))
     sp.Symbol("alp_" + str(row) + "_L_" + str(col))
     sp.Symbol("beta_" + str(row) + "_L_" + str(col))
-    sp.Symbol("K_" + str(row) + "_" + str(col))
+    sp.Symbol("cov_two_time_" + str(row) + "_" + str(col))
     sp.Symbol("cov_" + str(row) + "_" + str(col))
     sp.Symbol("cov_one_" + str(row) + "_" + str(col))
     sp.Symbol("cov_n_" + str(row) + "_" + str(col))
@@ -75,11 +75,11 @@ def do_latex_subs(graph, x):
         x = x.subs(sp.Symbol(beta_sb),
                    sp.Symbol(beta_latex_str))
 
-        k_latex_str = r"K_{\underline{" + row_nd + \
-                    r"},\underline{" + col_nd + r"}}"
-        k_sb = "K_" + str(row) + "_" + str(col)
-        x = x.subs(sp.Symbol(k_sb),
-                   sp.Symbol(k_latex_str))
+        cov2_latex_str = r"\left\langle\underline{" + row_nd + \
+                    r"}^n,\underline{" + col_nd + r"}^{n+1}\right\rangle"
+        cov2_sb = "cov2time_" + str(row) + "_" + str(col)
+        x = x.subs(sp.Symbol(cov2_sb),
+                   sp.Symbol(cov2_latex_str))
 
         for time in [None, "one", "n", "n_plus_one"]:
             superscript = time_superscript(time)
@@ -141,40 +141,22 @@ def print_all_mats_after_latex_subs(graph):
 
     """
     dim = graph.num_nds
-    x = sigma_eps_sb_mat(dim)
-    x = do_latex_subs(graph, x)
-    print("\n", x)
-    print(sp.latex(x))
 
-    x = sigma_nd_sb_mat(dim)
-    x = do_latex_subs(graph, x)
-    print("\n", x)
-    print(sp.latex(x))
+    def do_print(x):
+        x = do_latex_subs(graph, x)
+        print("\n", x)
+        print(sp.latex(x))
 
-    x = alp_sb_mat(dim)
-    x = do_latex_subs(graph, x)
-    print("\n", x)
-    print(sp.latex(x))
-
-    x = cov_sb_mat(dim)
-    x = do_latex_subs(graph, x)
-    print("\n", x)
-    print(sp.latex(x))
-
-    x = ee_sb_mat(dim)
-    x = do_latex_subs(graph, x)
-    print("\n", x)
-    print(sp.latex(x))
-
-    x = rho_sb_mat(dim)
-    x = do_latex_subs(graph, x)
-    print("\n", x)
-    print(sp.latex(x))
-
-    x = jacobian_sb_mat(dim)
-    x = do_latex_subs(graph, x)
-    print("\n", x)
-    print(sp.latex(x))
+    do_print(sigma_eps_sb_mat(dim))
+    do_print(sigma_nd_sb_mat(dim))
+    do_print(alp_sb_mat(dim))
+    do_print(beta_sb_mat(dim))
+    do_print(cov2time_sb_mat(dim))
+    do_print(cov_sb_mat(dim))
+    do_print(cov_sb_mat(dim, time="one"))
+    do_print(ee_sb_mat(dim))
+    do_print(rho_sb_mat(dim))
+    do_print(jacobian_sb_mat(dim))
 
 
 def time_superscript(time):
@@ -306,6 +288,44 @@ def print_matrix_sb_entries(mat, mat_name, graph, verbose=False):
     # inserted as the last line of a jupyter cell, it renders
     # the latex in str0
     return sp.Symbol(str0)
+
+def print_list_sb(eq_list, graph, verbose=False):
+    """
+    This method renders in latex, in a jupyter notebook (but not on the
+    console), a list 'eq_list' of sp.Equality Iff verbose=True, it also
+    prints the same thing in ASCII, in both the console and jupyter notebook.
+
+    Parameters
+    ----------
+    eq_list: list[sp.Equality]
+    verbose: Bool
+
+    Returns
+    -------
+    sp.Symbol
+
+    """
+    str0 = ""
+    x = eq_list
+    x_copy = deepcopy(x)
+    # print("lllj", type(x))
+    if verbose:
+        for i in range(len(x)):
+            print(str(x[i]), "\n")
+    str0 += r"\begin{array}{l}" + "\n"
+    for i in range(len(x)):
+        x_copy[i] = sp.latex(do_latex_subs(graph, x_copy[i]))
+        str0 += x_copy[i] + "\n" + r"\\" + "\n"
+    str0 = str0[:-3]
+    str0 += r"\end{array}"
+    # print("lluj", str0)
+    if verbose:
+        print("\n", str0)
+    # this return prints nothing on the console, but, if
+    # inserted as the last line of a jupyter cell, it renders
+    # the latex in str0
+    return sp.Symbol(str0)
+
 
 
 if __name__ == "__main__":

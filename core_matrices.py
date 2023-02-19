@@ -152,10 +152,11 @@ def beta_sb_mat(dim):
                         mat_type="general")
 
 
-def k_sb_mat(dim):
+def cov2time_sb_mat(dim):
     """
-    This method returns a K matrix (of type sp.Matrix) with entries K_{ i,
-    j}=K_i_j
+    This method returns 2-time covariance matrix C^{n,n+1} (of type 
+    sp.Matrix) with entries C^{n,n+1}_{i,j}=<x^{n}_i, x^{n+1}_j> = 
+    cov2time_i_j.
 
     Parameters
     ----------
@@ -167,7 +168,7 @@ def k_sb_mat(dim):
     sp.Matrix
 
     """
-    return make_sb_mat(dim, "K_%d_%d",
+    return make_sb_mat(dim, "cov2time_%d_%d",
                         mat_type="general")
 
 

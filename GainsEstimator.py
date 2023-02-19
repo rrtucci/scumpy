@@ -34,9 +34,9 @@ class GainsEstimator:
         The covariance matrix calculated from the input dataset
     cum_err: float
         cumulative error, equal to the sum of the absolute values of the
-        errors err_i_j in gains_sb_list. This error is calculated only if
+        errors err_i_j in gains_list. This error is calculated only if
         there are no hidden nodes; it's set to zero otherwise.
-    gains_sb_list: list[sp.Equality]
+    gains_list: list[sp.Equality]
         A list of equations of the form '\alpha_{i|j} = float' if the graph
         has an arrow x_j->x_i, or of the form 'err_{i,j} = float' if that
         arrow is missing from the graph. 'err_i_j' is an error equal to the
@@ -68,8 +68,8 @@ class GainsEstimator:
         df = df[graph.ord_nodes]
         self.cov_mat = df.cov().to_numpy()
         # print("ddfgh", df.cov())
-        self.gains_sb_list = deepcopy(gains_calculator.gains_sb_list)
-        assert self.gains_sb_list is not None
+        self.gains_list = deepcopy(gains_calculator.alp_list)
+        assert self.gains_list is not None
         if hidden_nds is None:
             self.hidden_nds = []
         else:
@@ -78,8 +78,8 @@ class GainsEstimator:
         dim = graph.num_nds
         self.alp_mat_estimate = np.zeros((dim, dim))
         self.cum_err = 0
-        for i in range(len(self.gains_sb_list)):
-            eq = self.gains_sb_list[i]
+        for i in range(len(self.gains_list)):
+            eq = self.gains_list[i]
             str0 = str(eq.args[0])
             if str0[0:3] == "cov":
                 str1 = "err" + str0[3:len(str0)]
@@ -93,7 +93,7 @@ class GainsEstimator:
                     cov_sb = sp.Symbol("cov_" +
                          str(row) + "_" + str(col))
                     eq = eq.subs({cov_sb: self.cov_mat[row, col]})
-            self.gains_sb_list[i] = eq
+            self.gains_list[i] = eq
             if len(self.hidden_nds) == 0:
                 str1 = str(eq.args[1])
                 if str0[0:3] == "alp":
@@ -126,7 +126,7 @@ class GainsEstimator:
 
         """
         full_str = r"\begin{array}{l}" + "\n"
-        for eq in self.gains_sb_list:
+        for eq in self.gains_list:
             str0 = str(eq.args[0])
             alp_eq = True
             if str(eq.args[0])[0:3] == "alp":
