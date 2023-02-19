@@ -1,0 +1,13 @@
+digraph PO {
+c->x,y;
+x->y;
+c->c[color=green, style=dashed];
+x->x[color=green, style=dashed];
+y->y[color=green, style=dashed];
+x->c[color=green, style=dashed];
+c->x[color=green, style=dashed];
+x->y[color=green, style=dashed];
+y->x[color=green, style=dashed];
+c->y[color=green, style=dashed];
+y->c[color=green, style=dashed];
+}
