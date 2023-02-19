@@ -77,7 +77,7 @@ def do_latex_subs(graph, x):
 
         cov2_latex_str = r"\left\langle\underline{" + row_nd + \
                     r"}^n,\underline{" + col_nd + r"}^{n+1}\right\rangle"
-        cov2_sb = "cov2time_" + str(row) + "_" + str(col)
+        cov2_sb = "cov2times_" + str(row) + "_" + str(col)
         x = x.subs(sp.Symbol(cov2_sb),
                    sp.Symbol(cov2_latex_str))
 
@@ -142,21 +142,21 @@ def print_all_mats_after_latex_subs(graph):
     """
     dim = graph.num_nds
 
-    def do_print(x):
+    def sb_mat_print(x):
         x = do_latex_subs(graph, x)
         print("\n", x)
         print(sp.latex(x))
 
-    do_print(sigma_eps_sb_mat(dim))
-    do_print(sigma_nd_sb_mat(dim))
-    do_print(alp_sb_mat(dim))
-    do_print(beta_sb_mat(dim))
-    do_print(cov2time_sb_mat(dim))
-    do_print(cov_sb_mat(dim))
-    do_print(cov_sb_mat(dim, time="one"))
-    do_print(ee_sb_mat(dim))
-    do_print(rho_sb_mat(dim))
-    do_print(jacobian_sb_mat(dim))
+    sb_mat_print(sigma_eps_sb_mat(dim))
+    sb_mat_print(sigma_nd_sb_mat(dim))
+    sb_mat_print(alp_sb_mat(dim))
+    sb_mat_print(beta_sb_mat(dim))
+    sb_mat_print(cov2times_sb_mat(dim))
+    sb_mat_print(cov_sb_mat(dim))
+    sb_mat_print(cov_sb_mat(dim, time="one"))
+    sb_mat_print(ee_sb_mat(dim))
+    sb_mat_print(rho_sb_mat(dim))
+    sb_mat_print(jacobian_sb_mat(dim))
 
 
 def time_superscript(time):
@@ -265,7 +265,7 @@ def print_matrix_sb_entries(mat, mat_name, graph, verbose=False):
     ----------
     mat: sp.Matrix
     mat_name: str
-    graph: Graph
+    graph: Graph or FBackGraph
     verbose: bool
 
     Returns
@@ -289,14 +289,16 @@ def print_matrix_sb_entries(mat, mat_name, graph, verbose=False):
     # the latex in str0
     return sp.Symbol(str0)
 
+
 def print_list_sb(eq_list, graph, verbose=False):
     """
     This method renders in latex, in a jupyter notebook (but not on the
-    console), a list 'eq_list' of sp.Equality Iff verbose=True, it also
+    console), a list 'eq_list' of sp.Equality. Iff verbose=True, it also
     prints the same thing in ASCII, in both the console and jupyter notebook.
 
     Parameters
     ----------
+    graph: Graph or FBackGraph
     eq_list: list[sp.Equality]
     verbose: Bool
 
@@ -325,7 +327,6 @@ def print_list_sb(eq_list, graph, verbose=False):
     # inserted as the last line of a jupyter cell, it renders
     # the latex in str0
     return sp.Symbol(str0)
-
 
 
 if __name__ == "__main__":

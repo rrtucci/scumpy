@@ -3,6 +3,14 @@ from Graph import *
 
 class FBackGraph(Graph):
     """
+    This class is a subclass of 'Graph'. Whereas the parent class is for
+    analyzing DAGs without feedback loops, this class can handle feedback
+    loops.
+
+    If one asks an instance of this class to draw a graph with slices=1,
+    it will draw a single time-slice and DASHED GREEN feedback arrows. If
+    slices=j>1, it will draw j time-slices connected by SOLID GREEN feedback
+    arrows.
 
     Attributes
     ----------
@@ -17,6 +25,15 @@ class FBackGraph(Graph):
     def __init__(self,
                 dot_file_path,
                 amputated_arrows=None):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        dot_file_path: str
+        amputated_arrows: list[(str, str)]
+        """
+
         Graph.__init__(self,
                        dot_file_path,
                        amputated_arrows=amputated_arrows,
@@ -28,6 +45,15 @@ class FBackGraph(Graph):
         self.ord_nodes = list(nx.topological_sort(self.nx_graph))
 
     def get_dag_and_fback_arrows(self):
+        """
+        This method returns a list of internal DAG arrows, and a list of
+        feedback arrows.
+
+        Returns
+        -------
+        list[(str, str)], list[(str, str)]
+
+        """
         dag_arrows = []
         fback_arrows = []
         with open(self.path) as f:
@@ -58,9 +84,9 @@ class FBackGraph(Graph):
         ----------
         jupyter: bool
         slices: int
-            number of slices to draw. slices=1 draws one time-slice with
-            feedback loops as dashed green arrows. slices=2 draws 2
-            time-slices with feedback arrows in solid green.
+            number of slices=1,2,3, ... to draw. slices=1 draws one
+            time-slice with feedback loops as dashed green arrows. slices=2
+            draws 2 time-slices with feedback arrows in solid green.
         point_right: bool
             If point_right=False, time points down (the default
             orientation). If point_right=True, time points right.

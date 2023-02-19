@@ -21,8 +21,8 @@ class FBackCovMatCalculator(CovMatCalculator):
 
     The class calculates/stores a symbolic representation of the covariance
     matrix C^t= <x^t_i, x^t_j> at time t=1, and of the growth matrix G,
-    both expressed as a function of the gains \alpha_{i,j} and the feedback
-    gains \beta{i|j}.
+    both expressed as a function of the dag arrow gains \alpha_{i,j} and the
+    feedback arrow gains \beta{i|j}.
 
     Attributes
     ----------
@@ -94,11 +94,10 @@ class FBackCovMatCalculator(CovMatCalculator):
 
     def print_initial_cov_mat_entries(self, verbose=False):
         """
-        This method renders in latex, in a jupyter notebook (but not in the
-        console), the entries, one at a time, of the initial (time=1)
-        covariance matrix stored in 'self.cov_mat_sb'. Iff verbose=True,
-        it also prints the same thing in ASCII, in both the console and
-        jupyter notebook.
+        This method prints the info in self.cov_mat_sb. It does this by
+        calling CovMatCalculator.print_cov_mat_entries( ) which in turn
+        calls latexify:print_matrix_sb_entries().
+
 
         Parameters
         ----------
@@ -115,10 +114,9 @@ class FBackCovMatCalculator(CovMatCalculator):
 
     def print_growth_mat_entries(self, verbose=False):
         """
-        This method renders in latex, in a jupyter notebook (but not in the
-        console), the entries, one at a time, of the growth matrix
-        stored in 'self.growth_mat_sb'. Iff verbose=True, it also prints the
-        same thing in ASCII, in both the console and jupyter notebook.
+        This method prints the info in self.growth_mat_sb. It does
+        this by calling latexify:print_matrix_sb_entries().
+
 
         Parameters
         ----------

@@ -102,10 +102,9 @@ class CovMatCalculator:
 
     def print_cov_mat_entries(self, verbose=False, time=None):
         """
-        This method renders in latex, in a jupyter notebook (but not in the
-        console), the entries, one at a time, of the covariance matrix
-        stored in 'self.cov_mat_sb'. Iff verbose=True, it also prints the
-        same thing in ASCII, in both the console and jupyter notebook.
+        This method prints the info in self.cov_mat_sb. It does this by
+        calling latexify:print_matrix_sb_entries().
+
 
         Parameters
         ----------
