@@ -153,6 +153,19 @@ names as column labels, and with
 instances of the node values as rows.
 [See this notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
 
+SCuMpy can now handle linear SCM with 
+feedback loops. See these notebooks:
+[notebook1](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/fback-2node-cov-mat.ipynb) 
+and 
+[notebook2](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/fback-2node-gains.ipynb).
+Linear SCM with feedback
+loops can be "unrolled" into a 1 time-slice
+DAG that repeats itself, with adjacent 
+time-slices connected by feedback arrows. This can be used
+to do Causal Inference with time series
+(a.k.a. panel data). 
+
+
 ## Installation Instructions
 See [this blog post](https://qbnets.wordpress.com/2023/01/26/first-version-of-scumpy-released-and-how-to-install-it-for-python-beginners/) of mine.
 
