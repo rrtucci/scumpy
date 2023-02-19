@@ -76,7 +76,7 @@ def do_latex_subs(graph, x):
                    sp.Symbol(beta_latex_str))
 
         cov2_latex_str = r"\left\langle\underline{" + row_nd + \
-                    r"}^n,\underline{" + col_nd + r"}^{n+1}\right\rangle"
+                    r"}^{[n]},\underline{" + col_nd + r"}^{[n+1]}\right\rangle"
         cov2_sb = "cov2times_" + str(row) + "_" + str(col)
         x = x.subs(sp.Symbol(cov2_sb),
                    sp.Symbol(cov2_latex_str))
