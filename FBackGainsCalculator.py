@@ -126,7 +126,7 @@ class FBackGainsCalculator(GainsCalculator):
                 beta_str = "beta_" + str(row) + "_L_" + str(col)
                 unknowns.append(sp.Symbol(beta_str))
             else:
-                cov2times_str = "cov2times_" + str(row) + "_" + str(col)
+                cov2times_str = "cov2times_" + str(col) + "_" + str(row)
                 unknowns.append(sp.Symbol(cov2times_str))
         # the comma does what is called sequence unpacking.
         # draws out item from single item list
