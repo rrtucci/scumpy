@@ -154,9 +154,8 @@ instances of the node values as rows.
 [See this notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
 
 Exciting news. SCuMpy can now do linear SCM
-with feedback loops. See [this blog post](https://qbnets.wordpress.
-com/2023/02/19/scumpy-can-now-do-linear-scm-with-feedback-loops/) of minejup
-for more details. This can be used to 
+with feedback loops. See [this blog post](https://qbnets.wordpress.com/2023/02/19/scumpy-can-now-do-linear-scm-with-feedback-loops/)
+of mine for more details. This can be used to 
 do Causal Inference with time series (a.k.a. panel data).
 
 ## Installation Instructions
