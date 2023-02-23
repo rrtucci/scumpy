@@ -173,10 +173,10 @@ def time_superscript(time):
     return superscript
 
 
-def get_str_for_matrix_entries(mat,
-                               mat_name,
-                               graph,
-                               latex=False):
+def get_matrix_string(mat,
+                      mat_name,
+                      graph,
+                      latex=False):
     """
     If latex=True, this method returns a string which is a well-formed latex
     expression for a latex array with one column. For each i, j, there is
@@ -192,9 +192,9 @@ def get_str_for_matrix_entries(mat,
     j. The lines are not fully latexified and don't have the integers i,
     j replaced by node names.
 
-    'mat_name' can be either "cov", "jacobian", "gains", or anything else.
-    The left hand side mat[i,j] of the equation in each line depends on what
-    we submit for 'mat_name'
+    'mat_name' can be either "cov", "jacobian", "alpha", "beta" or anything
+    else. The left hand side mat[i,j] of the equation in each line depends
+    on what we submit for 'mat_name'
 
     Parameters
     ----------
@@ -216,7 +216,7 @@ def get_str_for_matrix_entries(mat,
         row_nd = graph.ord_nodes[row]
         col_nd = graph.ord_nodes[col]
 
-        if mat_name == "gains" and col >= row:
+        if mat_name == "alpha" and col >= row:
             continue
 
         if mat_name[0:3] == "cov" and latex:
@@ -233,8 +233,11 @@ def get_str_for_matrix_entries(mat,
         elif mat_name == "jacobian" and latex:
             str0 += "\n" + r"\frac{\partial\underline{" + row_nd + \
                    r"}}{\partial\underline{" + col_nd + r"}}="
-        elif mat_name == "gains" and latex:
+        elif mat_name == "alpha" and latex:
             str0 += "\n" + r"\alpha_{\underline{" + row_nd +\
+                r"}| \underline{" + col_nd + r"}}="
+        elif mat_name == "beta" and latex:
+            str0 += "\n" + r"\beta_{\underline{" + row_nd +\
                 r"}| \underline{" + col_nd + r"}}="
         else:
             str0 += "\n" + mat_name + r"_{" + str(row) + r"=\underline{" + \
@@ -254,7 +257,7 @@ def get_str_for_matrix_entries(mat,
     return str0
 
 
-def print_matrix_sb_entries(mat, mat_name, graph, verbose=False):
+def print_matrix_sb(mat, mat_name, graph, verbose=False):
     """
     This method renders in latex, in a jupyter notebook (but not in the
     console), the entries, one at a time, of the symbolic matrix 'mat' named
@@ -276,12 +279,12 @@ def print_matrix_sb_entries(mat, mat_name, graph, verbose=False):
     x = mat
     x_copy = deepcopy(x)
     if verbose:
-        print(get_str_for_matrix_entries(x_copy, mat_name,
-                                         graph, latex=False))
+        print(get_matrix_string(x_copy, mat_name,
+                                graph, latex=False))
 
     x_copy = do_latex_subs(graph, x_copy)
-    str0 = get_str_for_matrix_entries(x_copy, mat_name,
-                                      graph, latex=True)
+    str0 = get_matrix_string(x_copy, mat_name,
+                             graph, latex=True)
     if verbose:
         print(str0)
     # this return prints nothing on the console, but, if

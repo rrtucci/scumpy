@@ -21,8 +21,8 @@ class FBackCovMatCalculator(CovMatCalculator):
 
     The class calculates/stores a symbolic representation of the covariance
     matrix C^t= <x^t_i, x^t_j> at time t=1, and of the growth matrix G,
-    both expressed as a function of the dag arrow gains \alpha_{i,j} and the
-    feedback arrow gains \beta{i|j}.
+    both expressed as a function of the unitime arrow gains \alpha_{i,
+    j} and the feedback arrow gains \beta{i|j}.
 
     Attributes
     ----------
@@ -42,9 +42,9 @@ class FBackCovMatCalculator(CovMatCalculator):
         CovMatCalculator.__init__(self, graph, conditioned_nds=conditioned_nds)
         self.growth_mat_sb = None
 
-    def calculate_cov_mat_sb(self):
+    def calculate_cov_mat(self):
         """
-        This method overrides CovMatCalculator.calculate_cov_mat_sb(self).
+        This method overrides CovMatCalculator.calculate_cov_mat(self).
         It calls that parent method, plus, in addition, it calculates/stores
         self.one_minus_A_inv for future use.
 
@@ -54,12 +54,12 @@ class FBackCovMatCalculator(CovMatCalculator):
 
         """
         dim = self.graph.num_nds
-        CovMatCalculator.calculate_cov_mat_sb(self)
+        CovMatCalculator.calculate_cov_mat(self)
         mat_B = set_to_zero_fback_gains_without_arrows(self.graph,
                                              beta_sb_mat(dim))
         self.growth_mat_sb = sp.simplify(self.one_minus_A_inv_sb*mat_B)
 
-    def print_cov_mat_entries(self, verbose=False, time=None):
+    def print_cov_mat(self, verbose=False, time=None):
         """
         This method prevents the user from using the parent method that it
         overrides.
@@ -74,9 +74,9 @@ class FBackCovMatCalculator(CovMatCalculator):
         None
 
         """
-        print("Do you mean 'print_initial_cov_mat_entries()'?")
+        print("Do you mean 'print_initial_cov_mat()'?")
 
-    def print_jacobian_entries(self, verbose=False):
+    def print_jacobian(self, verbose=False):
         """
         This method prevents the user from using the parent method that it
         overrides.
@@ -92,11 +92,11 @@ class FBackCovMatCalculator(CovMatCalculator):
         """
         print("Don't use this when the graph has feedback loops.")
 
-    def print_initial_cov_mat_entries(self, verbose=False):
+    def print_initial_cov_mat(self, verbose=False):
         """
         This method prints the info in self.cov_mat_sb. It does this by
-        calling CovMatCalculator.print_cov_mat_entries( ) which in turn
-        calls latexify:print_matrix_sb_entries().
+        calling CovMatCalculator.print_cov_mat( ) which in turn
+        calls latexify:print_matrix_sb().
 
 
         Parameters
@@ -108,14 +108,14 @@ class FBackCovMatCalculator(CovMatCalculator):
         sp.Symbol
 
         """
-        return CovMatCalculator.print_cov_mat_entries(self,
+        return CovMatCalculator.print_cov_mat(self,
                                                       verbose=verbose,
                                                       time="one")
 
-    def print_growth_mat_entries(self, verbose=False):
+    def print_growth_mat(self, verbose=False):
         """
         This method prints the info in self.growth_mat_sb. It does
-        this by calling latexify:print_matrix_sb_entries().
+        this by calling latexify:print_matrix_sb().
 
 
         Parameters
@@ -127,7 +127,7 @@ class FBackCovMatCalculator(CovMatCalculator):
         sp.Symbol
 
         """
-        return print_matrix_sb_entries(
+        return print_matrix_sb(
                                 self.growth_mat_sb,
                                 "G",
                                 self.graph,
@@ -139,9 +139,9 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         graph = FBackGraph(path)
         cal = FBackCovMatCalculator(graph)
-        cal.calculate_cov_mat_sb()
-        cal.print_initial_cov_mat_entries(verbose=True)
-        cal.print_growth_mat_entries(verbose=True)
+        cal.calculate_cov_mat()
+        cal.print_initial_cov_mat(verbose=True)
+        cal.print_growth_mat(verbose=True)
 
 
     main()

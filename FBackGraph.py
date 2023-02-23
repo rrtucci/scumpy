@@ -14,12 +14,12 @@ class FBackGraph(Graph):
 
     Attributes
     ----------
-    dag_arrows: list[(str, str)]
-        arrows that form a DAG. Their arrow gains are represented by \beta_{
-        i|j}.
+    unitime_arrows: list[(str, str)]
+        arrows whose orgin and target occur at the same time. Their arrow
+        gains are represented by \arrow_{ i|j}.
     fback_arrows: list[(str, str)]
         feedback arrows that connect 2 adjacent time-slices. Their arrow
-        gains are represented by \alpha_{i|j}.
+        gains are represented by \beta_{i|j}.
     """
 
     def __init__(self,
@@ -38,23 +38,24 @@ class FBackGraph(Graph):
                        dot_file_path,
                        amputated_arrows=amputated_arrows,
                        is_DAG=False)
-        self.dag_arrows, self.fback_arrows = self.get_dag_and_fback_arrows()
+        self.unitime_arrows, self.fback_arrows =\
+            self.get_unitime_and_fback_arrows()
         self.nx_graph = nx.DiGraph()
-        self.nx_graph.add_edges_from(self.dag_arrows)
+        self.nx_graph.add_edges_from(self.unitime_arrows)
         # this bombs if not DAG
         self.ord_nodes = list(nx.topological_sort(self.nx_graph))
 
-    def get_dag_and_fback_arrows(self):
+    def get_unitime_and_fback_arrows(self):
         """
-        This method returns a list of internal DAG arrows, and a list of
-        feedback arrows.
+        This method returns a list of unitime arrows, and a list of feedback 
+        arrows.
 
         Returns
         -------
         list[(str, str)], list[(str, str)]
 
         """
-        dag_arrows = []
+        unitime_arrows = []
         fback_arrows = []
         with open(self.path) as f:
             in_lines = f.readlines()
@@ -70,9 +71,9 @@ class FBackGraph(Graph):
                         if green_arrow:
                             fback_arrows.append((pa, ch))
                         else:
-                            dag_arrows.append((pa, ch))
+                            unitime_arrows.append((pa, ch))
         # print("ccvbb---------------", fback_arrows)
-        return dag_arrows, fback_arrows
+        return unitime_arrows, fback_arrows
 
     def draw(self, jupyter=False, slices=1, point_right=False):
         """
@@ -147,7 +148,7 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         g = FBackGraph(path)
         print('fback_arrows:', g.fback_arrows)
-        print('dag_arrows:', g.dag_arrows)
+        print('unitime_arrows:', g.unitime_arrows)
         if draw:
             g.draw(jupyter=False, slices=1)
             g.draw(jupyter=False, slices=3, point_right=True)

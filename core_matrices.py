@@ -265,7 +265,7 @@ if __name__ == "__main__":
         print(sigma_nd_sb_mat(dim))
         print(alp_sb_mat(dim))
         print(beta_sb_mat(dim))
-        print(k_sb_mat(dim))
+        print(ee_sb_mat(dim))
         print(cov_sb_mat(dim, time=None))
         print(cov_sb_mat(dim, time="one"))
         print(ee_sb_mat(dim))

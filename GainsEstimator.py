@@ -22,35 +22,40 @@ class GainsEstimator:
     as default value. Columns of the input dataset corresponding to hidden
     nodes will be ignored. Hence, these column entries can be any number.
     Correlations <x_i, x_j> where x_i or x_j is a hidden node will be
-    expressed symbolically; otherwise, they will be expressed numerically.
+    expressed symbolically (sb); otherwise, they will be expressed
+    numerically (nu).
 
     Attributes
     ----------
+    alp_list: list[sp.Equality]
+        A list of equations of the form '\alpha_{i|j} = float' if the graph
+        has an arrow x_j->x_i, or of the form 'err_{i,j} = float' if that
+        arrow is missing from the graph. 'err_i_j' is an error metric equal
+        to the difference between both sides of an equation that constrains
+        the covariances. Exception: if there are hidden nodes, the right
+        hand sides of these equations may contain symbolic expressions
+        pertaining to covariances alluding to hidden nodes.
     alp_mat_estimate: np.array of shape=(dim, dim), where dim=number of nodes
         estimate of the alpha matrix. Contains estimates for the gains
         \alpha_{i|j}. This array is only calculated if there are no hidden
         nodes; it's set to zero otherwise.
-    cov_mat: np.array of shape=(dim, dim)
-        The covariance matrix calculated from the input dataset
+    cov_mat: sp.Matrix
+        Let cov_mat_nu be the numpy, numeric (nu) covariance matrix
+        calculated from the input dataset. cov_mat is a sp.Matrix of the
+        same dimension as cov_mat_nu that coincides with cov_mat_nu on those
+        entries that do not have a hidden node as row or column index. Those
+        entries of cov_mat that do have hidden nodes in their indices,
+        are symbolic (sb).
     cum_err: float
         cumulative error, equal to the sum of the absolute values of the
         errors err_i_j in gains_list. This error is calculated only if
         there are no hidden nodes; it's set to zero otherwise.
-    gains_list: list[sp.Equality]
-        A list of equations of the form '\alpha_{i|j} = float' if the graph
-        has an arrow x_j->x_i, or of the form 'err_{i,j} = float' if that
-        arrow is missing from the graph. 'err_i_j' is an error equal to the
-        difference between both sides of an equation that constrains the
-        covariances. Exception: if there are hidden nodes, the right hand
-        sides of these equations may contain symbolic expressions pertaining
-        to covariances alluding to hidden nodes.
     graph: Graph
     hidden_nds: list[str] or None
         This is a list of the nodes that are hidden.
     """
 
-    def __init__(self, graph, path, gains_calculator,
-                 hidden_nds=None):
+    def __init__(self, graph, path, symbolic_solve=False, hidden_nds=None):
         """
 
         Parameters
@@ -58,42 +63,99 @@ class GainsEstimator:
         graph: Graph
         path: str
             path to input file containing dataset
-        gains_calculator: GainsCalculator
-        hidden_nds: list[str] or None
+        symbolic_solve: bool
+            symbolic_solve=True if linsolve() is called using a fully
+            symbolic covariance matrix, and then the numeric values of the
+            covariance matrix are substituted in the solution.
+            symbolic_solve=False if linsolve() is called using a hybrid
+            symbolic covariance matrix, partly symbolic, partly numeric.
+        hidden_nds: None or list[str]
         """
         self.graph = graph
         df = pd.read_csv(path)
         assert set(df.columns) == set(graph.ord_nodes)
         # put columns in same order as graph.ord_nodes
         df = df[graph.ord_nodes]
-        self.cov_mat = df.cov().to_numpy()
-        # print("ddfgh", df.cov())
-        self.gains_list = deepcopy(gains_calculator.alp_list)
-        assert self.gains_list is not None
         if hidden_nds is None:
             self.hidden_nds = []
         else:
             assert set(hidden_nds).issubset(graph.ord_nodes)
             self.hidden_nds = hidden_nds
+        self.cov_mat = None
+        self.set_cov_mat(df)
         dim = graph.num_nds
         self.alp_mat_estimate = np.zeros((dim, dim))
         self.cum_err = 0
-        for i in range(len(self.gains_list)):
-            eq = self.gains_list[i]
+        self.alp_list = None
+        self.set_alp_list(symbolic_solve)
+
+    def set_cov_mat(self, df):
+        """
+        This method sets the value of the sp.Matrix called self.cov_mat.
+        Entries of that matrix that have hidden nodes in their indices,
+        are symbolic. All other entries are numeric.
+
+        Parameters
+        ----------
+        df: pd.Dataframe
+
+        Returns
+        -------
+        None
+
+        """
+        cov_mat_nu = df.cov().to_numpy()
+        dim = self.graph.num_nds
+        self.cov_mat = cov_sb_mat(dim, time=None)
+        for row, col in product(range(dim), range(dim)):
+            row_nd = self.graph.ord_nodes[row]
+            col_nd = self.graph.ord_nodes[col]
+            symbolic = (row_nd in self.hidden_nds) or\
+                       col_nd in self.hidden_nds
+            if not symbolic:
+                self.cov_mat[row, col] = cov_mat_nu[row, col]
+
+    def set_alp_list(self, symbolic_solve):
+        """
+        This method sets the value of self.alp_list.
+
+        Parameters
+        ----------
+        symbolic_solve: bool
+
+        Returns
+        -------
+        None
+
+        """
+        dim = self.graph.num_nds
+        calc = GainsCalculator(self.graph)
+        if not symbolic_solve:
+            cov_mat_in = self.cov_mat
+        else:
+            cov_mat_in = cov_sb_mat(dim, time=None)
+
+        calc.calculate_gains(cov_mat_in=self.cov_mat,
+                                 mat_K=None, time=None)
+        self.alp_list = calc.alp_list
+        assert self.alp_list is not None
+        for i in range(len(self.alp_list)):
+            eq = self.alp_list[i]
             str0 = str(eq.args[0])
+
             if str0[0:3] == "cov":
                 str1 = "err" + str0[3:len(str0)]
                 eq = sp.Eq(sp.Symbol(str1), eq.args[0]-eq.args[1])
             for row, col in product(range(dim), range(dim)):
-                row_nd = graph.ord_nodes[row]
-                col_nd = graph.ord_nodes[col]
+                row_nd = self.graph.ord_nodes[row]
+                col_nd = self.graph.ord_nodes[col]
                 symbolic = (row_nd in self.hidden_nds) or\
                           (col_nd in self.hidden_nds)
                 if row <= col and not symbolic:
                     cov_sb = sp.Symbol("cov_" +
                          str(row) + "_" + str(col))
                     eq = eq.subs({cov_sb: self.cov_mat[row, col]})
-            self.gains_list[i] = eq
+            self.alp_list[i] = eq
             if len(self.hidden_nds) == 0:
                 str1 = str(eq.args[1])
                 if str0[0:3] == "alp":
@@ -103,7 +165,9 @@ class GainsEstimator:
                 else:
                     self.cum_err += abs(float(str1))
 
-    def print_gains(self, true_alp_mat=None, verbose=False):
+
+    def print_gains(self, true_alp_mat=None, verbose=False,
+                    switch_alp2beta=False):
         """
         This method renders in latex, in a jupyter notebook (but not on the
         console), the estimates of the gains \alp_{i|j} if arrow $x_j->x_i$
@@ -119,6 +183,9 @@ class GainsEstimator:
             known. One would be known if the input dataset was generated by
             RandomDataMaker.
         verbose: bool
+        switch_alp2beta: bool
+            This replaces the letter alpha (for unitime gains) by beta (for
+            feedback gains).
 
         Returns
         -------
@@ -126,10 +193,16 @@ class GainsEstimator:
 
         """
         full_str = r"\begin{array}{l}" + "\n"
-        for eq in self.gains_list:
+        if not switch_alp2beta:
+            mat_name = "alp"
+            g_letter = "alpha"
+        else:
+            mat_name = "beta"
+            g_letter = "beta"
+        for eq in self.alp_list:
             str0 = str(eq.args[0])
             alp_eq = True
-            if str(eq.args[0])[0:3] == "alp":
+            if str(eq.args[0])[0:3] == mat_name:
                 row_str, col_str = str0[4:len(str0)].split("_L_")
             else:
                 alp_eq = False
@@ -138,7 +211,7 @@ class GainsEstimator:
             row_nd = self.graph.ord_nodes[row]
             col_nd = self.graph.ord_nodes[col]
             if alp_eq:
-                sb_str0 = r"\alpha_{\underline{" + row_nd + "}|"
+                sb_str0 = "\\" + g_letter + r"_{\underline{" + row_nd+ "}|"
             else:
                 sb_str0 = r"err_{\underline{" + row_nd + "},"
             sb_str0 += r"\underline{" + col_nd + r"}}"
@@ -184,13 +257,15 @@ if __name__ == "__main__":
         num_rows = 100
         data_path = "test_data.csv"
         dmaker.generate_dataset_csv(num_rows, data_path)
-        calc = GainsCalculator(graph)
-        calc.calculate_gains_sb()
-        gest = GainsEstimator(graph, data_path, calc)
-        gest.print_gains(true_alp_mat=dmaker.alp_mat, verbose=True)
-        print("alp_mat_estimate=\n", gest.alp_mat_estimate)
-        print("cum_err=", gest.cum_err)
-        gest = GainsEstimator(graph, data_path, calc, hidden_nds=["s"])
-        gest.print_gains(true_alp_mat=dmaker.alp_mat, verbose=True)
+        for symbolic_solve in [False, True]:
+            gest = GainsEstimator(graph, data_path,
+                                  symbolic_solve=symbolic_solve)
+            gest.print_gains(true_alp_mat=dmaker.alp_mat, verbose=True)
+            print("alp_mat_estimate=\n", gest.alp_mat_estimate)
+            print("cum_err=", gest.cum_err)
+            gest = GainsEstimator(graph, data_path,
+                                  symbolic_solve=symbolic_solve,
+                                  hidden_nds=["s"])
+            gest.print_gains(true_alp_mat=dmaker.alp_mat, verbose=True)
 
     main()

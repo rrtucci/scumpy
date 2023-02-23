@@ -48,7 +48,7 @@ class GainsCalculator:
         self.alp_list = None
         self.alp_mat = None
 
-    def calculate_gains_sb(self, mat_K=None, time=None):
+    def calculate_gains(self, cov_mat_in=None, mat_K=None, time=None):
         """
         This method calculates and stores in 'self.alp_list', a list
         of symbolic equations. Each equation gives either the value of a
@@ -72,22 +72,34 @@ class GainsCalculator:
                                              alp_sb_mat(dim))
         self.alp_list = []
         self.alp_mat = sp.zeros(dim)
+        cov_mat = cov_sb_mat(dim, time=time)
+        if cov_mat_in is not None:
+            for row, col in product(range(dim), range(dim)):
+                row_nd = self.graph.ord_nodes[row]
+                col_nd = self.graph.ord_nodes[col]
+                # some entries of cov_mat_in
+                # may be symbols due to hidden nodes
+                if cov_mat_in[row, col].is_number:
+                    if (col_nd, row_nd) in self.graph.arrows:
+                        cov_mat[row, col] = cov_mat_in[row, col]
+
+
         for row in range(1, dim):
-            # cov_mat = cov_sb_mat(dim)
             # cov_prod = cov_mat[0:row, 0:row].inv()*cov_mat[0:row, row]
             # cov_prod = sp.simplify(cov_prod)
             # A[row, 0:row] = cov_prod.T
 
             # sympy can't solve overdetermined system
             # of linear equations so fix it this way
-            cov_mat = cov_sb_mat(dim, time=time)
             eqs_mat = cov_mat[0:row, 0:row] * \
                      A[row, 0:row].T - \
                       (cov_mat[0:row, row] - mat_K[0:row, row])
             eqs = [eqs_mat[i, 0] for i in range(row)]
             unknowns = []
             for i in range(row):
-                if str(A[row, i]) == '0':
+                row_nd = self.graph.ord_nodes[row]
+                i_nd = self.graph.ord_nodes[i]
+                if (i_nd, row_nd) not in self.graph.arrows:
                     # we only use cov_mat[min(i,j), max(i,j)]
                     # because cov_mat[i, j] is symmetric.
                     # Since this system is overdetermined,
@@ -110,11 +122,9 @@ class GainsCalculator:
 
     def print_gains(self, verbose=False):
         """
-        This method renders in latex, in a jupyter notebook (but not on the
-        console), an equation for the value of each gain \alpha_{i|j} of
-        arrow x_j->x_i, or, if that gain is zero, a constraint for <x_i,
-        x_j>. Iff verbose=True, it also prints the same thing in ASCII,
-        in both the console and jupyter notebook.
+        This method prints the info in self.alp_list. It does this by
+        calling latexify:print_list_sb()
+
 
         Parameters
         ----------
@@ -141,7 +151,7 @@ if __name__ == "__main__":
         # path = 'dot_atlas/good_bad_trols_G1.dot'
         graph = Graph(path)
         cal = GainsCalculator(graph)
-        cal.calculate_gains_sb()
+        cal.calculate_gains()
         cal.print_gains(verbose=True)
         print(cal.alp_mat)
 

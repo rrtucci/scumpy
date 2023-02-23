@@ -54,7 +54,7 @@ class CovMatCalculator:
         self.jacobian_sb = None
         self.one_minus_A_inv_sb = None
 
-    def calculate_cov_mat_sb(self):
+    def calculate_cov_mat(self):
         """
         This method calculates and stores in 'self.cov_mat_sb', a symbolic
         expression for each of the entries C_{i,j} =<x_i, x_j>  of the
@@ -100,10 +100,10 @@ class CovMatCalculator:
         self.cov_mat_sb = cov_mat
         self.jacobian_sb = jacobian
 
-    def print_cov_mat_entries(self, verbose=False, time=None):
+    def print_cov_mat(self, verbose=False, time=None):
         """
         This method prints the info in self.cov_mat_sb. It does this by
-        calling latexify:print_matrix_sb_entries().
+        calling latexify:print_matrix_sb().
 
 
         Parameters
@@ -121,13 +121,13 @@ class CovMatCalculator:
             mat_str = "cov"
         else:
             mat_str = "cov_" + time
-        return print_matrix_sb_entries(
+        return print_matrix_sb(
                                 self.cov_mat_sb,
                                 mat_str,
                                 self.graph,
                                 verbose=verbose)
 
-    def print_jacobian_entries(self, verbose=False):
+    def print_jacobian(self, verbose=False):
         """
         This method renders in latex, in a jupyter notebook (but not in the
         console), the entries, one at a time, of the Jacobian matrix J. Iff
@@ -143,7 +143,7 @@ class CovMatCalculator:
         sp.Symbol
 
         """
-        return print_matrix_sb_entries(
+        return print_matrix_sb(
                                 self.jacobian_sb,
                                 "jacobian",
                                 self.graph,
@@ -169,9 +169,9 @@ if __name__ == "__main__":
         graph = Graph(path)
         cal = CovMatCalculator(graph,
                                conditioned_nds=conditioned_nds)
-        cal.calculate_cov_mat_sb()
-        cal.print_cov_mat_entries(verbose=True)
-        cal.print_jacobian_entries(verbose=True)
+        cal.calculate_cov_mat()
+        cal.print_cov_mat(verbose=True)
+        cal.print_jacobian(verbose=True)
 
 
     main()

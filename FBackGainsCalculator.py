@@ -11,7 +11,7 @@ class FBackGainsCalculator(GainsCalculator):
     chapter entitled "LDEN diagrams with feedback loops". In that chapter,
     I consider, for a graph with feedback loops,
 
-    the matrix A with entries A_{i,j}=\alp_{ i|j}= DAG arrow gains
+    the matrix A with entries A_{i,j}=\alp_{ i|j}= unitime arrow gains
 
     the matrix B with entries B_{i,j}=\beta_{i|j}= feedback arrow gains
 
@@ -63,7 +63,7 @@ class FBackGainsCalculator(GainsCalculator):
         self.beta_list = None
         self.beta_mat = None
 
-    def calculate_gains_sb(self, mat_K=None, time=None):
+    def calculate_gains(self, mat_K=None, time=None):
         """
         This method overrides the parent method. It calls the parent method
         within itself. It fills in
@@ -89,13 +89,13 @@ class FBackGainsCalculator(GainsCalculator):
                                              beta_sb_mat(dim))
         mat_K = mat_B*cov2times_sb_mat(dim)
 
-        GainsCalculator.calculate_gains_sb(self,
-                                           mat_K,
+        GainsCalculator.calculate_gains(self,
+                                           mat_K=mat_K,
                                            time="n_plus_one")
         self.alp_mat_with_betas = deepcopy(self.alp_mat)
-        self.alp_mat = None
-
         self.alp_list_with_betas = deepcopy(self.alp_list)
+
+        self.alp_mat = None
         self.alp_list = None
 
         self.calculate_betas()
@@ -243,7 +243,7 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         graph = FBackGraph(path)
         cal = FBackGainsCalculator(graph)
-        cal.calculate_gains_sb()
+        cal.calculate_gains()
         cal.print_alp_list_with_betas(verbose=True)
         cal.print_beta_list(verbose=True)
         cal.print_alp_list(verbose=True)
