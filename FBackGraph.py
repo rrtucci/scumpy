@@ -14,12 +14,13 @@ class FBackGraph(Graph):
 
     Attributes
     ----------
-    unitime_arrows: list[(str, str)]
-        arrows whose orgin and target occur at the same time. Their arrow
-        gains are represented by \arrow_{ i|j}.
     fback_arrows: list[(str, str)]
         feedback arrows that connect 2 adjacent time-slices. Their arrow
         gains are represented by \beta_{i|j}.
+    unitime_arrows: list[(str, str)]
+        arrows whose orgin and target occur at the same time. Their arrow
+        gains are represented by \arrow_{ i|j}.
+
     """
 
     def __init__(self,
