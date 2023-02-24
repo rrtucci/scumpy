@@ -120,7 +120,7 @@ class FBackRandomDataMaker(RandomDataMaker):
                     j = self.graph.node_position(pa_nd)
                     nd_values[i] += self.alp_mat[i, j]*nd_values[j]
                 nd_values[i] += eps_values[i]
-                if n > 2:
+                if n >= 2:
                     for j in range(dim):
                         nd_values[i] += self.beta_mat[i, j] *\
                                         n_to_nd_values[n-1][j]
