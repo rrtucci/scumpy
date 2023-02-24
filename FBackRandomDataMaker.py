@@ -66,6 +66,31 @@ class FBackRandomDataMaker(RandomDataMaker):
             assert alp_mat.shape == (dim, dim)
             self.alp_mat = alp_mat
 
+    @staticmethod
+    def get_columns(n_max, graph):
+        """
+        This method returns the preferred list of column labels. First,
+        self.graph.ordered_nds with "[1]" appended to each node name. Next,
+        the same thing with "[2]" instead of "[1]". And so on.
+
+        Parameters
+        ----------
+        n_max: int
+        graph: FBackGraph
+
+        Returns
+        -------
+        list[str]
+
+        """
+        dim = graph.ord_nodes
+        columns = []
+        for n in range(1, n_max + 1):
+            x = [graph.ord_nodes[i] + "[" + str(n) + "]" for i in
+                 range(dim)]
+            columns += x
+        return columns
+
     def generate_random_gains(self, alp_bound):
         """
         In this internal method, the unitime gains \alpha_{i|j} and the
@@ -149,11 +174,7 @@ class FBackRandomDataMaker(RandomDataMaker):
 
         """
         dim = self.graph.num_nds
-        columns = []
-        for n in range(1, self.n_max + 1):
-            x = [self.graph.ord_nodes[i] + "[" + str(n) + "]" for i in
-                 range(dim)]
-            columns += x
+        columns = FBackRandomDataMaker.get_columns(self.n_max, self.graph)
         df = pd.DataFrame(columns=columns)
         for row in range(num_rows):
             n_to_nd_values = self.generate_one_random_instance()

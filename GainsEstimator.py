@@ -55,7 +55,7 @@ class GainsEstimator:
         This is a list of the nodes that are hidden.
     """
 
-    def __init__(self, graph, path, symbolic_solve=False, hidden_nds=None):
+    def __init__(self, graph, path, solve_symbolically=False, hidden_nds=None):
         """
 
         Parameters
@@ -63,19 +63,21 @@ class GainsEstimator:
         graph: Graph
         path: str
             path to input file containing dataset
-        symbolic_solve: bool
-            symbolic_solve=True if linsolve() is called using a fully
+        solve_symbolically: bool
+            solve_symbolically=True if linsolve() is called using a fully
             symbolic covariance matrix, and then the numeric values of the
             covariance matrix are substituted in the solution.
-            symbolic_solve=False if linsolve() is called using a hybrid
-            symbolic covariance matrix, partly symbolic, partly numeric.
+            solve_symbolically=False if linsolve() is called using a hybrid
+            covariance matrix, partly symbolic, partly numeric.
         hidden_nds: None or list[str]
         """
         self.graph = graph
-        df = pd.read_csv(path)
-        assert set(df.columns) == set(graph.ord_nodes)
-        # put columns in same order as graph.ord_nodes
-        df = df[graph.ord_nodes]
+        df = None
+        if path != "skip_df":
+            df = pd.read_csv(path)
+            assert set(df.columns) == set(graph.ord_nodes)
+            # put columns in same order as graph.ord_nodes
+            df = df[graph.ord_nodes]
         if hidden_nds is None:
             self.hidden_nds = []
         else:
@@ -87,7 +89,7 @@ class GainsEstimator:
         self.alp_mat_estimate = np.zeros((dim, dim))
         self.cum_err = 0
         self.alp_list = None
-        self.set_alp_list(symbolic_solve)
+        self.set_alp_list(solve_symbolically)
 
     def set_cov_mat(self, df):
         """
@@ -115,13 +117,13 @@ class GainsEstimator:
             if not symbolic:
                 self.cov_mat[row, col] = cov_mat_nu[row, col]
 
-    def set_alp_list(self, symbolic_solve):
+    def set_alp_list(self, solve_symbolically):
         """
         This method sets the value of self.alp_list.
 
         Parameters
         ----------
-        symbolic_solve: bool
+        solve_symbolically: bool
 
         Returns
         -------
@@ -130,7 +132,7 @@ class GainsEstimator:
         """
         dim = self.graph.num_nds
         calc = GainsCalculator(self.graph)
-        if not symbolic_solve:
+        if not solve_symbolically:
             cov_mat_in = cov_sb_mat(dim, time=None)
         else:
             cov_mat_in = self.cov_mat
@@ -256,14 +258,14 @@ if __name__ == "__main__":
         num_rows = 100
         data_path = "test_data.csv"
         dmaker.generate_dataset_csv(num_rows, data_path)
-        for symbolic_solve in [False, True]:
+        for solve_symbolically in [False, True]:
             gest = GainsEstimator(graph, data_path,
-                                  symbolic_solve=symbolic_solve)
+                                  solve_symbolically=solve_symbolically)
             gest.print_gains(true_alp_mat=dmaker.alp_mat, verbose=True)
             print("alp_mat_estimate=\n", gest.alp_mat_estimate)
             print("cum_err=", gest.cum_err)
             gest = GainsEstimator(graph, data_path,
-                                  symbolic_solve=symbolic_solve,
+                                  solve_symbolically=solve_symbolically,
                                   hidden_nds=["s"])
             gest.print_gains(true_alp_mat=dmaker.alp_mat, verbose=True)
 
