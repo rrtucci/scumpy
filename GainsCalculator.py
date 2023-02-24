@@ -56,8 +56,10 @@ class GainsCalculator:
 
         Parameters
         ----------
+        cov_mat_in: sp.Matrix
         mat_K: sp.Matrix
             K matrix used only for linear SCM with feedback loops
+        time: None or int
 
         Returns
         -------
@@ -82,7 +84,6 @@ class GainsCalculator:
                 if cov_mat_in[row, col].is_number:
                     if (col_nd, row_nd) in self.graph.arrows:
                         cov_mat[row, col] = cov_mat_in[row, col]
-
 
         for row in range(1, dim):
             # cov_prod = cov_mat[0:row, 0:row].inv()*cov_mat[0:row, row]
@@ -118,7 +119,6 @@ class GainsCalculator:
                     # print("kkkll", left_str)
                     row_str, col_str = left_str[4:].split("_L_")
                     self.alp_mat[int(row_str), int(col_str)] = sol_list[i]
-
 
     def print_gains(self, verbose=False):
         """

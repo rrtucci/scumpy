@@ -6,19 +6,20 @@ import pandas as pd
 
 class RandomDataMaker:
     """
-    This purpose of this class is to generate a  synthetic dataset with the
-    names of the nodes graph.ord_nodes as column labels, and instances of
-    node values in each row. To do this generation, we require 'alp_mat',
-    'graph' and 'sigma_eps'.
+    This purpose of this class is to generate, for a linear SCM WITHOUT
+    feedback loops, a synthetic dataset with: (1) column labels= the names
+    of the nodes graph.ord_nodes, (2)instances of node values in each row.
+    To generate this, we require 'alp_mat', 'graph' and 'sigma_eps'.
+
 
     Attributes
     ----------
-    alp_mat: np.array of shape=(dim,dim), here dim is number of nodes
-        the matrix of alphas (i.e., gains \alpha_{i|j})
+    alp_mat: np.array of shape=(dim,dim), where dim = number of nodes.
+        The matrix of alphas (i.e., gains \alpha_{i|j})
     graph: Graph
         information about DAG structure
     sigma_eps: list[float]
-        the standard deviations of \epsilon_j, which is the externat root
+        the standard deviations of \epsilon_j, which is the external root
         node pointing into x_j. The entries in this list are ordered
         according to 'graph.ord_nodes'
 
@@ -29,8 +30,8 @@ class RandomDataMaker:
         Constructor.
 
         In this constructor, an alp_mat not equal to 'None' can be
-        submitted, or, if alp_mat == None, an alp_mat will be generated at
-        random. If generated at random, each non-zero gain \alpha_{ i|j} is
+        submitted, or, if alp_mat == None, an alp_mat will be generated
+        randomly. If generated randomly, each non-zero gain \alpha_{ i|j} is
         chosen from the uniform distribution over the interval [ -alp_bound,
         alp_bound]
 
@@ -54,8 +55,8 @@ class RandomDataMaker:
 
     def generate_random_gains(self, alp_bound):
         """
-        In this internal method, the gains \alpha_{i|j} are generated at
-        random. Each non-zero \alpha_{ i|j} is chosen from the uniform
+        In this internal method, the gains \alpha_{i|j} are generated
+        randomly. Each non-zero \alpha_{ i|j} is chosen from the uniform
         distribution over the interval [-alp_bound, alp_bound].
 
         Parameters
@@ -80,8 +81,8 @@ class RandomDataMaker:
 
     def generate_one_random_instance(self):
         """
-        This internal method returns an array, chosen at random, for the
-        values of the nodes 'graph.ord_nodes'.
+        This internal method returns an array with random values for the
+        nodes 'graph.ord_nodes'.
 
         Returns
         -------
@@ -104,9 +105,9 @@ class RandomDataMaker:
     def generate_dataset_csv(self, num_rows, path):
         """
         This method writes a file which contains a dataset in the
-        comma-separated-values (csv) format. The dataset has the node names
-        graph.ord_nodes as column labels, and instances of node values in
-        each row.
+        comma-separated-values (csv) format. The dataset has (1) column
+        labels= the names of the nodes graph.ord_nodes, (2)instances of node
+        values in each row.
 
         Parameters
         ----------

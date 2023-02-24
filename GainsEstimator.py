@@ -131,11 +131,11 @@ class GainsEstimator:
         dim = self.graph.num_nds
         calc = GainsCalculator(self.graph)
         if not symbolic_solve:
-            cov_mat_in = self.cov_mat
-        else:
             cov_mat_in = cov_sb_mat(dim, time=None)
+        else:
+            cov_mat_in = self.cov_mat
 
-        calc.calculate_gains(cov_mat_in=self.cov_mat,
+        calc.calculate_gains(cov_mat_in=cov_mat_in,
                                  mat_K=None, time=None)
         self.alp_list = calc.alp_list
         assert self.alp_list is not None
@@ -164,7 +164,6 @@ class GainsEstimator:
                     self.alp_mat_estimate[row, col] = float(str1)
                 else:
                     self.cum_err += abs(float(str1))
-
 
     def print_gains(self, true_alp_mat=None, verbose=False,
                     switch_alp2beta=False):
@@ -211,7 +210,7 @@ class GainsEstimator:
             row_nd = self.graph.ord_nodes[row]
             col_nd = self.graph.ord_nodes[col]
             if alp_eq:
-                sb_str0 = "\\" + g_letter + r"_{\underline{" + row_nd+ "}|"
+                sb_str0 = "\\" + g_letter + r"_{\underline{" + row_nd + "}|"
             else:
                 sb_str0 = r"err_{\underline{" + row_nd + "},"
             sb_str0 += r"\underline{" + col_nd + r"}}"
