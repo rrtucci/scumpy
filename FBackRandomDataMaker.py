@@ -94,7 +94,7 @@ class FBackRandomDataMaker(RandomDataMaker):
             if row > col and (col_nd, row_nd) in self.graph.unitime_arrows:
                 alp_mat[row, col] = np.random.uniform(-alp_bound, alp_bound)
             if (col_nd, row_nd) in self.graph.fback_arrows:
-                alp_mat[row, col] = np.random.uniform(-alp_bound, alp_bound)
+                beta_mat[row, col] = np.random.uniform(-alp_bound, alp_bound)
         return alp_mat, beta_mat
 
     def generate_one_random_instance(self):
@@ -178,5 +178,7 @@ if __name__ == "__main__":
         num_rows = 5
         dmaker.generate_dataset_csv(num_rows, data_path)
         print(pd.read_csv(data_path))
+        print(dmaker.alp_mat)
+        print(dmaker.beta_mat)
 
     main(False)
