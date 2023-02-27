@@ -53,7 +53,9 @@ class RandomDataMaker:
             assert alpha_mat.shape == (dim, dim)
             self.alpha_mat = alpha_mat
 
-    def generate_random_gains(self, alpha_bound):
+    @staticmethod
+    def generate_random_gains(graph, alpha_bound=1.0):
+
         """
         In this internal method, the gains \alpha_{i|j} are generated
         randomly. Each non-zero \alpha_{ i|j} is chosen from the uniform
@@ -70,12 +72,12 @@ class RandomDataMaker:
 
         """
         assert alpha_bound > 0
-        dim = self.graph.num_nds
+        dim = graph.num_nds
         alpha_mat = np.zeros((dim, dim))
         for row, col in product(range(dim), range(dim)):
-            row_nd = self.graph.ord_nodes[row]
-            col_nd = self.graph.ord_nodes[col]
-            if row > col and (col_nd, row_nd) in self.graph.arrows:
+            row_nd = graph.ord_nodes[row]
+            col_nd = graph.ord_nodes[col]
+            if row > col and (col_nd, row_nd) in graph.arrows:
                 alpha_mat[row, col] = np.random.uniform(-alpha_bound, alpha_bound)
         return alpha_mat
 
@@ -93,12 +95,12 @@ class RandomDataMaker:
         dim = self.graph.num_nds
         eps_values = [np.random.normal(loc=1.0, scale=self.sigma_eps[i])
                       for i in range(dim)]
-        nd_values = np.zeros((dim,))
-        for i, nd in enumerate(self.graph.ord_nodes):
-            for pa_nd in self.graph.nx_graph.predecessors(nd):
-                j = self.graph.node_position(pa_nd)
-                nd_values[i] += self.alpha_mat[i, j]*nd_values[j]
+        nd_values = [0]*dim
+        for i in range(dim):
             nd_values[i] += eps_values[i]
+            for j in range(dim):
+                if i > j:
+                    nd_values[i] += self.alpha_mat[i, j]*nd_values[j]
 
         return nd_values
 

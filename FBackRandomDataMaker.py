@@ -58,7 +58,9 @@ class FBackRandomDataMaker(RandomDataMaker):
         RandomDataMaker.__init__(self, graph, sig_eps,
                                  alpha_mat=np.zeros((dim, dim)),
                                  alpha_bound=alpha_bound)
-        self.alpha_mat, self.beta_mat = self.generate_random_gains(alpha_bound)
+        self.alpha_mat, self.beta_mat = \
+                FBackRandomDataMaker.generate_random_gains(
+                    graph, alpha_bound)
         if beta_mat is not None:
             assert beta_mat.shape == (dim, dim)
             self.beta_mat = beta_mat
@@ -91,7 +93,8 @@ class FBackRandomDataMaker(RandomDataMaker):
             columns += x
         return columns
 
-    def generate_random_gains(self, alpha_bound):
+    @staticmethod
+    def generate_random_gains(graph, alpha_bound=1.0):
         """
         In this internal method, the inslice gains \alpha_{i|j} and the
         feedback gains \beta_{i|j} are generated randomly. Each non-zero
@@ -110,15 +113,15 @@ class FBackRandomDataMaker(RandomDataMaker):
 
         """
         assert alpha_bound > 0
-        dim = self.graph.num_nds
+        dim = graph.num_nds
         alpha_mat = np.zeros((dim, dim))
         beta_mat = np.zeros((dim, dim))
         for row, col in product(range(dim), range(dim)):
-            row_nd = self.graph.ord_nodes[row]
-            col_nd = self.graph.ord_nodes[col]
-            if row > col and (col_nd, row_nd) in self.graph.inslice_arrows:
+            row_nd = graph.ord_nodes[row]
+            col_nd = graph.ord_nodes[col]
+            if row > col and (col_nd, row_nd) in graph.inslice_arrows:
                 alpha_mat[row, col] = np.random.uniform(-alpha_bound, alpha_bound)
-            if (col_nd, row_nd) in self.graph.fback_arrows:
+            if (col_nd, row_nd) in graph.fback_arrows:
                 beta_mat[row, col] = np.random.uniform(-alpha_bound, alpha_bound)
         return alpha_mat, beta_mat
 
@@ -135,20 +138,21 @@ class FBackRandomDataMaker(RandomDataMaker):
         """
 
         dim = self.graph.num_nds
-        eps_values = [np.random.normal(loc=1.0, scale=self.sigma_eps[i])
-                      for i in range(dim)]
         n_to_nd_values = {}
         for n in range(1, self.n_max+1):
-            nd_values = np.zeros((dim,))
-            for i, nd in enumerate(self.graph.ord_nodes):
-                for pa_nd in self.graph.nx_graph.predecessors(nd):
-                    j = self.graph.node_position(pa_nd)
-                    nd_values[i] += self.alpha_mat[i, j]*nd_values[j]
+            eps_values = [np.random.normal(loc=1.0, scale=self.sigma_eps[i])
+                          for i in range(dim)]
+            nd_values = [0]*dim
+            for i in range(dim):
                 nd_values[i] += eps_values[i]
+                if n >= 1:
+                    for j in range(dim):
+                        if i>j:
+                            nd_values[i] += self.alpha_mat[i, j]*nd_values[j]
                 if n >= 2:
                     for j in range(dim):
                         nd_values[i] += self.beta_mat[i, j] *\
-                                        n_to_nd_values[n-1][j]
+                                    n_to_nd_values[n-1][j]
 
             n_to_nd_values[n] = nd_values
 
