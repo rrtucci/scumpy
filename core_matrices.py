@@ -12,13 +12,14 @@ The names of the entries of the matrices created by this file, are as follows:
 
     "sigma_eps_" + str(i)
     "sigma_nd_" + str(i)
-    "alp_" + str(row) + "_L_" + str(col)
+    "alpha_" + str(row) + "_L_" + str(col)
     "beta_" + str(row) + "_L_" + str(col)
     "K_" + str(row) + "_" + str(col)
     "cov_" + str(row) + "_" + str(col)
     "cov_one_" + str(row) + "_" + str(col)
     "cov_n_" + str(row) + "_" + str(col)
     "cov_n_plus_one" + str(row) + "_" + str(col)
+    "cov_n" + str(n) + "_" + str(row) + "_" + str(col)
     "ee_" + str(row) + "_" + str(col)
     "rho_" + str(row) + "_" + str(col)
     "pder_" + str(row) + "_wrt_" + str(col)
@@ -114,10 +115,10 @@ def sigma_nd_sb_mat(dim):
                         mat_type="diagonal")
 
 
-def alp_sb_mat(dim):
+def alpha_sb_mat(dim):
     """
     This method returns a matrix (of type sp.Matrix) of gains A with entries
-    A_{ i, j} = alp_i_L_j=\alpha_{i|j}
+    A_{ i, j} = alpha_i_L_j=\alpha_{i|j}
 
     Parameters
     ----------
@@ -129,7 +130,7 @@ def alp_sb_mat(dim):
     sp.Matrix
 
     """
-    return make_sb_mat(dim, "alp_%d_L_%d",
+    return make_sb_mat(dim, "alpha_%d_L_%d",
                         mat_type="strict_lower_triangular")
 
 
@@ -152,50 +153,63 @@ def beta_sb_mat(dim):
                         mat_type="general")
 
 
-def cov2times_sb_mat(dim):
+def cov_sb_mat(dim, time=None):
+    """
+    This method returns the covariance matrix at time t, C^t (of type
+    sp.Matrix) with entries C^t_{i,j}=<x^t_i, x^t_j> = cov_t_i_j. $t$ can be
+    None, "one", "n", "n_plus_one" or an int
+
+    Parameters
+    ----------
+    dim: int
+        dimension of square matrix = number of nodes in graph.
+    time: None or str or int
+
+
+    Returns
+    -------
+    sp.Matrix
+
+    """
+    assert time in [None, "one", "n", "n_plus_one"] or \
+           isinstance(time, int)
+    if time is None:
+        mat_str = "cov_%d_%d"
+    elif isinstance(time, int):
+        mat_str = "cov_n" + str(time) + "_%d_%d"
+    else:
+        mat_str = "cov_" + time + "_%d_%d"
+    return make_sb_mat(dim, mat_str, mat_type="symmetric")
+
+
+def cov2times_sb_mat(dim, time=None):
     """
     This method returns 2-times covariance matrix C^{n,n+1} (of type
-    sp.Matrix) with entries C^{n,n+1}_{i,j}=<x^{n}_i, x^{n+1}_j> = 
+    sp.Matrix) with entries C^{n,n+1}_{i,j}=<x^{n}_i, x^{n+1}_j> =
     cov2times_i_j.
 
     Parameters
     ----------
     dim: int
         dimension of square matrix = number of nodes in graph.
+    time: "n" or int
+        evaluate n at time
 
     Returns
     -------
     sp.Matrix
 
     """
-    return make_sb_mat(dim, "cov2times_%d_%d",
-                        mat_type="general")
-
-
-def cov_sb_mat(dim, time=None):
-    """
-    This method returns the covariance matrix at time t, C^t (of type
-    sp.Matrix) with entries C^t_{i,j}=<x^t_i, x^t_j> = cov_t_i_j. $t$ can be
-    None, "one", "n" or "n_plus_one"
-
-    Parameters
-    ----------
-    dim: int
-        dimension of square matrix = number of nodes in graph.
-    time: None or str
-
-
-    Returns
-    -------
-    sp.Matrix
-
-    """
-    assert time in [None, "one", "n", "n_plus_one"]
-    if time is None:
-        mat_str = "cov_%d_%d"
+    if isinstance(time, int):
+        str0 = "cov2times_n" + str(time)
+    elif time == "n":
+        str0 = "cov2times_n"
     else:
-        mat_str = "cov_" + time + "_%d_%d"
-    return make_sb_mat(dim, mat_str, mat_type="symmetric")
+        assert False, "time=" + str(time)
+    str0 += "_%d_%d"
+
+    return make_sb_mat(dim, str0,
+                       mat_type="general")
 
 
 def ee_sb_mat(dim):
@@ -263,15 +277,17 @@ if __name__ == "__main__":
         dim = 3
         print(sigma_eps_sb_mat(dim))
         print(sigma_nd_sb_mat(dim))
-        print(alp_sb_mat(dim))
+        print(alpha_sb_mat(dim))
         print(beta_sb_mat(dim))
         print(ee_sb_mat(dim))
         print(cov_sb_mat(dim, time=None))
         print(cov_sb_mat(dim, time="one"))
+        print(cov_sb_mat(dim, time=2))
+        print(cov2times_sb_mat(dim, time=None))
+        print(cov2times_sb_mat(dim, time=5))
         print(ee_sb_mat(dim))
         print(rho_sb_mat(dim))
         print(jacobian_sb_mat(dim))
-        print()
-        print((sp.eye(dim) - alp_sb_mat(dim)).inv())
+        print((sp.eye(dim) - alpha_sb_mat(dim)).inv())
     main()
 

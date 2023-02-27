@@ -21,7 +21,7 @@ class FBackCovMatCalculator(CovMatCalculator):
 
     The class calculates/stores a symbolic representation of the covariance
     matrix C^t= <x^t_i, x^t_j> at time t=1, and of the growth matrix G,
-    both expressed as a function of the unitime arrow gains \alpha_{i,
+    both expressed as a function of the inslice arrow gains \alpha_{i,
     j} and the feedback arrow gains \beta{i|j}.
 
     Attributes
@@ -109,8 +109,8 @@ class FBackCovMatCalculator(CovMatCalculator):
 
         """
         return CovMatCalculator.print_cov_mat(self,
-                                                      verbose=verbose,
-                                                      time="one")
+                                              verbose=verbose,
+                                              time="one")
 
     def print_growth_mat(self, verbose=False):
         """
@@ -127,8 +127,7 @@ class FBackCovMatCalculator(CovMatCalculator):
         sp.Symbol
 
         """
-        return print_matrix_sb(
-                                self.growth_mat_sb,
+        return print_matrix_sb(self.growth_mat_sb,
                                 "G",
                                 self.graph,
                                 verbose=verbose)

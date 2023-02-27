@@ -9,12 +9,12 @@ class RandomDataMaker:
     This purpose of this class is to generate, for a linear SCM WITHOUT
     feedback loops, a synthetic dataset with: (1) column labels= the names
     of the nodes graph.ord_nodes, (2)instances of node values in each row.
-    To generate this, we require 'alp_mat', 'graph' and 'sigma_eps'.
+    To generate this, we require 'alpha_mat', 'graph' and 'sigma_eps'.
 
 
     Attributes
     ----------
-    alp_mat: np.array of shape=(dim,dim), where dim = number of nodes.
+    alpha_mat: np.array of shape=(dim,dim), where dim = number of nodes.
         The matrix of alphas (i.e., gains \alpha_{i|j})
     graph: Graph
         information about DAG structure
@@ -25,43 +25,43 @@ class RandomDataMaker:
 
     """
 
-    def __init__(self, graph, sig_eps, alp_mat=None, alp_bound=1.0):
+    def __init__(self, graph, sig_eps, alpha_mat=None, alpha_bound=1.0):
         """
         Constructor.
 
-        In this constructor, an alp_mat not equal to 'None' can be
-        submitted, or, if alp_mat == None, an alp_mat will be generated
+        In this constructor, an alpha_mat not equal to 'None' can be
+        submitted, or, if alpha_mat == None, an alpha_mat will be generated
         randomly. If generated randomly, each non-zero gain \alpha_{ i|j} is
-        chosen from the uniform distribution over the interval [ -alp_bound,
-        alp_bound]
+        chosen from the uniform distribution over the interval [ -alpha_bound,
+        alpha_bound]
 
         Parameters
         ----------
         graph: Graph
         sig_eps: list[float]
-        alp_mat: np.array of shape=(dim, dim)
-        alp_bound: float
+        alpha_mat: np.array of shape=(dim, dim)
+        alpha_bound: float
             must be a positive number.
         """
         self.graph = graph
         dim = graph.num_nds
         assert len(sig_eps) == dim
         self.sigma_eps = sig_eps
-        if alp_mat is None:
-            self.alp_mat = self.generate_random_gains(alp_bound)
+        if alpha_mat is None:
+            self.alpha_mat = self.generate_random_gains(alpha_bound)
         else:
-            assert alp_mat.shape == (dim, dim)
-            self.alp_mat = alp_mat
+            assert alpha_mat.shape == (dim, dim)
+            self.alpha_mat = alpha_mat
 
-    def generate_random_gains(self, alp_bound):
+    def generate_random_gains(self, alpha_bound):
         """
         In this internal method, the gains \alpha_{i|j} are generated
         randomly. Each non-zero \alpha_{ i|j} is chosen from the uniform
-        distribution over the interval [-alp_bound, alp_bound].
+        distribution over the interval [-alpha_bound, alpha_bound].
 
         Parameters
         ----------
-        alp_bound: float
+        alpha_bound: float
             must be a positive number.
 
         Returns
@@ -69,15 +69,15 @@ class RandomDataMaker:
         np.array of shape=(dim, dim)
 
         """
-        assert alp_bound > 0
+        assert alpha_bound > 0
         dim = self.graph.num_nds
-        alp_mat = np.zeros((dim, dim))
+        alpha_mat = np.zeros((dim, dim))
         for row, col in product(range(dim), range(dim)):
             row_nd = self.graph.ord_nodes[row]
             col_nd = self.graph.ord_nodes[col]
             if row > col and (col_nd, row_nd) in self.graph.arrows:
-                alp_mat[row, col] = np.random.uniform(-alp_bound, alp_bound)
-        return alp_mat
+                alpha_mat[row, col] = np.random.uniform(-alpha_bound, alpha_bound)
+        return alpha_mat
 
     def generate_one_random_instance(self):
         """
@@ -97,7 +97,7 @@ class RandomDataMaker:
         for i, nd in enumerate(self.graph.ord_nodes):
             for pa_nd in self.graph.nx_graph.predecessors(nd):
                 j = self.graph.node_position(pa_nd)
-                nd_values[i] += self.alp_mat[i, j]*nd_values[j]
+                nd_values[i] += self.alpha_mat[i, j]*nd_values[j]
             nd_values[i] += eps_values[i]
 
         return nd_values
@@ -149,13 +149,13 @@ if __name__ == "__main__":
         dmaker.generate_dataset_csv(num_rows, data_path)
         print(pd.read_csv(data_path))
         print("------------------------------")
-        alp_mat = np.zeros((dim, dim))
-        alp_mat[1, 0] = 4
-        alp_mat[2, 0], alp_mat[2, 1] = 2, -3
-        alp_mat[3, 0], alp_mat[3, 1] = 1, -1
+        alpha_mat = np.zeros((dim, dim))
+        alpha_mat[1, 0] = 4
+        alpha_mat[2, 0], alpha_mat[2, 1] = 2, -3
+        alpha_mat[3, 0], alpha_mat[3, 1] = 1, -1
         sig_eps = [0.0]*dim
         dmaker = RandomDataMaker(graph, sig_eps=sig_eps,
-                                 alp_mat=alp_mat)
+                                 alpha_mat=alpha_mat)
         data_path = "test_data.csv"
         num_rows = 5
         dmaker.generate_dataset_csv(num_rows, data_path)

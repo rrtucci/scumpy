@@ -11,7 +11,7 @@ class FBackGainsCalculator(GainsCalculator):
     chapter entitled "LDEN diagrams with feedback loops". In that chapter,
     I consider, for a graph with feedback loops,
 
-    the matrix A with entries A_{i,j}=\alp_{ i|j}= unitime arrow gains
+    the matrix A with entries A_{i,j}=\alpha_{ i|j}= inslice arrow gains
 
     the matrix B with entries B_{i,j}=\beta_{i|j}= feedback arrow gains
 
@@ -28,18 +28,18 @@ class FBackGainsCalculator(GainsCalculator):
     obtain B(CMinfo). Finally, it substitutes B(CMinfo) into A(B, CMinfo) to
     get A(B(CMinfo), CMinfo).
     
-    self.alp_list_with_betas and self.alp_mat_with_betas are used to store 
+    self.alpha_list_with_betas and self.alpha_mat_with_betas are used to store 
     A(B, CM_info).
     
     self.beta_list and self.beta_mat are used to store B(CM_info).
     
-    self.alp_list and self.alp_mat are used to store A(B(CM_info), CM_info).
+    self.alpha_list and self.alpha_mat are used to store A(B(CM_info), CM_info).
     
     Attributes
     ----------
-    # alp_list and alp_mat are inherited from parent class
-    alp_list_with_betas: list[sp.Equality]
-    alp_mat_with_betas: sp.Matrix
+    # alpha_list and alpha_mat are inherited from parent class
+    alpha_list_with_betas: list[sp.Equality]
+    alpha_mat_with_betas: sp.Matrix
     beta_list: list[sp.Equality]
     beta_mat: sp.Matrix
 
@@ -55,22 +55,21 @@ class FBackGainsCalculator(GainsCalculator):
         """
         GainsCalculator.__init__(self, graph)
 
-        # self.alp_list and self.alp_mat are inherited from parent class.
-
-        self.alp_list_with_betas = None
-        self.alp_mat_with_betas = None
+        # self.alpha_list and self.alpha_mat are inherited from parent class.
+        self.alpha_list_with_betas = None
+        self.alpha_mat_with_betas = None
 
         self.beta_list = None
         self.beta_mat = None
 
-    def calculate_gains(self, mat_K=None, time=None):
+    def calculate_gains(self, cov_mat_list_in=None, mat_K=None, time="n"):
         """
         This method overrides the parent method. It calls the parent method
         within itself. It fills in
 
-        self.alp_list and self.alp_mat
+        self.alpha_list and self.alpha_mat
 
-        self.alp_list_with_betas and self.alp_mat_with_betas
+        self.alpha_list_with_betas and self.alpha_mat_with_betas
 
         self.beta_list and self.beta_mat
 
@@ -85,23 +84,39 @@ class FBackGainsCalculator(GainsCalculator):
 
         """
         dim = self.graph.num_nds
+
+        if time == "n":
+            time0 = "n"
+            time1 = "n_plus_one"
+        elif isinstance(time, int):
+            time0 = time
+            time1 = time + 1
+        else:
+            assert False
+
+        if cov_mat_list_in is None:
+            cov_mat0 = cov_sb_mat(dim, time=time0)
+            cov2times = cov2times_sb_mat(dim, time=time0)
+            cov_mat1 = cov_sb_mat(dim, time=time1)
+        else:
+            cov_mat0, cov2times, cov_mat1 = cov_mat_list_in
+
         mat_B = set_to_zero_fback_gains_without_arrows(self.graph,
                                              beta_sb_mat(dim))
-        mat_K = mat_B*cov2times_sb_mat(dim)
+        mat_K = mat_B * cov_mat0
 
-        GainsCalculator.calculate_gains(self,
-                                           mat_K=mat_K,
-                                           time="n_plus_one")
-        self.alp_mat_with_betas = deepcopy(self.alp_mat)
-        self.alp_list_with_betas = deepcopy(self.alp_list)
+        calc = GainsCalculator(self.graph)
+        calc.calculate_gains(cov_mat_in=cov_mat1, mat_K=mat_K, time=time1)
+        self.alpha_mat_with_betas = deepcopy(calc.alpha_mat)
+        self.alpha_list_with_betas = deepcopy(calc.alpha_list)
 
-        self.alp_mat = None
-        self.alp_list = None
+        self.alpha_mat = None
+        self.alpha_list = None
 
-        self.calculate_betas()
+        self.calculate_betas(cov_mat0=cov_mat0, cov2times=cov2times)
         self.calculate_alphas()
 
-    def calculate_betas(self):
+    def calculate_betas(self, cov_mat0=None, cov2times=None, time="n"):
         """
         This method fills in self.beta_list and self.beta_mat
 
@@ -111,10 +126,22 @@ class FBackGainsCalculator(GainsCalculator):
 
         """
         dim = self.graph.num_nds
+        if time == "n":
+            time0 = "n"
+        elif isinstance(time, int):
+            time0 = time
+        else:
+            assert False
+        if cov_mat0 is None:
+            cov_mat0 = cov2times_sb_mat(dim, time=time0)
+        if cov2times is None:
+            cov2times = cov2times_sb_mat(dim, time=time0)
+
         mat_B = set_to_zero_fback_gains_without_arrows(self.graph,
                                              beta_sb_mat(dim))
-        eq_mat = (sp.eye(dim) - self.alp_mat_with_betas) * \
-                 cov2times_sb_mat(dim).T - mat_B * cov_sb_mat(dim, time="n")
+        eq_mat = (sp.eye(dim) - self.alpha_mat_with_betas) * \
+                 cov2times.T - \
+                 mat_B * cov_mat0
 
         unknowns = []
         eq_list = []
@@ -126,7 +153,14 @@ class FBackGainsCalculator(GainsCalculator):
                 beta_str = "beta_" + str(row) + "_L_" + str(col)
                 unknowns.append(sp.Symbol(beta_str))
             else:
-                cov2times_str = "cov2times_" + str(col) + "_" + str(row)
+                if time == "n":
+                    xtra_str = "n"
+                elif isinstance(time, int):
+                    xtra_str = "n" + str(time)
+                else:
+                    assert False
+                cov2times_str = "cov2times_" + xtra_str +\
+                                 "_" + str(col) + "_" + str(row)
                 unknowns.append(sp.Symbol(cov2times_str))
         # the comma does what is called sequence unpacking.
         # draws out item from single item list
@@ -145,7 +179,7 @@ class FBackGainsCalculator(GainsCalculator):
 
     def calculate_alphas(self):
         """
-        This method fills in self.alp_list and self.alp_mat
+        This method fills in self.alpha_list and self.alpha_mat
 
         Returns
         -------
@@ -153,21 +187,21 @@ class FBackGainsCalculator(GainsCalculator):
 
         """
         dim = self.graph.num_nds
-        self.alp_mat = deepcopy(self.alp_mat_with_betas)
-        self.alp_list = deepcopy(self.alp_list_with_betas)
+        self.alpha_mat = deepcopy(self.alpha_mat_with_betas)
+        self.alpha_list = deepcopy(self.alpha_list_with_betas)
         for row, col in product(range(dim), range(dim)):
             row_nd = self.graph.ord_nodes[row]
             col_nd = self.graph.ord_nodes[col]
             beta_str = "beta_" + str(row) + "_L_" + str(col)
-            self.alp_mat = sp.simplify(self.alp_mat.subs(sp.Symbol(beta_str),
+            self.alpha_mat = sp.simplify(self.alpha_mat.subs(sp.Symbol(beta_str),
                                            self.beta_mat[row, col]))
-            for i in range(len(self.alp_list)):
-                self.alp_list[i] = sp.simplify(
-                    self.alp_list[i].subs(sp.Symbol(beta_str),
+            for i in range(len(self.alpha_list)):
+                self.alpha_list[i] = sp.simplify(
+                    self.alpha_list[i].subs(sp.Symbol(beta_str),
                             self.beta_mat[row, col]))
-        # print("ccvvf", self.alp_mat)
+        # print("ccvvf", self.alpha_mat)
 
-    def print_gains(self, verbose=False):
+    def print_alpha_list(self, verbose=False, time=None):
         """
         This method prevents the user from using the parent method that it
         overrides.
@@ -183,9 +217,9 @@ class FBackGainsCalculator(GainsCalculator):
         """
         assert False
 
-    def print_alp_list_with_betas(self, verbose=False):
+    def print_alpha_list_with_betas(self, verbose=False, time="n"):
         """
-        This method prints the info in self.alp_list_with_betas. It does
+        This method prints the info in self.alpha_list_with_betas. It does
         this by calling latexify:print_list_sb().
 
         Parameters
@@ -197,11 +231,12 @@ class FBackGainsCalculator(GainsCalculator):
         sp.Symbol
 
         """
-        return print_list_sb(self.alp_list_with_betas,
+        return print_list_sb(self.alpha_list_with_betas,
                              self.graph,
-                            verbose=verbose)
+                            verbose=verbose,
+                             time=time)
 
-    def print_beta_list(self, verbose=False):
+    def print_beta_list(self, verbose=False, time="n"):
         """
         This method prints the info in self.beta_list. It does this by
         calling latexify:print_list_sb().
@@ -217,11 +252,12 @@ class FBackGainsCalculator(GainsCalculator):
         """
         return print_list_sb(self.beta_list,
                              self.graph,
-                             verbose=verbose)
+                             verbose=verbose,
+                             time=time)
 
-    def print_alp_list(self, verbose=False):
+    def print_alpha_list(self, verbose=False, time="n"):
         """
-        This method prints the info in self.alp_list. It does this by
+        This method prints the info in self.alpha_list. It does this by
         calling latexify:print_list_sb().
 
         Parameters
@@ -233,9 +269,10 @@ class FBackGainsCalculator(GainsCalculator):
         sp.Symbol
 
         """
-        return print_list_sb(self.alp_list,
+        return print_list_sb(self.alpha_list,
                              self.graph,
-                             verbose=verbose)
+                             verbose=verbose,
+                             time=time)
 
 
 if __name__ == "__main__":
@@ -244,8 +281,8 @@ if __name__ == "__main__":
         graph = FBackGraph(path)
         cal = FBackGainsCalculator(graph)
         cal.calculate_gains()
-        cal.print_alp_list_with_betas(verbose=True)
+        cal.print_alpha_list_with_betas(verbose=True)
         cal.print_beta_list(verbose=True)
-        cal.print_alp_list(verbose=True)
+        cal.print_alpha_list(verbose=True)
 
     main()

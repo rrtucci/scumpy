@@ -17,7 +17,7 @@ class FBackGraph(Graph):
     fback_arrows: list[(str, str)]
         feedback arrows that connect 2 adjacent time-slices. Their arrow
         gains are represented by \beta_{i|j}.
-    unitime_arrows: list[(str, str)]
+    inslice_arrows: list[(str, str)]
         arrows whose orgin and target occur at the same time. Their arrow
         gains are represented by \arrow_{ i|j}.
 
@@ -39,16 +39,16 @@ class FBackGraph(Graph):
                        dot_file_path,
                        amputated_arrows=amputated_arrows,
                        is_DAG=False)
-        self.unitime_arrows, self.fback_arrows =\
-            self.get_unitime_and_fback_arrows()
+        self.inslice_arrows, self.fback_arrows =\
+            self.get_inslice_and_fback_arrows()
         self.nx_graph = nx.DiGraph()
-        self.nx_graph.add_edges_from(self.unitime_arrows)
+        self.nx_graph.add_edges_from(self.inslice_arrows)
         # this bombs if not DAG
         self.ord_nodes = list(nx.topological_sort(self.nx_graph))
 
-    def get_unitime_and_fback_arrows(self):
+    def get_inslice_and_fback_arrows(self):
         """
-        This method returns a list of unitime arrows, and a list of feedback 
+        This method returns a list of inslice arrows, and a list of feedback 
         arrows.
 
         Returns
@@ -56,7 +56,7 @@ class FBackGraph(Graph):
         list[(str, str)], list[(str, str)]
 
         """
-        unitime_arrows = []
+        inslice_arrows = []
         fback_arrows = []
         with open(self.path) as f:
             in_lines = f.readlines()
@@ -72,9 +72,9 @@ class FBackGraph(Graph):
                         if green_arrow:
                             fback_arrows.append((pa, ch))
                         else:
-                            unitime_arrows.append((pa, ch))
+                            inslice_arrows.append((pa, ch))
         # print("ccvbb---------------", fback_arrows)
-        return unitime_arrows, fback_arrows
+        return inslice_arrows, fback_arrows
 
     def draw(self, jupyter=False, slices=1, point_right=False):
         """
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         g = FBackGraph(path)
         print('fback_arrows:', g.fback_arrows)
-        print('unitime_arrows:', g.unitime_arrows)
+        print('inslice_arrows:', g.inslice_arrows)
         if draw:
             g.draw(jupyter=False, slices=1)
             g.draw(jupyter=False, slices=3, point_right=True)

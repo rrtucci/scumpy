@@ -28,7 +28,7 @@ def set_to_one_sigma_eps_mat(graph, x):
     num_nds = graph.num_nds
     for i in range(num_nds):
         sigma_eps_sb = "sigma_eps_" + str(i)
-        x = x.subs({sp.Symbol(sigma_eps_sb): 1})
+        x = x.subs(sp.Symbol(sigma_eps_sb), 1)
     return x
 
 
@@ -52,8 +52,8 @@ def set_to_zero_gains_without_arrows(graph, x):
         col_nd = graph.ord_nodes[col]
 
         if row > col and (col_nd, row_nd) not in graph.arrows:
-            alp_sb = "alp_" + str(row) + "_L_" + str(col)
-            x = x.subs({sp.Symbol(alp_sb): 0})
+            alpha_sb = "alpha_" + str(row) + "_L_" + str(col)
+            x = x.subs(sp.Symbol(alpha_sb), 0)
     return x
 
 
@@ -78,7 +78,7 @@ def set_to_zero_fback_gains_without_arrows(graph, x):
 
         if (col_nd, row_nd) not in graph.fback_arrows:
             beta_sb = "beta_" + str(row) + "_L_" + str(col)
-            x = x.subs({sp.Symbol(beta_sb): 0})
+            x = x.subs(sp.Symbol(beta_sb), 0)
     return x
 
 
@@ -106,11 +106,11 @@ if __name__ == "__main__":
         # dot has 5 arrows out of maximum of 6 possible
         # for 4 nodes. Hence, one of the gains is zero.
         # arrow 2->3 (i.e., "b"->"s") is missing
-        # so alp_3_L_2=0
+        # so alpha_3_L_2=0
         print(graph.ord_nodes)
         print(graph.arrows)
 
-        x = alp_sb_mat(dim)
+        x = alpha_sb_mat(dim)
         print("\n", x)
 
         x = set_to_zero_gains_without_arrows(graph, x)

@@ -17,10 +17,10 @@ class GainsCalculator:
 
     Attributes
     ----------
-    alp_mat: sp.Matrix
+    alpha_mat: sp.Matrix
         the symbolic solutions for the gains \alpha_{i|j} as an sp.Matrix.
         alpha_{i|j}=0 if arrow x_j->x_i missing.
-    alp_list: list[sp.Equality]
+    alpha_list: list[sp.Equality]
         list of symbols, where each symbol in the list is an equation of the
         form:
 
@@ -45,12 +45,12 @@ class GainsCalculator:
 
         """
         self.graph = graph
-        self.alp_list = None
-        self.alp_mat = None
+        self.alpha_list = None
+        self.alpha_mat = None
 
     def calculate_gains(self, cov_mat_in=None, mat_K=None, time=None):
         """
-        This method calculates and stores in 'self.alp_list', a list
+        This method calculates and stores in 'self.alpha_list', a list
         of symbolic equations. Each equation gives either the value of a
         gain \alpha_{i|j}, or a constraint on the covariances.
 
@@ -59,7 +59,6 @@ class GainsCalculator:
         cov_mat_in: sp.Matrix
         mat_K: sp.Matrix
             K matrix used only for linear SCM with feedback loops
-        time: None or int
 
         Returns
         -------
@@ -67,13 +66,15 @@ class GainsCalculator:
 
         """
         dim = self.graph.num_nds
+
         if mat_K is None:
             mat_K = sp.zeros(dim)
         # print('hhgffd', mat_K)
         A = set_to_zero_gains_without_arrows(self.graph,
-                                             alp_sb_mat(dim))
-        self.alp_list = []
-        self.alp_mat = sp.zeros(dim)
+                                             alpha_sb_mat(dim))
+        self.alpha_list = []
+        self.alpha_mat = sp.zeros(dim)
+
         cov_mat = cov_sb_mat(dim, time=time)
         if cov_mat_in is not None:
             for row, col in product(range(dim), range(dim)):
@@ -113,16 +114,16 @@ class GainsCalculator:
             sol_list, = linsolve(eqs, unknowns)
             # print(str(sol_list))
             for i in range(row):
-                self.alp_list.append(sp.Eq(unknowns[i], sol_list[i]))
+                self.alpha_list.append(sp.Eq(unknowns[i], sol_list[i]))
                 left_str = str(unknowns[i])
-                if left_str[0:3] == 'alp':
+                if left_str[0:5] == 'alpha':
                     # print("kkkll", left_str)
-                    row_str, col_str = left_str[4:].split("_L_")
-                    self.alp_mat[int(row_str), int(col_str)] = sol_list[i]
+                    row_str, col_str = left_str[6:].split("_L_")
+                    self.alpha_mat[int(row_str), int(col_str)] = sol_list[i]
 
-    def print_gains(self, verbose=False):
+    def print_alpha_list(self, verbose=False, time=None):
         """
-        This method prints the info in self.alp_list. It does this by
+        This method prints the info in self.alpha_list. It does this by
         calling latexify:print_list_sb()
 
 
@@ -135,7 +136,8 @@ class GainsCalculator:
         sp.Symbol
 
         """
-        return print_list_sb(self.alp_list, self.graph, verbose=verbose)
+        return print_list_sb(self.alpha_list, self.graph,
+                             verbose=verbose, time=time)
 
 
 if __name__ == "__main__":
@@ -152,8 +154,8 @@ if __name__ == "__main__":
         graph = Graph(path)
         cal = GainsCalculator(graph)
         cal.calculate_gains()
-        cal.print_gains(verbose=True)
-        print(cal.alp_mat)
+        cal.print_alpha_list(verbose=True)
+        print(cal.alpha_mat)
 
 
     main()

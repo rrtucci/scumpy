@@ -75,7 +75,7 @@ class CovMatCalculator:
         """
         dim = self.graph.num_nds
         mat_A = set_to_zero_gains_without_arrows(self.graph,
-                                             alp_sb_mat(dim))
+                                             alpha_sb_mat(dim))
         one_minus_A = sp.eye(dim) - mat_A
         self.one_minus_A_inv_sb = one_minus_A.inv()
 
@@ -85,11 +85,11 @@ class CovMatCalculator:
             col_nd = self.graph.ord_nodes[col]
             if len(self.conditioned_nds) == 0:
                 if row_nd != col_nd:
-                    eps_cov = eps_cov.subs({eps_cov[row, col]: 0})
+                    eps_cov = eps_cov.subs(eps_cov[row, col], 0)
             else:
                 if (row_nd in self.conditioned_nds or
                         col_nd in self.conditioned_nds):
-                    eps_cov = eps_cov.subs({eps_cov[row, col]: 0})
+                    eps_cov = eps_cov.subs(eps_cov[row, col], 0)
 
         cov_mat = sp.simplify(self.one_minus_A_inv_sb * eps_cov *
                               self.one_minus_A_inv_sb.T)
@@ -119,15 +119,19 @@ class CovMatCalculator:
         """
         if time is None:
             mat_str = "cov"
-        else:
+        elif time in ["one", "n", "n_plus_one"]:
             mat_str = "cov_" + time
-        return print_matrix_sb(
-                                self.cov_mat_sb,
+        elif isinstance(time, int):
+            mat_str = "cov_n" + str(time)
+        else:
+            assert False
+        return print_matrix_sb(self.cov_mat_sb,
                                 mat_str,
                                 self.graph,
-                                verbose=verbose)
+                                verbose=verbose,
+                                time=time)
 
-    def print_jacobian(self, verbose=False):
+    def print_jacobian(self, verbose=False, time=None):
         """
         This method renders in latex, in a jupyter notebook (but not in the
         console), the entries, one at a time, of the Jacobian matrix J. Iff
@@ -143,11 +147,11 @@ class CovMatCalculator:
         sp.Symbol
 
         """
-        return print_matrix_sb(
-                                self.jacobian_sb,
-                                "jacobian",
+        return print_matrix_sb(self.jacobian_sb,
+                                "pder",
                                 self.graph,
-                                verbose=verbose)
+                                verbose=verbose,
+                               time=time)
 
 
 if __name__ == "__main__":
