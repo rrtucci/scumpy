@@ -168,7 +168,7 @@ class GainsEstimator:
                 col_nd = self.graph.ord_nodes[col]
                 symbolic = (row_nd in self.hidden_nds) or\
                           (col_nd in self.hidden_nds)
-                if row <= col and not symbolic:
+                if not symbolic:
                     sb_str = sb_cov_str(row, col, time=None)
                     eq = eq.subs(sb_str, self.cov_mat[row, col])
             self.alpha_list[i] = eq
@@ -244,7 +244,9 @@ if __name__ == "__main__":
         graph = Graph(dot_path)
         dim = graph.num_nds
         sig_eps = [0.1]*dim
-        dmaker = RandomDataMaker(graph, sig_eps=sig_eps)
+        alpha_bound = 1
+        dmaker = RandomDataMaker(graph, sig_eps=sig_eps,
+                                 alpha_bound=alpha_bound)
         num_rows = 100
         data_path = "test_data.csv"
         dmaker.generate_dataset_csv(num_rows, data_path)
@@ -254,7 +256,7 @@ if __name__ == "__main__":
                                   solve_symbolically=solve_symbolically)
             gest.print_alpha_list(true_alpha_mat=dmaker.alpha_mat, verbose=True)
             print("alpha_mat_estimate=\n", gest.alpha_mat_estimate)
-            print("cum_err=", gest.alpha_cum_err)
+            print("alpha_cum_err=", gest.alpha_cum_err)
             gest = GainsEstimator(graph, data_path,
                                   solve_symbolically=solve_symbolically,
                                   hidden_nds=["s"])

@@ -226,13 +226,13 @@ class FBackGainsEstimator(GainsEstimator):
 
     def get_alpha_list_comments(self, true_alpha_mat):
         return FBackGainsEstimator.get_greek_list_comments("alpha",
-                                                    self.alpha_list,
-                                                    true_alpha_mat)
+                                                           self.alpha_list,
+                                                           true_alpha_mat)
         
     def get_beta_list_comments(self, true_beta_mat):
         return FBackGainsEstimator.get_greek_list_comments("beta",
-                                                    self.beta_list,
-                                                    true_beta_mat)
+                                                           self.beta_list,
+                                                           true_beta_mat)
 
     def print_alpha_list(self, true_alpha_mat=None, verbose=False):
         comments = self.get_alpha_list_comments(true_alpha_mat)
@@ -252,10 +252,12 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         graph = FBackGraph(path)
         dim = graph.num_nds
-        sig_eps = [0.1] * dim
+        sig_eps = [1] * dim
         n_max = 2
-        dmaker = FBackRandomDataMaker(n_max, graph, sig_eps=sig_eps)
-        num_rows = 100
+        alpha_bound = 1
+        dmaker = FBackRandomDataMaker(n_max, graph, sig_eps=sig_eps,
+                                      alpha_bound=alpha_bound)
+        num_rows = 1000
         data_path = "test_data.csv"
         dmaker.generate_dataset_csv(num_rows, data_path)
         df = pd.read_csv(data_path)

@@ -144,11 +144,10 @@ def do_latex_subs(graph, x, time=None):
         row_nd = graph.ord_nodes[row]
         col_nd = graph.ord_nodes[col]
 
-        if row > col:
-            latex_str = r"\alpha_{\underline{" + row_nd + \
-                        r"}|\underline{" + col_nd + r"}}"
-            sb_str = "alpha_" + str(row) + "_L_" + str(col)
-            x = x.subs(sp.Symbol(sb_str), sp.Symbol(latex_str))
+        latex_str = r"\alpha_{\underline{" + row_nd + \
+                    r"}|\underline{" + col_nd + r"}}"
+        sb_str = "alpha_" + str(row) + "_L_" + str(col)
+        x = x.subs(sp.Symbol(sb_str), sp.Symbol(latex_str))
 
         latex_str = r"\beta_{\underline{" + row_nd + \
                     r"}|\underline{" + col_nd + r"}}"
@@ -245,6 +244,23 @@ def print_all_mats_after_latex_subs(graph):
     sb_mat_print(jacobian_sb_mat(dim))
 
 
+def create_eq_list_from_matrix(mat, mat_name, graph, time):
+    eq_list = []
+    dim = graph.num_nds
+    for row, col in product(range(dim), range(dim)):
+        mat_str = mat_name
+        sep = "_"
+        if mat_name in ["alpha", "beta"]:
+            sep = "_L_"
+        if mat_name == "pder":
+            sep = "_wrt_"
+        if isinstance(time, int):
+            mat_str += str(time)
+        mat_str += "_" + str(row) + sep + str(col)
+        eq_list.append(sp.Eq(sp.Symbol(mat_str), mat[row, col]))
+    return eq_list
+
+
 def print_matrix_sb(mat, mat_name, graph, verbose=False, time=None):
     """
     This method renders in latex, in a jupyter notebook (but not in the
@@ -264,25 +280,12 @@ def print_matrix_sb(mat, mat_name, graph, verbose=False, time=None):
     sp.Symbol
 
     """
-    eq_list = []
-    dim = graph.num_nds
-    for row, col in product(range(dim), range(dim)):
-        mat_str = mat_name
-        sep = "_"
-        if mat_name in ["alpha", "beta"]:
-            sep = "_L_"
-        if mat_name == "pder":
-            sep = "_wrt_"
-        if isinstance(time, int):
-            mat_str += str(time)
-        mat_str += "_" + str(row) + sep + str(col)
-        eq_list.append(sp.Eq(sp.Symbol(mat_str), mat[row, col]))
-
+    eq_list = create_eq_list_from_matrix(mat, mat_name, graph, time)
     return print_list_sb(eq_list, graph, verbose=verbose, time=time)
 
 
 def print_list_sb(eq_list, graph, verbose=False,
-                  time=None, comment_list=None, round=False):
+                  time=None, comment_list=None, round=True):
     """
     This method renders in latex, in a jupyter notebook (but not on the
     console), a list 'eq_list' of sp.Equality. Iff verbose=True, it also

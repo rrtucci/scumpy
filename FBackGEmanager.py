@@ -1,3 +1,5 @@
+import numpy as np
+
 from FBackGainsEstimator import *
 
 class FBackGEmanager:
@@ -37,26 +39,95 @@ class FBackGEmanager:
             )
             self.n_to_estimator[time].calculate_gains()
 
-    def print_alpha_lists(self, true_alpha_mat=None, verbose=False):
+    def print_greek_lists(self, name, true_greek_mat=None, verbose=False):
+        assert name in ["alpha", "beta"]
         str0 = r"\begin{array}{l}" + "\n"
         for time in range(1, self.n_max):
             str0 += r"\text{******** time=" + str(time) + r"}\\" + "\n"
             gest = self.n_to_estimator[time]
-            x = gest.print_alpha_list(true_alpha_mat=true_alpha_mat,
-                                  verbose=verbose)
+            if name == "alpha":
+                mat = gest.alpha_mat_estimate
+            else:
+                mat = gest.beta_mat_estimate
+            eq_list = create_eq_list_from_matrix(mat, name, self.graph,
+                                                 time=None)
+            comments = gest.get_greek_list_comments(
+                name , eq_list, true_greek_mat=true_greek_mat)
+            x = print_list_sb(eq_list,
+                              self.graph,
+                              comment_list=comments)
             str0 += str(x) + "\n" + r"\\" + "\n"
         str0 = str0[:-3]
         str0 += r"\end{array}"
+        if verbose:
+            print(str0)
         return sp.Symbol(str0)
+
+    def print_mean_greek_list(self, name, true_greek_mat=None, verbose=False):
+        assert name in ["alpha", "beta"]
+        if name == "alpha":
+            av_np = np.mean([self.n_to_estimator[
+                               time].alpha_mat_estimate for
+                           time in range(1, self.n_max)], axis=0)
+        else:
+            av_np = np.mean([self.n_to_estimator[
+                                 time].beta_mat_estimate for
+                             time in range(1, self.n_max)], axis=0)
+        mat =  sp.Matrix(av_np)
+        eq_list = create_eq_list_from_matrix(mat, name, self.graph,
+                                             time=None)
+        comments = self.n_to_estimator[1].get_greek_list_comments(
+            name, eq_list, true_greek_mat=true_greek_mat)
+
+        return print_list_sb(eq_list, self.graph,
+                             comment_list=comments, verbose=verbose)
+
     
+    def print_alpha_lists(self, true_alpha_mat=None, verbose=False):
+        return self.print_greek_lists("alpha", 
+                                      true_greek_mat=true_alpha_mat,
+                                      verbose=verbose)
+    
+    def print_mean_alpha_list(self, true_alpha_mat=None, verbose=False):
+        return self.print_mean_greek_list("alpha", 
+                                      true_greek_mat=true_alpha_mat,
+                                      verbose=verbose)
+
     def print_beta_lists(self, true_beta_mat=None, verbose=False):
-        str0 = r"\begin{array}{l}" + "\n"
-        for time in range(1, self.n_max):
-            str0 += r"\text{******** time=" + str(time) + r"}\\" + "\n"
-            gest = self.n_to_estimator[time]
-            x = gest.print_beta_list(true_beta_mat=true_beta_mat,
-                                  verbose=verbose)
-            str0 += str(x) + "\n" + r"\\" + "\n"
-        str0 = str0[:-3]
-        str0 += r"\end{array}"
-        return sp.Symbol(str0)
+        return self.print_greek_lists("beta",
+                                      true_greek_mat=true_beta_mat,
+                                      verbose=verbose)
+
+    def print_mean_beta_list(self, true_beta_mat=None, verbose=False):
+        return self.print_mean_greek_list("beta",
+                                          true_greek_mat=true_beta_mat,
+                                          verbose=verbose)
+
+if __name__ == "__main__":
+    def main():
+        path = 'dot_atlas/fback-2node.dot'
+        graph = FBackGraph(path)
+        dim = graph.num_nds
+        sig_eps = [0.1] * dim
+        n_max = 4
+        alpha_bound = 1
+        alpha_mat, beta_mat = \
+            FBackRandomDataMaker.generate_random_gains(
+            graph, alpha_bound=alpha_bound)
+        dmaker = FBackRandomDataMaker(n_max, graph, alpha_mat=alpha_mat,
+                                      beta_mat=beta_mat,
+                                      sig_eps=sig_eps)
+        num_rows = 10
+        data_path = "test_data.csv"
+        dmaker.generate_dataset_csv(num_rows, data_path)
+        df = pd.read_csv(data_path)
+        mger = FBackGEmanager(n_max, graph, data_path)
+        mger.print_alpha_lists(true_alpha_mat=dmaker.alpha_mat, verbose=True)
+        mger.print_mean_alpha_list(true_alpha_mat=dmaker.alpha_mat,
+                                  verbose=True)
+        mger.print_beta_lists(true_beta_mat=dmaker.beta_mat, verbose=True)
+        mger.print_mean_beta_list(true_beta_mat=dmaker.beta_mat,
+                                  verbose=True)
+
+
+    main()

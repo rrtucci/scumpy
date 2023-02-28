@@ -48,7 +48,8 @@ class RandomDataMaker:
         assert len(sig_eps) == dim
         self.sigma_eps = sig_eps
         if alpha_mat is None:
-            self.alpha_mat = self.generate_random_gains(alpha_bound)
+            self.alpha_mat = self.generate_random_gains(
+                graph, alpha_bound)
         else:
             assert alpha_mat.shape == (dim, dim)
             self.alpha_mat = alpha_mat
