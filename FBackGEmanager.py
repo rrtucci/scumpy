@@ -119,7 +119,7 @@ if __name__ == "__main__":
                                       sig_eps=sig_eps)
         num_rows = 10
         data_path = "test_data.csv"
-        dmaker.generate_dataset_csv(num_rows, data_path)
+        dmaker.write_dataset_csv(num_rows, data_path)
         df = pd.read_csv(data_path)
         mger = FBackGEmanager(n_max, graph, data_path)
         mger.print_alpha_lists(true_alpha_mat=dmaker.alpha_mat, verbose=True)

@@ -172,7 +172,7 @@ class GainsEstimator:
                     sb_str = sb_cov_str(row, col, time=None)
                     eq = eq.subs(sb_str, self.cov_mat[row, col])
             self.alpha_list[i] = eq
-
+            # print("llkkl", eq)
             str1 = str(eq.args[1])
             try:
                 xx = float(str1)
@@ -243,13 +243,15 @@ if __name__ == "__main__":
         # dot_path = 'dot_atlas/good_bad_trols_G1.dot'
         graph = Graph(dot_path)
         dim = graph.num_nds
-        sig_eps = [0.1]*dim
-        alpha_bound = 1
+        sig_eps = [0.001]*dim
+        alpha_bound = 10
         dmaker = RandomDataMaker(graph, sig_eps=sig_eps,
                                  alpha_bound=alpha_bound)
         num_rows = 100
         data_path = "test_data.csv"
-        dmaker.generate_dataset_csv(num_rows, data_path)
+        dmaker.write_dataset_csv(num_rows, data_path)
+        df = pd.read_csv(data_path)
+        print(df)
         for solve_symbolically in [False, True]:
             print("************** solve_symbolically=", solve_symbolically)
             gest = GainsEstimator(graph, data_path,

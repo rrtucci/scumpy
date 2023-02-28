@@ -252,14 +252,14 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         graph = FBackGraph(path)
         dim = graph.num_nds
-        sig_eps = [1] * dim
+        sig_eps = [.001] * dim
         n_max = 2
-        alpha_bound = 1
+        alpha_bound = 10
         dmaker = FBackRandomDataMaker(n_max, graph, sig_eps=sig_eps,
                                       alpha_bound=alpha_bound)
-        num_rows = 1000
+        num_rows = 100
         data_path = "test_data.csv"
-        dmaker.generate_dataset_csv(num_rows, data_path)
+        dmaker.write_dataset_csv(num_rows, data_path)
         df = pd.read_csv(data_path)
         for solve_symbolically in [False, True]:
             print("************** solve_symbolically=", solve_symbolically)

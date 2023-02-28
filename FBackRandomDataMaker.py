@@ -3,6 +3,7 @@ from RandomDataMaker import *
 import numpy as np
 from itertools import product
 import pandas as pd
+from random import randint
 
 
 class FBackRandomDataMaker(RandomDataMaker):
@@ -31,7 +32,7 @@ class FBackRandomDataMaker(RandomDataMaker):
     """
 
     def __init__(self, n_max, graph, sig_eps, alpha_mat=None,
-                 beta_mat=None, alpha_bound=1.0):
+                 beta_mat=None, alpha_bound=1):
         """
         Constructor.
 
@@ -94,7 +95,7 @@ class FBackRandomDataMaker(RandomDataMaker):
         return columns
 
     @staticmethod
-    def generate_random_gains(graph, alpha_bound=1.0):
+    def generate_random_gains(graph, alpha_bound=1):
         """
         In this internal method, the inslice gains \alpha_{i|j} and the
         feedback gains \beta_{i|j} are generated randomly. Each non-zero
@@ -120,9 +121,9 @@ class FBackRandomDataMaker(RandomDataMaker):
             row_nd = graph.ord_nodes[row]
             col_nd = graph.ord_nodes[col]
             if row > col and (col_nd, row_nd) in graph.inslice_arrows:
-                alpha_mat[row, col] = np.random.uniform(-alpha_bound, alpha_bound)
+                alpha_mat[row, col] = randint(-alpha_bound, alpha_bound)
             if (col_nd, row_nd) in graph.fback_arrows:
-                beta_mat[row, col] = np.random.uniform(-alpha_bound, alpha_bound)
+                beta_mat[row, col] = randint(-alpha_bound, alpha_bound)
         return alpha_mat, beta_mat
 
     def generate_one_random_instance(self):
@@ -140,11 +141,10 @@ class FBackRandomDataMaker(RandomDataMaker):
         dim = self.graph.num_nds
         n_to_nd_values = {}
         for n in range(1, self.n_max+1):
-            eps_values = [np.random.normal(loc=1.0, scale=self.sigma_eps[i])
-                          for i in range(dim)]
             nd_values = [0]*dim
             for i in range(dim):
-                nd_values[i] += eps_values[i]
+                nd_values[i] += np.random.normal(loc=0,
+                                                 scale=self.sigma_eps[i])
                 if n >= 1:
                     for j in range(dim):
                         if i>j:
@@ -158,7 +158,7 @@ class FBackRandomDataMaker(RandomDataMaker):
 
         return n_to_nd_values
 
-    def generate_dataset_csv(self, num_rows, path):
+    def write_dataset_csv(self, num_rows, path):
         """
         This method writes a file which contains a dataset in the
         comma-separated-values (csv) format. The dataset has: (1) column
@@ -196,14 +196,16 @@ if __name__ == "__main__":
         if draw:
             graph.draw(jupyter=False)
         dim = graph.num_nds
-        sig_eps = [2]*dim
+        sig_eps = [.001]*dim
         n_max = 4
-        dmaker = FBackRandomDataMaker(n_max, graph, sig_eps=sig_eps)
+        alpha_bound = 10
+        dmaker = FBackRandomDataMaker(n_max, graph, sig_eps=sig_eps,
+                                      alpha_bound=alpha_bound)
         data_path = "fback_test_data.csv"
         num_rows = 5
-        dmaker.generate_dataset_csv(num_rows, data_path)
+        dmaker.write_dataset_csv(num_rows, data_path)
         print(pd.read_csv(data_path))
-        print(dmaker.alpha_mat)
-        print(dmaker.beta_mat)
+        print("alpha_mat=\n", dmaker.alpha_mat)
+        print("beta_mat=\n", dmaker.beta_mat)
 
     main(False)
