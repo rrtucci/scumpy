@@ -108,7 +108,7 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         graph = FBackGraph(path)
         dim = graph.num_nds
-        sig_eps = [0.1] * dim
+        sig_eps = [0.00001] * dim
         n_max = 4
         alpha_bound = 1
         alpha_mat, beta_mat = \
@@ -117,10 +117,11 @@ if __name__ == "__main__":
         dmaker = FBackRandomDataMaker(n_max, graph, alpha_mat=alpha_mat,
                                       beta_mat=beta_mat,
                                       sig_eps=sig_eps)
-        num_rows = 10
+        num_rows = 100
         data_path = "test_data.csv"
         dmaker.write_dataset_csv(num_rows, data_path)
         df = pd.read_csv(data_path)
+        print(df)
         mger = FBackGEmanager(n_max, graph, data_path)
         mger.print_alpha_lists(true_alpha_mat=dmaker.alpha_mat, verbose=True)
         mger.print_mean_alpha_list(true_alpha_mat=dmaker.alpha_mat,

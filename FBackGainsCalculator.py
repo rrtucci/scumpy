@@ -166,6 +166,7 @@ class FBackGainsCalculator(GainsCalculator):
         # draws out item from single item list
         sol_list, = linsolve(eq_list, unknowns)
         # print(str(sol_list))
+        sol_list = sp.factor(sol_list)
 
         self.beta_list = []
         self.beta_mat = sp.zeros(dim)
