@@ -207,7 +207,7 @@ def do_latex_subs(graph, x, time=None):
     return x
 
 
-def print_all_mats_after_latex_subs(graph):
+def print_all_core_mats_after_latex_subs(graph):
     """
     This method is for debugging 'do_latex_subs()'. It creates the core
     matrices built by the functions in file core_matrices.py. Then it passes
@@ -248,6 +248,8 @@ def create_eq_list_from_matrix(mat, mat_name, graph, time):
     eq_list = []
     dim = graph.num_nds
     for row, col in product(range(dim), range(dim)):
+        if row <= col and mat_name == "alpha":
+            continue
         mat_str = mat_name
         sep = "_"
         if mat_name in ["alpha", "beta"]:
@@ -343,6 +345,6 @@ if __name__ == "__main__":
             file.write(dot)
         path = 'tempo13.txt'
         graph = Graph(path)
-        print_all_mats_after_latex_subs(graph)
+        print_all_core_mats_after_latex_subs(graph)
 
     main()

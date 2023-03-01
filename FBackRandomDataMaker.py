@@ -3,7 +3,6 @@ from RandomDataMaker import *
 import numpy as np
 from itertools import product
 import pandas as pd
-from random import randint
 
 
 class FBackRandomDataMaker(RandomDataMaker):
@@ -31,8 +30,8 @@ class FBackRandomDataMaker(RandomDataMaker):
 
     """
 
-    def __init__(self, n_max, graph, sig_eps, alpha_mat=None,
-                 beta_mat=None, alpha_bound=1):
+    def __init__(self, n_max, graph, mean_eps, sig_eps, alpha_mat=None,
+                 beta_mat=None, alpha_bound=1, beta_bound=1):
         """
         Constructor.
 
@@ -56,12 +55,13 @@ class FBackRandomDataMaker(RandomDataMaker):
         """
         self.n_max = n_max
         dim = graph.num_nds
-        RandomDataMaker.__init__(self, graph, sig_eps,
+        RandomDataMaker.__init__(self, graph, mean_eps, sig_eps,
                                  alpha_mat=np.zeros((dim, dim)),
                                  alpha_bound=alpha_bound)
-        self.alpha_mat, self.beta_mat = \
-                FBackRandomDataMaker.generate_random_gains(
-                    graph, alpha_bound)
+        self.alpha_mat, self.beta_mat = FBackRandomDataMaker.\
+            generate_random_alpha_and_beta_mats(graph,
+                                               alpha_bound,
+                                               beta_bound)
         if beta_mat is not None:
             assert beta_mat.shape == (dim, dim)
             self.beta_mat = beta_mat
@@ -95,7 +95,8 @@ class FBackRandomDataMaker(RandomDataMaker):
         return columns
 
     @staticmethod
-    def generate_random_gains(graph, alpha_bound=1):
+    def generate_random_alpha_and_beta_mats(graph, alpha_bound=1,
+                                            beta_bound=1):
         """
         In this internal method, the inslice gains \alpha_{i|j} and the
         feedback gains \beta_{i|j} are generated randomly. Each non-zero
@@ -113,7 +114,6 @@ class FBackRandomDataMaker(RandomDataMaker):
             both arrays of shape=(dim, dim)
 
         """
-        assert alpha_bound > 0
         dim = graph.num_nds
         alpha_mat = np.zeros((dim, dim))
         beta_mat = np.zeros((dim, dim))
@@ -121,9 +121,9 @@ class FBackRandomDataMaker(RandomDataMaker):
             row_nd = graph.ord_nodes[row]
             col_nd = graph.ord_nodes[col]
             if row > col and (col_nd, row_nd) in graph.inslice_arrows:
-                alpha_mat[row, col] = randint(-alpha_bound, alpha_bound)
+                alpha_mat[row, col] = my_random(alpha_bound)
             if (col_nd, row_nd) in graph.fback_arrows:
-                beta_mat[row, col] = randint(-alpha_bound, alpha_bound)
+                beta_mat[row, col] = my_random(beta_bound)
         return alpha_mat, beta_mat
 
     def generate_one_random_instance(self):
@@ -143,7 +143,7 @@ class FBackRandomDataMaker(RandomDataMaker):
         for n in range(1, self.n_max+1):
             nd_values = [0]*dim
             for i in range(dim):
-                nd_values[i] += np.random.normal(loc=0,
+                nd_values[i] += np.random.normal(loc=10,
                                                  scale=self.sigma_eps[i])
                 if n >= 1:
                     for j in range(dim):
@@ -196,13 +196,18 @@ if __name__ == "__main__":
         if draw:
             graph.draw(jupyter=False)
         dim = graph.num_nds
-        sig_eps = [.001]*dim
+        mean_eps = [0]*dim
+        sig_eps = [10]*dim
         n_max = 4
         alpha_bound = 10
-        dmaker = FBackRandomDataMaker(n_max, graph, sig_eps=sig_eps,
-                                      alpha_bound=alpha_bound)
+        beta_bound = 1
+        dmaker = FBackRandomDataMaker(n_max, graph,
+                                      mean_eps=mean_eps,
+                                      sig_eps=sig_eps,
+                                      alpha_bound=alpha_bound,
+                                      beta_bound=beta_bound)
         data_path = "fback_test_data.csv"
-        num_rows = 5
+        num_rows = 100
         dmaker.write_dataset_csv(num_rows, data_path)
         print(pd.read_csv(data_path))
         print("alpha_mat=\n", dmaker.alpha_mat)

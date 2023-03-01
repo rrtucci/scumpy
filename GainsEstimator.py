@@ -243,10 +243,15 @@ if __name__ == "__main__":
         # dot_path = 'dot_atlas/good_bad_trols_G1.dot'
         graph = Graph(dot_path)
         dim = graph.num_nds
-        sig_eps = [.00001]*dim
+        mean_eps = [0]*dim
+        sig_eps = [10]*dim
         alpha_bound = 10
-        dmaker = RandomDataMaker(graph, sig_eps=sig_eps,
-                                 alpha_bound=alpha_bound)
+        beta_bound = 1
+        dmaker = RandomDataMaker(graph,
+                                 mean_eps=mean_eps,
+                                 sig_eps=sig_eps,
+                                 alpha_bound=alpha_bound,
+                                 beta_bound=beta_bound)
         num_rows = 100
         data_path = "test_data.csv"
         dmaker.write_dataset_csv(num_rows, data_path)

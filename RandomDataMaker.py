@@ -2,7 +2,16 @@ from Graph import *
 import numpy as np
 from itertools import product
 import pandas as pd
-from random import randint
+from random import randint, uniform
+import math
+
+def my_random(bound):
+    assert bound > 0
+    if bound > 1:
+        b = math.ceil(bound)
+        return randint(-b, b)
+    else:
+        return uniform(-bound, bound)
 
 
 class RandomDataMaker:
@@ -26,7 +35,8 @@ class RandomDataMaker:
 
     """
 
-    def __init__(self, graph, sig_eps, alpha_mat=None, alpha_bound=1):
+    def __init__(self, graph, mean_eps, sig_eps, alpha_mat=None,
+                 alpha_bound=1, beta_bound=1):
         """
         Constructor.
 
@@ -46,17 +56,19 @@ class RandomDataMaker:
         """
         self.graph = graph
         dim = graph.num_nds
+        assert len(mean_eps) == dim
+        self.mean_eps = mean_eps
         assert len(sig_eps) == dim
         self.sigma_eps = sig_eps
         if alpha_mat is None:
-            self.alpha_mat = self.generate_random_gains(
-                graph, alpha_bound)
+            self.alpha_mat = RandomDataMaker.\
+                generate_random_alpha_mat(graph, alpha_bound)
         else:
             assert alpha_mat.shape == (dim, dim)
             self.alpha_mat = alpha_mat
 
     @staticmethod
-    def generate_random_gains(graph, alpha_bound=1):
+    def generate_random_alpha_mat(graph, alpha_bound=1):
 
         """
         In this internal method, the gains \alpha_{i|j} are generated
@@ -73,14 +85,13 @@ class RandomDataMaker:
         np.array of shape=(dim, dim)
 
         """
-        assert alpha_bound > 0
         dim = graph.num_nds
         alpha_mat = np.zeros((dim, dim))
         for row, col in product(range(dim), range(dim)):
             row_nd = graph.ord_nodes[row]
             col_nd = graph.ord_nodes[col]
             if row > col and (col_nd, row_nd) in graph.arrows:
-                alpha_mat[row, col] = randint(-alpha_bound, alpha_bound)
+                alpha_mat[row, col] = my_random(alpha_bound)
         return alpha_mat
 
     def generate_one_random_instance(self):
@@ -97,7 +108,7 @@ class RandomDataMaker:
         dim = self.graph.num_nds
         nd_values = [0]*dim
         for i in range(dim):
-            nd_values[i] = np.random.normal(loc=0, scale=self.sigma_eps[i])
+            nd_values[i] = np.random.normal(loc=10, scale=self.sigma_eps[i])
             for j in range(dim):
                 if i > j:
                     nd_values[i] += self.alpha_mat[i, j]*nd_values[j]
@@ -144,12 +155,17 @@ if __name__ == "__main__":
         if draw:
             graph.draw(jupyter=False)
         dim = graph.num_nds
-        sig_eps = [.001]*dim
+        mean_eps = [0]*dim
+        sig_eps = [10]*dim
         alpha_bound = 10
-        dmaker = RandomDataMaker(graph, sig_eps=sig_eps,
-                                 alpha_bound=alpha_bound)
+        beta_bound = 1
+        dmaker = RandomDataMaker(graph,
+                                 mean_eps=mean_eps,
+                                 sig_eps=sig_eps,
+                                 alpha_bound=alpha_bound,
+                                 beta_bound=beta_bound)
         data_path = "test_data.csv"
-        num_rows = 5
+        num_rows = 100
         dmaker.write_dataset_csv(num_rows, data_path)
         print("alpha_mat=\n", dmaker.alpha_mat)
         print(pd.read_csv(data_path))
@@ -158,8 +174,11 @@ if __name__ == "__main__":
         alpha_mat[1, 0] = 4
         alpha_mat[2, 0], alpha_mat[2, 1] = 2, -3
         alpha_mat[3, 0], alpha_mat[3, 1] = 1, -1
+        mean_eps = [0]*dim
         sig_eps = [0.0]*dim
-        dmaker = RandomDataMaker(graph, sig_eps=sig_eps,
+        dmaker = RandomDataMaker(graph,
+                                 mean_eps=mean_eps,
+                                 sig_eps=sig_eps,
                                  alpha_mat=alpha_mat)
         data_path = "test_data.csv"
         num_rows = 5

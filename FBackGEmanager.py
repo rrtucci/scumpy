@@ -108,14 +108,18 @@ if __name__ == "__main__":
         path = 'dot_atlas/fback-2node.dot'
         graph = FBackGraph(path)
         dim = graph.num_nds
-        sig_eps = [0.00001] * dim
+        mean_eps = [0]*dim
+        sig_eps = [10] * dim
         n_max = 4
-        alpha_bound = 1
+        alpha_bound = 10
+        beta_bound = 1
         alpha_mat, beta_mat = \
-            FBackRandomDataMaker.generate_random_gains(
-            graph, alpha_bound=alpha_bound)
-        dmaker = FBackRandomDataMaker(n_max, graph, alpha_mat=alpha_mat,
+            FBackRandomDataMaker.generate_random_alpha_and_beta_mats(
+            graph, alpha_bound=alpha_bound, beta_bound=beta_bound)
+        dmaker = FBackRandomDataMaker(n_max, graph,
+                                      alpha_mat=alpha_mat,
                                       beta_mat=beta_mat,
+                                      mean_eps=mean_eps,
                                       sig_eps=sig_eps)
         num_rows = 100
         data_path = "test_data.csv"
