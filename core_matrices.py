@@ -182,7 +182,7 @@ def cov_sb_mat(dim, time=None):
     return make_sb_mat(dim, mat_str, mat_type="symmetric")
 
 
-def cov2times_sb_mat(dim, time=None):
+def cov2times_sb_mat(dim, time=None, delta=False):
     """
     This method returns 2-times covariance matrix C^{n,n+1} (of type
     sp.Matrix) with entries C^{n,n+1}_{i,j}=<x^{n}_i, x^{n+1}_j> =
@@ -200,10 +200,13 @@ def cov2times_sb_mat(dim, time=None):
     sp.Matrix
 
     """
+    xtra_str = ""
+    if delta:
+        xtra_str = "d_"
     if isinstance(time, int):
-        str0 = "cov2times_n" + str(time)
+        str0 = xtra_str + "cov2times_n" + str(time)
     elif time == "n":
-        str0 = "cov2times_n"
+        str0 = xtra_str + "cov2times_n"
     else:
         assert False, "time=" + str(time)
     str0 += "_%d_%d"

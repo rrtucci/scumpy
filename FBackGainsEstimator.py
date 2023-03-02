@@ -63,7 +63,8 @@ class FBackGainsEstimator(GainsEstimator):
                  graph,
                  df,
                  solve_symbolically=False,
-                 hidden_nds=None):
+                 hidden_nds=None,
+                 delta=True):
         """
 
         Parameters
@@ -83,6 +84,7 @@ class FBackGainsEstimator(GainsEstimator):
                        solve_symbolically=solve_symbolically,
                        hidden_nds=hidden_nds)
         self.time = time
+        self.delta = delta
         dim = graph.num_nds
         # alpha version of the following already defined
         # by parent method
@@ -138,7 +140,7 @@ class FBackGainsEstimator(GainsEstimator):
                     
     def calculate_gains(self):
         dim = self.graph.num_nds
-        calc = FBackGainsCalculator(self.graph)
+        calc = FBackGainsCalculator(self.graph, delta=self.delta)
         if self.solve_symbolically:
             cov_mat0 = cov_sb_mat(dim, time=self.time)
             cov2times = cov2times_sb_mat(dim, time=self.time)

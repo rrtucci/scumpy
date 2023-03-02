@@ -45,7 +45,7 @@ class FBackGainsCalculator(GainsCalculator):
 
     """
 
-    def __init__(self, graph):
+    def __init__(self, graph, delta=True):
         """
         Constructor
 
@@ -54,6 +54,7 @@ class FBackGainsCalculator(GainsCalculator):
         graph: FBackGraph
         """
         GainsCalculator.__init__(self, graph)
+        self.delta = delta
 
         # self.alpha_list and self.alpha_mat are inherited from parent class.
         self.alpha_list_with_betas = None
@@ -98,8 +99,10 @@ class FBackGainsCalculator(GainsCalculator):
             cov_mat0 = cov_sb_mat(dim, time=time0)
             cov2times = cov2times_sb_mat(dim, time=time0)
             cov_mat1 = cov_sb_mat(dim, time=time1)
+            d_cov2times = cov2times_sb_mat(dim, time=time0, delta=True)
         else:
             cov_mat0, cov2times, cov_mat1 = cov_mat_list_in
+            d_cov2times = cov2times - cov_mat0
 
         mat_B = set_to_zero_fback_gains_without_arrows(self.graph,
                                              beta_sb_mat(dim))
@@ -113,10 +116,10 @@ class FBackGainsCalculator(GainsCalculator):
         self.alpha_mat = None
         self.alpha_list = None
 
-        self.calculate_betas(cov_mat0=cov_mat0, cov2times=cov2times)
+        self.calculate_betas(cov_mat0, cov2times, d_cov2times, time=time0)
         self.calculate_alphas()
 
-    def calculate_betas(self, cov_mat0=None, cov2times=None, time="n"):
+    def calculate_betas(self, cov_mat0, cov2times, d_cov2times, time):
         """
         This method fills in self.beta_list and self.beta_mat
 
@@ -126,32 +129,49 @@ class FBackGainsCalculator(GainsCalculator):
 
         """
         dim = self.graph.num_nds
-        if time == "n":
-            time0 = "n"
-        elif isinstance(time, int):
-            time0 = time
-        else:
-            assert False
-        if cov_mat0 is None:
-            cov_mat0 = cov2times_sb_mat(dim, time=time0)
-        if cov2times is None:
-            cov2times = cov2times_sb_mat(dim, time=time0)
 
         mat_B = set_to_zero_fback_gains_without_arrows(self.graph,
                                              beta_sb_mat(dim))
-        eq_mat = (sp.eye(dim) - self.alpha_mat_with_betas) * \
-                 cov2times.T - \
-                 mat_B * cov_mat0
 
-        unknowns = []
-        eq_list = []
+        if not self.delta:
+            eq_mat = (sp.eye(dim) - self.alpha_mat_with_betas) * \
+                     cov2times.T - \
+                     mat_B * cov_mat0
+        else:
+            # delta method consists in solving two systems
+            # of linear  equations:
+            # b_0 = A x_0 solve for x_0
+            # b_1 = A x_1 solve for x_1
+            # so
+            # b_0 + b_1 = A(x_0 + x_1)
+
+            eq_mat0 = (sp.eye(dim) - self.alpha_mat_with_betas) * \
+                     cov_mat0.T - mat_B * cov_mat0
+            eq_mat1 = (sp.eye(dim) - self.alpha_mat_with_betas) * \
+                      d_cov2times.T - mat_B * cov_mat0
+        if not self.delta:
+            unknowns = []
+            eq_list = []
+        else:
+            unknowns0=[]
+            unknowns1=[]
+            eq_list0=[]
+            eq_list1=[]
         for row, col in product(range(dim), range(dim)):
             row_nd = self.graph.ord_nodes[row]
             col_nd = self.graph.ord_nodes[col]
-            eq_list.append(eq_mat[row, col])
+            if not self.delta:
+                eq_list.append(eq_mat[row, col])
+            else:
+                eq_list0.append(eq_mat0[row, col])
+                eq_list1.append(eq_mat1[row, col])
             if (col_nd, row_nd) in self.graph.fback_arrows:
                 beta_str = "beta_" + str(row) + "_L_" + str(col)
-                unknowns.append(sp.Symbol(beta_str))
+                if not self.delta:
+                    unknowns.append(sp.Symbol(beta_str))
+                else:
+                    unknowns0.append(sp.Symbol(beta_str))
+                    unknowns1.append(sp.Symbol(beta_str))
             else:
                 if time == "n":
                     xtra_str = "n"
@@ -161,18 +181,35 @@ class FBackGainsCalculator(GainsCalculator):
                     assert False
                 cov2times_str = "cov2times_" + xtra_str +\
                                  "_" + str(col) + "_" + str(row)
-                unknowns.append(sp.Symbol(cov2times_str))
+                if not self.delta:
+                    unknowns.append(sp.Symbol(cov2times_str))
+                else:
+                    # do nothing for unknowns0
+                    unknowns1.append(sp.Symbol("d_" + cov2times_str))
+
         # the comma does what is called sequence unpacking.
         # draws out item from single item list
-        sol_list, = linsolve(eq_list, unknowns)
-        # print(str(sol_list))
-        sol_list = sp.factor(sol_list)
+        if not self.delta:
+            sol_list, = linsolve(eq_list, unknowns)
+            # print(str(sol_list))
+            sol_list = sp.factor(sol_list)
+        else:
+            sol_list0, = linsolve(eq_list0, unknowns0)
+            sol_list1, = linsolve(eq_list1, unknowns1)
+            sol_list = []
+            unknowns = unknowns1
+            for i in range(len(sol_list1)):
+                if i < len(unknowns0):
+                    sol_list.append(sol_list0[i] + sol_list1[i])
+                else:
+                    sol_list.append(sol_list1[i])
 
         self.beta_list = []
         self.beta_mat = sp.zeros(dim)
         for i in range(len(sol_list)):
             self.beta_list.append(sp.Eq(unknowns[i], sol_list[i]))
             left_str = str(unknowns[i])
+
             if left_str[0:3] == 'beta':
                 # print("kkkll", left_str)
                 row_str, col_str = left_str[4:].split("_L_")

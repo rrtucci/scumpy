@@ -8,7 +8,8 @@ class FBackGEmanager:
                  graph,
                  path,
                  solve_symbolically=False,
-                 hidden_nds=None):
+                 hidden_nds=None,
+                 delta=True):
         self.n_max = n_max
         self.graph = graph
         self.solve_symbolically = solve_symbolically
@@ -35,7 +36,8 @@ class FBackGEmanager:
                 graph,
                 df_two_slices,
                 solve_symbolically,
-                hidden_nds
+                hidden_nds,
+                delta
             )
             self.n_to_estimator[time].calculate_gains()
 

@@ -68,17 +68,21 @@ def latex_cov_str(row_nd, col_nd, time):
                 r"}" + superscript + r"\right\rangle"
     return latex_str
 
-def sb_cov2times_str(row, col, time):
+def sb_cov2times_str(row, col, time, delta=False):
+    xtra_str = ""
+    if delta:
+        xtra_str = "d_"
     if time == "n":
-        sb_str = "cov2times_n"
+        sb_str = xtra_str + "cov2times_n"
     elif isinstance(time, int):
-        sb_str = "cov2times_n" + str(time)
+        sb_str = xtra_str + "cov2times_n" + str(time)
     else:
         assert False
     sb_str += "_" + str(row) + "_" + str(col)
     return sb_str
 
-def latex_cov2times_str(row_nd, col_nd, time):
+
+def latex_cov2times_str(row_nd, col_nd, time, delta=False):
     if time == "n":
         superscript = latex_time_superscript("n")
         superscript_plus = latex_time_superscript("n_plus_one")
@@ -87,8 +91,12 @@ def latex_cov2times_str(row_nd, col_nd, time):
         superscript_plus = latex_time_superscript(time + 1)
     else:
         assert False
+    xtra_str = ""
+    if delta:
+        xtra_str = r"\Delta "
     latex_str = r"\left\langle\underline{" + row_nd + \
-            r"}" + superscript + r",\underline{" + col_nd + \
+            r"}" + superscript + r"," + xtra_str + \
+             r"\underline{" + col_nd + \
             r"}" + superscript_plus + r"\right\rangle"
     return latex_str
 
@@ -159,9 +167,12 @@ def do_latex_subs(graph, x, time=None):
             sb_str = sb_cov_str(row, col, time0)
             x = x.subs(sp.Symbol(sb_str), sp.Symbol(latex_str))
 
-        latex_str = latex_cov2times_str(row_nd, col_nd, time="n")
-        sb_str = sb_cov2times_str(row, col, time="n")
-        x = x.subs(sp.Symbol(sb_str), sp.Symbol(latex_str))
+        for delta in [True, False]:
+            latex_str = latex_cov2times_str(row_nd, col_nd, time="n",
+                                            delta=delta)
+            sb_str = sb_cov2times_str(row, col, time="n",
+                                      delta=delta)
+            x = x.subs(sp.Symbol(sb_str), sp.Symbol(latex_str))
 
         # print("vvbgh", time)
         if isinstance(time, int):
