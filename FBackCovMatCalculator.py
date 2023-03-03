@@ -76,7 +76,7 @@ class FBackCovMatCalculator(CovMatCalculator):
         """
         print("Do you mean 'print_initial_cov_mat()'?")
 
-    def print_jacobian(self, verbose=False):
+    def print_jacobian(self, verbose=False, time=None):
         """
         This method prevents the user from using the parent method that it
         overrides.
@@ -84,6 +84,7 @@ class FBackCovMatCalculator(CovMatCalculator):
         Parameters
         ----------
         verbose: bool
+        time: None or str or int
 
         Returns
         -------

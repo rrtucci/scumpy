@@ -14,6 +14,17 @@ symbolic substitutions of some of the symbols in x. x is usually a sp.Matrix.
 
 
 def round_expr(expr, num_digits):
+    """
+
+    Parameters
+    ----------
+    expr
+    num_digits
+
+    Returns
+    -------
+
+    """
     return expr.xreplace(
         {n: round(n, num_digits) for n in expr.atoms(sp.Number)})
 
@@ -46,6 +57,18 @@ def latex_time_superscript(time):
     return superscript
 
 def sb_cov_str(row, col, time):
+    """
+
+    Parameters
+    ----------
+    row
+    col
+    time
+
+    Returns
+    -------
+
+    """
     if time is None:
         sb_str = "cov"
     elif time in ["one", "n", "n_plus_one"]:
@@ -58,6 +81,18 @@ def sb_cov_str(row, col, time):
     return sb_str
 
 def latex_cov_str(row_nd, col_nd, time):
+    """
+
+    Parameters
+    ----------
+    row_nd
+    col_nd
+    time
+
+    Returns
+    -------
+
+    """
     superscript = latex_time_superscript(time)
     if row_nd == col_nd:
         latex_str = r"\sigma^2_{\underline{" + row_nd + \
@@ -69,6 +104,19 @@ def latex_cov_str(row_nd, col_nd, time):
     return latex_str
 
 def sb_cov2times_str(row, col, time, delta=False):
+    """
+
+    Parameters
+    ----------
+    row
+    col
+    time
+    delta
+
+    Returns
+    -------
+
+    """
     xtra_str = ""
     if delta:
         xtra_str = "d_"
@@ -83,6 +131,19 @@ def sb_cov2times_str(row, col, time, delta=False):
 
 
 def latex_cov2times_str(row_nd, col_nd, time, delta=False):
+    """
+
+    Parameters
+    ----------
+    row_nd
+    col_nd
+    time
+    delta
+
+    Returns
+    -------
+
+    """
     if time == "n":
         superscript = latex_time_superscript("n")
         superscript_plus = latex_time_superscript("n_plus_one")
@@ -129,6 +190,7 @@ def do_latex_subs(graph, x, time=None):
     ----------
     graph: Graph
     x: sp.Symbol or sp.Matrix
+    time: None or str or int
 
     Returns
     -------
@@ -256,6 +318,19 @@ def print_all_core_mats_after_latex_subs(graph):
 
 
 def create_eq_list_from_matrix(mat, mat_name, graph, time):
+    """
+
+    Parameters
+    ----------
+    mat
+    mat_name
+    graph
+    time
+
+    Returns
+    -------
+
+    """
     eq_list = []
     dim = graph.num_nds
     for row, col in product(range(dim), range(dim)):
@@ -287,6 +362,7 @@ def print_matrix_sb(mat, mat_name, graph, verbose=False, time=None):
     mat_name: str
     graph: Graph or FBackGraph
     verbose: bool
+    time: None or str or int
 
     Returns
     -------
@@ -306,9 +382,12 @@ def print_list_sb(eq_list, graph, verbose=False,
 
     Parameters
     ----------
+    eq_list: list[sp.Eq]
     graph: Graph or FBackGraph
-    eq_list: list[sp.Equality]
     verbose: Bool
+    time:
+    comment_list:
+    round: bool
 
     Returns
     -------

@@ -15,18 +15,10 @@ class FBackRandomDataMaker(RandomDataMaker):
 
     Attributes
     ----------
-    alpha_mat: np.array of shape=(dim,dim), where dim = number of nodes.
-        The matrix of alphas (i.e., inslice gains \alpha_{i|j})
     beta_mat: np.array of shape=(dim,dim), where dim = number of nodes.
         The matrix of betas (i.e., feedback gains \beta_{i|j})
     n_max: int
         We consider times n=1,2,3,..., n_max
-    graph: FBackGraph
-        information about DAG structure
-    sigma_eps: list[float]
-        the standard deviations of \epsilon_j, which is the external root
-        node pointing into x_j. The entries in this list are ordered
-        according to 'graph.ord_nodes'
 
     """
 
@@ -47,11 +39,13 @@ class FBackRandomDataMaker(RandomDataMaker):
         n_max: int
             We consider times n=1,2,3, ..., n_max
         graph: FBackGraph
+        mean_eps: list[float]
         sig_eps: list[float]
         alpha_mat: np.array of shape=(dim, dim)
         beta_mat: np.array of shape=(dim, dim)
         alpha_bound: float
             must be a positive number.
+        beta_bound: float
         """
         self.n_max = n_max
         dim = graph.num_nds
@@ -105,8 +99,10 @@ class FBackRandomDataMaker(RandomDataMaker):
 
         Parameters
         ----------
+        graph: FBackGraph
         alpha_bound: float
             must be a positive number.
+        beta_bound: float
 
         Returns
         -------

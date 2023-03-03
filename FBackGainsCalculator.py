@@ -42,6 +42,7 @@ class FBackGainsCalculator(GainsCalculator):
     alpha_mat_with_betas: sp.Matrix
     beta_list: list[sp.Equality]
     beta_mat: sp.Matrix
+    delta: bool
 
     """
 
@@ -52,6 +53,7 @@ class FBackGainsCalculator(GainsCalculator):
         Parameters
         ----------
         graph: FBackGraph
+        delta: bool
         """
         GainsCalculator.__init__(self, graph)
         self.delta = delta
@@ -76,8 +78,9 @@ class FBackGainsCalculator(GainsCalculator):
 
         Parameters
         ----------
+        cov_mat_list_in: list[sp.Matrix]
         mat_K: sp.Matrix
-        time: None or str
+        time: None or str or int
 
         Returns
         -------
@@ -122,6 +125,14 @@ class FBackGainsCalculator(GainsCalculator):
     def calculate_betas(self, cov_mat0, cov2times, d_cov2times, time):
         """
         This method fills in self.beta_list and self.beta_mat
+
+        Parameters
+        ----------
+        cov_mat0: sp.Matrix
+        cov2times: sp.Matrix
+        d_cov2times: sp.Matrix
+        time: None or str or int
+
 
         Returns
         -------
@@ -239,21 +250,6 @@ class FBackGainsCalculator(GainsCalculator):
                             self.beta_mat[row, col]))
         # print("ccvvf", self.alpha_mat)
 
-    def print_alpha_list(self, verbose=False, time=None):
-        """
-        This method prevents the user from using the parent method that it
-        overrides.
-
-        Parameters
-        ----------
-        verbose: bool
-
-        Returns
-        -------
-        None
-
-        """
-        assert False
 
     def print_alpha_list_with_betas(self, verbose=False, time="n"):
         """
@@ -263,6 +259,7 @@ class FBackGainsCalculator(GainsCalculator):
         Parameters
         ----------
         verbose: bool
+        time: None or str or int
 
         Returns
         -------
@@ -282,6 +279,7 @@ class FBackGainsCalculator(GainsCalculator):
         Parameters
         ----------
         verbose: bool
+        time: None or str or int
 
         Returns
         -------
@@ -301,6 +299,7 @@ class FBackGainsCalculator(GainsCalculator):
         Parameters
         ----------
         verbose: bool
+        time: None or str or int
 
         Returns
         -------

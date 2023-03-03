@@ -28,34 +28,16 @@ class FBackGainsEstimator(GainsEstimator):
 
     Attributes
     ----------
-    alpha_list: list[sp.Equality]
-        A list of equations of the form '\alpha_{i|j} = float' if the graph
-        has an arrow x_j->x_i, or of the form 'err_{i,j} = float' if that
-        arrow is missing from the graph. 'err_i_j' is an error metric equal
-        to the difference between both sides of an equation that constrains
-        the covariances. Exception: if there are hidden nodes, the right
-        hand sides of these equations may contain symbolic expressions
-        pertaining to covariances alluding to hidden nodes.
-    alpha_mat_estimate: np.array of shape=(dim, dim), where dim=number of nodes
-        estimate of the alpha matrix. Contains estimates for the gains
-        \alpha_{i|j}. If a particular \alpha_{i|j} estimate can't be
-        converted to a float (because, for example, it depends on hidden
-        variables), it is set to np.nan. \alpha_{i|j} estimates for
-        non-existent arrows are set to 0.
-    cov_mat: sp.Matrix
-        Let cov_mat_nm be the numpy, numeric (nm) covariance matrix
-        calculated from the input dataset. cov_mat is a sp.Matrix of the
-        same dimension as cov_mat_nm that coincides with cov_mat_nm on those
-        entries that do not have a hidden node as row or column index. Those
-        entries of cov_mat that do have hidden nodes in their indices,
-        are symbolic (sb).
-    alpha_cum_err: float
-        cumulative error, equal to the sum of the absolute values of the
-        errors err_i_j in gains_list. This error is calculated only if
-        there are no hidden nodes; it's set to zero otherwise.
-    graph: FBackGraph
-    hidden_nds: list[str] or None
-        This is a list of the nodes that are hidden.
+    beta_cum_err: float
+    beta_list:
+    beta_mat:
+    beta_mat_est:
+    cov_mat_list:
+    delta: bool
+    time: None or str or int
+
+
+
     """
 
     def __init__(self,
@@ -69,9 +51,9 @@ class FBackGainsEstimator(GainsEstimator):
 
         Parameters
         ----------
+        time: None or str or int
         graph: Graph
-        path: str
-            path to input file containing dataset
+        df: pd.Dataframe
         solve_symbolically: bool
             solve_symbolically=True if linsolve() is called using a fully
             symbolic covariance matrix, and then the numeric values of the
@@ -79,6 +61,7 @@ class FBackGainsEstimator(GainsEstimator):
             solve_symbolically=False if linsolve() is called using a hybrid
             covariance matrix, partly symbolic, partly numeric.
         hidden_nds: None or list[str]
+        delta: bool
         """
         GainsEstimator.__init__(self, graph, path=None,
                        solve_symbolically=solve_symbolically,
@@ -139,6 +122,12 @@ class FBackGainsEstimator(GainsEstimator):
                         cov_mat_list_nm[i][row, col]
                     
     def calculate_gains(self):
+        """
+
+        Returns
+        -------
+
+        """
         dim = self.graph.num_nds
         calc = FBackGainsCalculator(self.graph, delta=self.delta)
         if self.solve_symbolically:
@@ -157,6 +146,19 @@ class FBackGainsEstimator(GainsEstimator):
         
     def fix_greek_list(self, name, 
                        greek_list, greek_mat_estimate, greek_cum_err):
+        """
+
+        Parameters
+        ----------
+        name
+        greek_list
+        greek_mat_estimate
+        greek_cum_err
+
+        Returns
+        -------
+
+        """
         dim = self.graph.num_nds
         len0= len(name)
         for i in range(len(greek_list)):
@@ -201,6 +203,18 @@ class FBackGainsEstimator(GainsEstimator):
     def get_greek_list_comments(name,
                                 greek_list,
                                 true_greek_mat):
+        """
+
+        Parameters
+        ----------
+        name
+        greek_list
+        true_greek_mat
+
+        Returns
+        -------
+
+        """
         comments = []
         len0 = len(name)
         for i in range(len(greek_list)):
@@ -215,34 +229,88 @@ class FBackGainsEstimator(GainsEstimator):
         return comments
 
     def fix_alpha_list(self):
+        """
+
+        Returns
+        -------
+
+        """
         self.fix_greek_list("alpha",
                        self.alpha_list, 
                        self.alpha_mat_estimate, 
                        self.alpha_cum_err)
 
     def fix_beta_list(self):
+        """
+
+        Returns
+        -------
+
+        """
         self.fix_greek_list("beta",
                        self.beta_list, 
                        self.beta_mat_estimate, 
                        self.beta_cum_err)
 
     def get_alpha_list_comments(self, true_alpha_mat):
+        """
+
+        Parameters
+        ----------
+        true_alpha_mat
+
+        Returns
+        -------
+
+        """
         return FBackGainsEstimator.get_greek_list_comments("alpha",
                                                            self.alpha_list,
                                                            true_alpha_mat)
         
     def get_beta_list_comments(self, true_beta_mat):
+        """
+
+        Parameters
+        ----------
+        true_beta_mat
+
+        Returns
+        -------
+
+        """
         return FBackGainsEstimator.get_greek_list_comments("beta",
                                                            self.beta_list,
                                                            true_beta_mat)
 
     def print_alpha_list(self, true_alpha_mat=None, verbose=False):
+        """
+
+        Parameters
+        ----------
+        true_alpha_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         comments = self.get_alpha_list_comments(true_alpha_mat)
         return print_list_sb(self.alpha_list, self.graph,
                              verbose=verbose, time=self.time,
                              comment_list=comments, round=True)
     
     def print_beta_list(self, true_beta_mat=None, verbose=False):
+        """
+
+        Parameters
+        ----------
+        true_beta_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         comments = self.get_beta_list_comments(true_beta_mat)
         return print_list_sb(self.beta_list, self.graph,
                              verbose=verbose, time=self.time,

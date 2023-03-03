@@ -17,9 +17,6 @@ class GainsCalculator:
 
     Attributes
     ----------
-    alpha_mat: sp.Matrix
-        the symbolic solutions for the gains \alpha_{i|j} as an sp.Matrix.
-        alpha_{i|j}=0 if arrow x_j->x_i missing.
     alpha_list: list[sp.Equality]
         list of symbols, where each symbol in the list is an equation of the
         form:
@@ -30,7 +27,9 @@ class GainsCalculator:
         arrow is missing, then \alpha_{i|j} on the left hand side of the
         above equation is replaced by <x_i, x_j>, so the equation becomes a
         constraint on the covariance matrix entries.
-
+    alpha_mat: sp.Matrix
+        the symbolic solutions for the gains \alpha_{i|j} as an sp.Matrix.
+        alpha_{i|j}=0 if arrow x_j->x_i missing.
     graph: Graph
 
     """
@@ -59,6 +58,7 @@ class GainsCalculator:
         cov_mat_in: sp.Matrix
         mat_K: sp.Matrix
             K matrix used only for linear SCM with feedback loops
+        time: None or str or int
 
         Returns
         -------
@@ -130,6 +130,7 @@ class GainsCalculator:
         Parameters
         ----------
         verbose: Bool
+        time: None or str or int
 
         Returns
         -------

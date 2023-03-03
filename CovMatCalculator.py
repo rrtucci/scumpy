@@ -141,6 +141,7 @@ class CovMatCalculator:
         Parameters
         ----------
         verbose: bool
+        time: None or str or int
 
         Returns
         -------

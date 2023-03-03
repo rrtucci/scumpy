@@ -6,6 +6,17 @@ from random import randint, uniform
 import math
 
 def my_random(bound):
+    """
+
+    Parameters
+    ----------
+    bound: float
+
+    Returns
+    -------
+    int or float
+
+    """
     assert bound > 0
     if bound > 1:
         b = math.ceil(bound)
@@ -28,6 +39,7 @@ class RandomDataMaker:
         The matrix of alphas (i.e., gains \alpha_{i|j})
     graph: Graph
         information about DAG structure
+    mean_eps: list[float]
     sigma_eps: list[float]
         the standard deviations of \epsilon_j, which is the external root
         node pointing into x_j. The entries in this list are ordered
@@ -36,7 +48,7 @@ class RandomDataMaker:
     """
 
     def __init__(self, graph, mean_eps, sig_eps, alpha_mat=None,
-                 alpha_bound=1, beta_bound=1):
+                 alpha_bound=1):
         """
         Constructor.
 
@@ -49,6 +61,7 @@ class RandomDataMaker:
         Parameters
         ----------
         graph: Graph
+        mean_eps: list[float]
         sig_eps: list[float]
         alpha_mat: np.array of shape=(dim, dim)
         alpha_bound: float
@@ -77,6 +90,7 @@ class RandomDataMaker:
 
         Parameters
         ----------
+        graph: Graph
         alpha_bound: float
             must be a positive number.
 
@@ -158,12 +172,10 @@ if __name__ == "__main__":
         mean_eps = [0]*dim
         sig_eps = [10]*dim
         alpha_bound = 10
-        beta_bound = 1
         dmaker = RandomDataMaker(graph,
                                  mean_eps=mean_eps,
                                  sig_eps=sig_eps,
-                                 alpha_bound=alpha_bound,
-                                 beta_bound=beta_bound)
+                                 alpha_bound=alpha_bound)
         data_path = "test_data.csv"
         num_rows = 100
         dmaker.write_dataset_csv(num_rows, data_path)

@@ -21,6 +21,7 @@ class FBackGraph(Graph):
         arrows whose orgin and target occur at the same time. Their arrow
         gains are represented by \arrow_{ i|j}.
 
+
     """
 
     def __init__(self,

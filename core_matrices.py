@@ -182,7 +182,7 @@ def cov_sb_mat(dim, time=None):
     return make_sb_mat(dim, mat_str, mat_type="symmetric")
 
 
-def cov2times_sb_mat(dim, time=None, delta=False):
+def cov2times_sb_mat(dim, time="n", delta=False):
     """
     This method returns 2-times covariance matrix C^{n,n+1} (of type
     sp.Matrix) with entries C^{n,n+1}_{i,j}=<x^{n}_i, x^{n+1}_j> =
@@ -194,6 +194,7 @@ def cov2times_sb_mat(dim, time=None, delta=False):
         dimension of square matrix = number of nodes in graph.
     time: "n" or int
         evaluate n at time
+    delta: bool
 
     Returns
     -------
@@ -286,7 +287,7 @@ if __name__ == "__main__":
         print(cov_sb_mat(dim, time=None))
         print(cov_sb_mat(dim, time="one"))
         print(cov_sb_mat(dim, time=2))
-        print(cov2times_sb_mat(dim, time=None))
+        print(cov2times_sb_mat(dim, time="n"))
         print(cov2times_sb_mat(dim, time=5))
         print(ee_sb_mat(dim))
         print(rho_sb_mat(dim))

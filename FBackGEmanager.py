@@ -3,6 +3,17 @@ import numpy as np
 from FBackGainsEstimator import *
 
 class FBackGEmanager:
+    """
+
+    Attributes
+    ----------
+    graph: FBackGraph
+    hidden_nds:
+    n_max: int
+    n_to_estimator:
+    solve_symbolically: bool
+
+    """
 
     def __init__(self, n_max,
                  graph,
@@ -10,6 +21,17 @@ class FBackGEmanager:
                  solve_symbolically=False,
                  hidden_nds=None,
                  delta=True):
+        """
+
+        Parameters
+        ----------
+        n_max
+        graph
+        path
+        solve_symbolically
+        hidden_nds
+        delta
+        """
         self.n_max = n_max
         self.graph = graph
         self.solve_symbolically = solve_symbolically
@@ -42,6 +64,18 @@ class FBackGEmanager:
             self.n_to_estimator[time].calculate_gains()
 
     def print_greek_lists(self, name, true_greek_mat=None, verbose=False):
+        """
+
+        Parameters
+        ----------
+        name
+        true_greek_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         assert name in ["alpha", "beta"]
         str0 = r"\begin{array}{l}" + "\n"
         for time in range(1, self.n_max):
@@ -65,7 +99,20 @@ class FBackGEmanager:
             print(str0)
         return sp.Symbol(str0)
 
-    def print_mean_greek_list(self, name, true_greek_mat=None, verbose=False):
+    def print_mean_greek_list(self, name, true_greek_mat=None,
+                              verbose=False):
+        """
+
+        Parameters
+        ----------
+        name
+        true_greek_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         assert name in ["alpha", "beta"]
         if name == "alpha":
             av_np = np.mean([self.n_to_estimator[
@@ -86,21 +133,65 @@ class FBackGEmanager:
 
     
     def print_alpha_lists(self, true_alpha_mat=None, verbose=False):
+        """
+
+        Parameters
+        ----------
+        true_alpha_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         return self.print_greek_lists("alpha", 
                                       true_greek_mat=true_alpha_mat,
                                       verbose=verbose)
     
     def print_mean_alpha_list(self, true_alpha_mat=None, verbose=False):
+        """
+
+        Parameters
+        ----------
+        true_alpha_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         return self.print_mean_greek_list("alpha", 
                                       true_greek_mat=true_alpha_mat,
                                       verbose=verbose)
 
     def print_beta_lists(self, true_beta_mat=None, verbose=False):
+        """
+
+        Parameters
+        ----------
+        true_beta_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         return self.print_greek_lists("beta",
                                       true_greek_mat=true_beta_mat,
                                       verbose=verbose)
 
     def print_mean_beta_list(self, true_beta_mat=None, verbose=False):
+        """
+
+        Parameters
+        ----------
+        true_beta_mat
+        verbose
+
+        Returns
+        -------
+
+        """
         return self.print_mean_greek_list("beta",
                                           true_greek_mat=true_beta_mat,
                                           verbose=verbose)
