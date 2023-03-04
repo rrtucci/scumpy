@@ -7,8 +7,12 @@ from copy import deepcopy
 
 """
 
-The functions in this file return their input x after performing some 
-symbolic substitutions of some of the symbols in x. x is usually an sp.Matrix.
+The file contains a very complete substitution function do_latex_subs() that 
+returns any input x after performing symbolic substitutions of some of the 
+symbols in x. x is usually an sp.Matrix.
+
+This file also contains various functions for printing matrices (sp.Matrix) 
+and lists (list[sp.Matrix]).
 
 """
 
@@ -29,6 +33,7 @@ def round_expr(expr, num_digits):
     """
     return expr.xreplace(
         {n: round(n, num_digits) for n in expr.atoms(sp.Number)})
+
 
 def latex_time_superscript(time):
     """
@@ -58,6 +63,7 @@ def latex_time_superscript(time):
         assert False
     return superscript
 
+
 def sb_cov_str(row, col, time):
     """
     This method returns a symbolic string for the entry of the covariance
@@ -84,6 +90,7 @@ def sb_cov_str(row, col, time):
         assert False
     sb_str += "_" + str(row) + "_" + str(col)
     return sb_str
+
 
 def latex_cov_str(row_nd, col_nd, time):
     """
@@ -112,6 +119,7 @@ def latex_cov_str(row_nd, col_nd, time):
                 r"}" + superscript + r",\underline{" + col_nd + \
                 r"}" + superscript + r"\right\rangle"
     return latex_str
+
 
 def sb_cov2times_str(row, col, time, delta=False):
     """
@@ -340,6 +348,8 @@ def print_all_core_mats_after_latex_subs(graph):
     sb_mat_print(cov_sb_mat(dim, time=5))
     sb_mat_print(cov2times_sb_mat(dim))
     sb_mat_print(cov2times_sb_mat(dim, time=5))
+    sb_mat_print(cov2times_sb_mat(dim, delta=True))
+    sb_mat_print(cov2times_sb_mat(dim, time=5, delta=True))
     sb_mat_print(ee_sb_mat(dim))
     sb_mat_print(rho_sb_mat(dim))
     sb_mat_print(jacobian_sb_mat(dim))
@@ -347,16 +357,19 @@ def print_all_core_mats_after_latex_subs(graph):
 
 def create_eq_list_from_matrix(mat, mat_name, graph, time):
     """
+    This method takes as input an sp.Matrix mat and creates a list[sp.Eq]
+    from it. The latter list can then be printed using latexify.print_list_sb()
 
     Parameters
     ----------
-    mat
-    mat_name
-    graph
-    time
+    mat: sp.Matrix
+    mat_name: str
+    graph: Graph
+    time: None or str or int
 
     Returns
     -------
+    list[sp.Eq]
 
     """
     eq_list = []
@@ -402,7 +415,7 @@ def print_matrix_sb(mat, mat_name, graph, verbose=False, time=None):
 
 
 def print_list_sb(eq_list, graph, verbose=False,
-                  time=None, comment_list=None, round=True):
+                  time=None, comment_list=None, rounded=True):
     """
     This method renders in latex, in a jupyter notebook (but not on the
     console), a list 'eq_list' of sp.Eq. Iff verbose=True, it also
@@ -413,9 +426,11 @@ def print_list_sb(eq_list, graph, verbose=False,
     eq_list: list[sp.Eq]
     graph: Graph or FBackGraph
     verbose: Bool
-    time:
-    comment_list:
-    round: bool
+    time: None or str or int
+    comment_list: list[str]
+        This List[str] should be of the same length as eq_list
+    rounded: bool
+        This is True iff the numerical parts of the answer are to be rounded.
 
     Returns
     -------
@@ -424,7 +439,7 @@ def print_list_sb(eq_list, graph, verbose=False,
     """
     if comment_list is None:
         comment_list = [""]*len(eq_list)
-    assert len(eq_list)==len(comment_list)
+    assert len(eq_list) == len(comment_list)
     str0 = ""
     x = eq_list
     x_copy = deepcopy(x)
@@ -434,7 +449,7 @@ def print_list_sb(eq_list, graph, verbose=False,
             print(str(x[i]) + "\t" + comment_list[i] + "\n")
     str0 += r"\begin{array}{l}" + "\n"
     for i in range(len(x)):
-        if round:
+        if rounded:
             x_copy[i] = round_expr(x_copy[i], 6)
         x_copy[i] = do_latex_subs(graph, x_copy[i], time)
         x_copy[i] = sp.latex(x_copy[i])

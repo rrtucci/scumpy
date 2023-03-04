@@ -13,7 +13,7 @@ numerical substitutions of some of the symbols in x. x is usually a sp.Matrix.
 
 def set_to_one_sigma_eps_mat(graph, x):
     """
-    This method substitutes \sigma_{\epsilon_j} by 0 for all j.
+    This method sets \sigma_{\epsilon_j} to 0 for all j.
 
     Parameters
     ----------
@@ -34,8 +34,8 @@ def set_to_one_sigma_eps_mat(graph, x):
 
 def set_to_zero_gains_without_arrows(graph, x):
     """
-    This method substitutes gain \alpha_{i|j} by 0 for all i,j such that
-    there is no arrow x_j->x_i.
+    This method sets inslice gain \alpha_{i|j} to 0 for all i,j such that
+    there is no inslice arrow x_j->x_i.
 
     Parameters
     ----------
@@ -59,8 +59,8 @@ def set_to_zero_gains_without_arrows(graph, x):
 
 def set_to_zero_fback_gains_without_arrows(graph, x):
     """
-    This method substitutes feedback gain \beta_{i|j} by 0 for all i,j such
-    that there is no arrow x_j->x_i.
+    This method sets feedback gain \beta_{i|j} to 0 for all i,j such that
+    there is no feedback arrow x_j->x_i.
 
     Parameters
     ----------

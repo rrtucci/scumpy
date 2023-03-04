@@ -344,7 +344,7 @@ class FBackGainsEstimator(GainsEstimator):
         comments = self.get_alpha_list_comments(true_alpha_mat)
         return print_list_sb(self.alpha_list, self.graph,
                              verbose=verbose, time=self.time,
-                             comment_list=comments, round=True)
+                             comment_list=comments, rounded=True)
     
     def print_beta_list(self, true_beta_mat=None, verbose=False):
         """
@@ -364,7 +364,7 @@ class FBackGainsEstimator(GainsEstimator):
         comments = self.get_beta_list_comments(true_beta_mat)
         return print_list_sb(self.beta_list, self.graph,
                              verbose=verbose, time=self.time,
-                             comment_list=comments, round=True)
+                             comment_list=comments, rounded=True)
 
 
 if __name__ == "__main__":

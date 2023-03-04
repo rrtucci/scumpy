@@ -8,7 +8,7 @@ import math
 def my_random(bound):
     """
     For bound <=1, this method returns a float chosen randomly from the
-    uniform distribution over the interval [-bound, bound]. For bound <=1,
+    uniform distribution over the interval [-bound, bound]. For bound >1,
     this method returns an integer chosen randomly from the uniform integer
     distribution over the interval [-bound, bound].
 
@@ -36,6 +36,8 @@ class RandomDataMaker:
     of the nodes graph.ord_nodes, (2)instances of node values in each row.
     To generate this, we require 'alpha_mat', 'graph' and 'sigma_eps'.
 
+    \epsilon_j is a gaussian variable representing the external root node
+    pointing into x_j.
 
     Attributes
     ----------
@@ -44,10 +46,13 @@ class RandomDataMaker:
     graph: Graph
         information about DAG structure
     mean_eps: list[float]
+        list of the mean values of the gaussian random variables
+        \epsilon_j. The entries in this list are ordered according to
+        'graph.ord_nodes'
     sigma_eps: list[float]
-        the standard deviations of \epsilon_j, which is the external root
-        node pointing into x_j. The entries in this list are ordered
-        according to 'graph.ord_nodes'
+        list of the standard deviations of the gaussian random variables
+        \epsilon_j. The entries in this list are ordered according to
+        'graph.ord_nodes'
 
     """
 
@@ -56,11 +61,9 @@ class RandomDataMaker:
         """
         Constructor.
 
-        In this constructor, an alpha_mat not equal to 'None' can be
+        For this constructor, an alpha_mat not equal to 'None' can be
         submitted, or, if alpha_mat == None, an alpha_mat will be generated
-        randomly. If generated randomly, each non-zero gain \alpha_{ i|j} is
-        chosen from the uniform distribution over the interval [ -alpha_bound,
-        alpha_bound]
+        randomly using my_random()
 
         Parameters
         ----------
@@ -89,8 +92,7 @@ class RandomDataMaker:
 
         """
         In this internal method, the gains \alpha_{i|j} are generated
-        randomly. Each non-zero \alpha_{ i|j} is chosen from the uniform
-        distribution over the interval [-alpha_bound, alpha_bound].
+        randomly using my_random().
 
         Parameters
         ----------

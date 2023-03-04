@@ -244,8 +244,8 @@ class GainsEstimator:
         """
         comments = self.get_alpha_list_comments(true_alpha_mat)
         return print_list_sb(self.alpha_list, self.graph,
-                      verbose=verbose, time=None,
-                      comment_list=comments, round=True)
+                             verbose=verbose, time=None,
+                             comment_list=comments, rounded=True)
 
 
 if __name__ == "__main__":
