@@ -17,7 +17,7 @@ class GainsCalculator:
 
     Attributes
     ----------
-    alpha_list: list[sp.Equality]
+    alpha_list: list[sp.Eq]
         list of symbols, where each symbol in the list is an equation of the
         form:
 
@@ -56,6 +56,9 @@ class GainsCalculator:
         Parameters
         ----------
         cov_mat_in: sp.Matrix
+            A numeric covariance matrix can be passed in through this
+            variable. If this variable is None, a symbolic covariance
+            matrix is used instead.
         mat_K: sp.Matrix
             K matrix used only for linear SCM with feedback loops
         time: None or str or int

@@ -19,7 +19,7 @@ class FBackGraph(Graph):
         gains are represented by \beta_{i|j}.
     inslice_arrows: list[(str, str)]
         arrows whose orgin and target occur at the same time. Their arrow
-        gains are represented by \arrow_{ i|j}.
+        gains are represented by \alpha_{ i|j}.
 
 
     """
@@ -89,7 +89,8 @@ class FBackGraph(Graph):
         slices: int
             number of slices=1,2,3, ... to draw. slices=1 draws one
             time-slice with feedback loops as dashed green arrows. slices=2
-            draws 2 time-slices with feedback arrows in solid green.
+            draws 2 time-slices (DAGs) connected by feedback arrows in solid
+            green.
         point_right: bool
             If point_right=False, time points down (the default
             orientation). If point_right=True, time points right.

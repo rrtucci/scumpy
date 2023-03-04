@@ -30,13 +30,13 @@ class GainsEstimator:
     alpha_cum_err: float
         cumulative error, equal to the sum of the absolute values of the
         errors err_i_j in gains_list. This error is calculated only if
-        there are no hidden nodes; it's set to zero otherwise.
+        there are no hidden nodes; it's set to np.nan otherwise.
     alpha_list: list[sp.Eq]
         A list of equations of the form '\alpha_{i|j} = float' if the graph
         has an arrow x_j->x_i, or of the form 'err_{i,j} = float' if that
         arrow is missing from the graph. 'err_i_j' is an error metric equal
         to the difference between both sides of an equation that constrains
-        the covariances. Exception: if there are hidden nodes, the right
+        the covariances. Caveat: if there are hidden nodes, the right
         hand sides of these equations may contain symbolic expressions
         pertaining to covariances alluding to hidden nodes.
     alpha_mat_estimate: np.array of shape=(dim, dim), where dim=number of nodes
@@ -56,6 +56,11 @@ class GainsEstimator:
     hidden_nds: list[str] or None
         This is a list of the nodes that are hidden.
     solve_symbolically: bool
+        Estimating gains requires solving systems of linear equations. Use
+        "solve_symbolically=True" if you want to solve the system of
+        equations symbolically first, and then substitute numerical values.
+        Use "solve_symbolically=False" if you want to substitute numerical
+        values first. Both techniques should yield the same answer.
     """
 
     def __init__(self, graph,
@@ -70,11 +75,6 @@ class GainsEstimator:
         path: str
             path to input file containing dataset
         solve_symbolically: bool
-            solve_symbolically=True if linsolve() is called using a fully
-            symbolic covariance matrix, and then the numeric values of the
-            covariance matrix are substituted in the solution.
-            solve_symbolically=False if linsolve() is called using a hybrid
-            covariance matrix, partly symbolic, partly numeric.
         hidden_nds: None or list[str]
         """
         self.graph = graph
@@ -132,10 +132,9 @@ class GainsEstimator:
 
     def calculate_gains(self):
         """
-        This method sets the value of self.alpha_list.
+        This method creates an instance of GainsCalculator and asks it to
+        fill self.alpha_list.
 
-        Parameters
-        ----------
 
         Returns
         -------
@@ -155,9 +154,14 @@ class GainsEstimator:
 
     def fix_alpha_list(self):
         """
+        This method modifies the list "alpha_list". For "alpha_list": (1) it
+        changes the constraint items (2) it inserts numerical values if
+        solve_symbolically=True. It also calculates from "alpha_list",
+        the numpy matrix "alpha_mat_estimate" and the float "alpha_cum_err".
 
         Returns
         -------
+        None
 
         """
         dim = self.graph.num_nds
@@ -170,7 +174,7 @@ class GainsEstimator:
                 row_str, col_str = str0.split("_")[-2:]
                 str1 = "err" + "_" + row_str + "_" + col_str
                 eq = sp.Eq(sp.Symbol(str1),
-                           sp.Symbol(eq.args[0])-sp.Symbol(eq.args[1]))
+                           eq.args[0] - eq.args[1])
             for row, col in product(range(dim), range(dim)):
                 row_nd = self.graph.ord_nodes[row]
                 col_nd = self.graph.ord_nodes[col]
@@ -195,13 +199,17 @@ class GainsEstimator:
 
     def get_alpha_list_comments(self, true_alpha_mat):
         """
+        This method returns a list[str] of the same length as "alpha_list".
+        The returned list will be used as comments, to be printed to the
+        right of each entry, when the entries of "alpha_list" are printed.
 
         Parameters
         ----------
-        true_alpha_mat
+        true_alpha_mat: np.array
 
         Returns
         -------
+        list[str]
 
         """
         comments = []
@@ -211,20 +219,15 @@ class GainsEstimator:
                 row_str, col_str = str0[6:].split("_L_")
                 row, col = int(row_str), int(col_str)
                 comments.append("(true= " +
-                                ("%.6f" %true_alpha_mat[row, col]) + ")")
+                                ("%.6f" % true_alpha_mat[row, col]) + ")")
             else:
                 comments.append("")
         return comments
 
-
     def print_alpha_list(self, true_alpha_mat=None, verbose=False):
         """
-        This method renders in latex, in a jupyter notebook (but not on the
-        console), the estimates of the gains \alpha_{i|j} if arrow $x_j->x_i$
-        is present in the DAG, or of err_i_j if that arrow is absent in the
-        DAG. It also prints, if it's available, the true \alpha_{i|j} next to
-        its estimate. Iff verbose=True, it also prints the same thing in ASCII,
-        in both the console and jupyter notebook.
+        This method prints the info in self.alpha_list. It does this by
+        calling latexify.print_list_sb()
 
         Parameters
         ----------
@@ -274,13 +277,15 @@ if __name__ == "__main__":
             print("************** solve_symbolically=", solve_symbolically)
             gest = GainsEstimator(graph, data_path,
                                   solve_symbolically=solve_symbolically)
-            gest.print_alpha_list(true_alpha_mat=dmaker.alpha_mat, verbose=True)
+            gest.print_alpha_list(true_alpha_mat=dmaker.alpha_mat,
+                                  verbose=True)
             print("alpha_mat_estimate=\n", gest.alpha_mat_estimate)
             print("alpha_cum_err=", gest.alpha_cum_err)
             gest = GainsEstimator(graph, data_path,
                                   solve_symbolically=solve_symbolically,
                                   hidden_nds=["s"])
-            gest.print_alpha_list(true_alpha_mat=dmaker.alpha_mat, verbose=True)
+            gest.print_alpha_list(true_alpha_mat=dmaker.alpha_mat,
+                                  verbose=True)
             print("alpha_mat_estimate=\n", gest.alpha_mat_estimate)
             print("alpha_cum_err=", gest.alpha_cum_err)
 

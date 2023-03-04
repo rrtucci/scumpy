@@ -1,17 +1,23 @@
 import numpy as np
-
 from FBackGainsEstimator import *
+
 
 class FBackGEmanager:
     """
+    GE=Gains Estimator. The goal of this class is to create an
+    FBackGainsEstimator for n=1,2,3, ..., n_max-1. These are stored in the
+    dictionary self.n_to_estimator.
 
     Attributes
     ----------
     graph: FBackGraph
-    hidden_nds:
+    hidden_nds: list[str]
+        same meaning as in FBackGainsEstimator
     n_max: int
-    n_to_estimator:
+        >=1
+    n_to_estimator: dict[int, FBackGainsEstimator]
     solve_symbolically: bool
+        same meaning as in FBackGainsEstimator
 
     """
 
@@ -22,15 +28,17 @@ class FBackGEmanager:
                  hidden_nds=None,
                  delta=True):
         """
+        Constructor
 
         Parameters
         ----------
-        n_max
-        graph
-        path
-        solve_symbolically
-        hidden_nds
-        delta
+        n_max: int
+        graph: FBackGraph
+        path: str
+            path to csv file with data
+        solve_symbolically: bool
+        hidden_nds: list[str]
+        delta: bool
         """
         self.n_max = n_max
         self.graph = graph
@@ -49,7 +57,7 @@ class FBackGEmanager:
         dim = self.graph.num_nds
         self.n_to_estimator = {}
         for time in range(1, self.n_max):
-            slice_n = columns[(time-1)*dim : time*dim]
+            slice_n = columns[(time-1)*dim: time*dim]
             slice_n_plus_one = columns[time * dim: (time+1) * dim]
             two_slices = slice_n + slice_n_plus_one
             df_two_slices = df[two_slices]
@@ -65,15 +73,20 @@ class FBackGEmanager:
 
     def print_greek_lists(self, name, true_greek_mat=None, verbose=False):
         """
+        This method prints the alpha_list (or the beta_list) of
+        self.n_to_estimator[n], for n=1,2,3,..., n_max-1, by calling
+        latexify.print_list_sb() for each n.
 
         Parameters
         ----------
-        name
-        true_greek_mat
-        verbose
+        name: str
+            either "alpha" or "beta"
+        true_greek_mat: np.array
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         assert name in ["alpha", "beta"]
@@ -88,7 +101,7 @@ class FBackGEmanager:
             eq_list = create_eq_list_from_matrix(mat, name, self.graph,
                                                  time=None)
             comments = gest.get_greek_list_comments(
-                name , eq_list, true_greek_mat=true_greek_mat)
+                name, eq_list, true_greek_mat=true_greek_mat)
             x = print_list_sb(eq_list,
                               self.graph,
                               comment_list=comments)
@@ -102,15 +115,20 @@ class FBackGEmanager:
     def print_mean_greek_list(self, name, true_greek_mat=None,
                               verbose=False):
         """
+        This method print the average over time n, the alpha_mat (or the
+        beta_mat) of self.n_to_estimator[n] for n=1,2,3,..., n_max-1.
 
         Parameters
         ----------
-        name
-        true_greek_mat
-        verbose
+        name: str
+            either "alpha" or "beta"
+        true_greek_mat: np.array
+            either "true_alpha_mat" or "true_beta_mat"
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         assert name in ["alpha", "beta"]
@@ -122,7 +140,7 @@ class FBackGEmanager:
             av_np = np.mean([self.n_to_estimator[
                                  time].beta_mat_estimate for
                              time in range(1, self.n_max)], axis=0)
-        mat =  sp.Matrix(av_np)
+        mat = sp.Matrix(av_np)
         eq_list = create_eq_list_from_matrix(mat, name, self.graph,
                                              time=None)
         comments = self.n_to_estimator[1].get_greek_list_comments(
@@ -131,17 +149,19 @@ class FBackGEmanager:
         return print_list_sb(eq_list, self.graph,
                              comment_list=comments, verbose=verbose)
 
-    
     def print_alpha_lists(self, true_alpha_mat=None, verbose=False):
         """
+        This method prints the alpha_list of FBackGainsEstimator[n] for n=1,
+        2,3, ... n_max-1 by calling self.print_greek_lists().
 
         Parameters
         ----------
-        true_alpha_mat
-        verbose
+        true_alpha_mat: np.array
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         return self.print_greek_lists("alpha", 
@@ -150,14 +170,18 @@ class FBackGEmanager:
     
     def print_mean_alpha_list(self, true_alpha_mat=None, verbose=False):
         """
+        This method prints the average over time n of the alpha_list of
+        FBackGainsEstimator[n] for n=1, 2,3, ... n_max-1. It does this by
+        calling self.print_mean_greek_list().
 
         Parameters
         ----------
-        true_alpha_mat
-        verbose
+        true_alpha_mat: np.array
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         return self.print_mean_greek_list("alpha", 
@@ -166,14 +190,18 @@ class FBackGEmanager:
 
     def print_beta_lists(self, true_beta_mat=None, verbose=False):
         """
+        This method prints the beta_list of FBackGainsEstimator[n] for n=1,
+        2,3, ... n_max-1 by calling self.print_greek_lists().
+
 
         Parameters
         ----------
-        true_beta_mat
-        verbose
+        true_beta_mat: np.array
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         return self.print_greek_lists("beta",
@@ -182,19 +210,24 @@ class FBackGEmanager:
 
     def print_mean_beta_list(self, true_beta_mat=None, verbose=False):
         """
+        This method prints the average over time n of the beta_list of
+        FBackGainsEstimator[n] for n=1, 2,3, ... n_max-1. It does this by
+        calling self.print_mean_greek_list().
 
         Parameters
         ----------
-        true_beta_mat
-        verbose
+        true_beta_mat: np.array
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         return self.print_mean_greek_list("beta",
                                           true_greek_mat=true_beta_mat,
                                           verbose=verbose)
+
 
 if __name__ == "__main__":
     def main():

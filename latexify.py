@@ -8,21 +8,23 @@ from copy import deepcopy
 """
 
 The functions in this file return their input x after performing some 
-symbolic substitutions of some of the symbols in x. x is usually a sp.Matrix.
+symbolic substitutions of some of the symbols in x. x is usually an sp.Matrix.
 
 """
 
 
 def round_expr(expr, num_digits):
     """
+    This function rounds the numerical parts of any SymPy expression.
 
     Parameters
     ----------
-    expr
-    num_digits
+    expr: most Sympy expressions
+    num_digits: int
 
     Returns
     -------
+    type(expr)
 
     """
     return expr.xreplace(
@@ -58,15 +60,18 @@ def latex_time_superscript(time):
 
 def sb_cov_str(row, col, time):
     """
+    This method returns a symbolic string for the entry of the covariance
+    matrix at time "time" and position (row, col).
 
     Parameters
     ----------
-    row
-    col
-    time
+    row: int
+    col: int
+    time: None or str or int
 
     Returns
     -------
+    str
 
     """
     if time is None:
@@ -82,15 +87,20 @@ def sb_cov_str(row, col, time):
 
 def latex_cov_str(row_nd, col_nd, time):
     """
+    This method returns a latex string for the entry of the covariance
+    matrix at time "time" and position  (row_nd, col_nd). Here row_nd and
+    col_nd are node names.
+
 
     Parameters
     ----------
-    row_nd
-    col_nd
-    time
+    row_nd: str
+    col_nd: str
+    time: None or str or int
 
     Returns
     -------
+    str
 
     """
     superscript = latex_time_superscript(time)
@@ -105,16 +115,23 @@ def latex_cov_str(row_nd, col_nd, time):
 
 def sb_cov2times_str(row, col, time, delta=False):
     """
+    This method returns a symbolic string for the entry of the following
+    matrices between times time  and time+1 and at position (row, col).
+
+    if delta=False, 2-times covariance matrix cov2times_n
+
+    if delta=True, 2-times covariance matrix d_cov2times_n
 
     Parameters
     ----------
-    row
-    col
-    time
-    delta
+    row: int
+    col: int
+    time: None or str or int
+    delta: bool
 
     Returns
     -------
+    str
 
     """
     xtra_str = ""
@@ -132,16 +149,25 @@ def sb_cov2times_str(row, col, time, delta=False):
 
 def latex_cov2times_str(row_nd, col_nd, time, delta=False):
     """
+    This method returns a latex string for the entry of the following
+    matrices between times time and time+1 and at position (row_nd,
+    col_nd), where row_nd and col_nd are node names.
+
+    if delta=False, 2-times covariance matrix cov2times_n
+
+    if delta=True, 2-times covariance matrix d_cov2times_n
+
 
     Parameters
     ----------
-    row_nd
-    col_nd
-    time
-    delta
+    row_nd: str
+    col_nd: str
+    time: None or str or int
+    delta: bool
 
     Returns
     -------
+    str
 
     """
     if time == "n":
@@ -177,6 +203,8 @@ def do_latex_subs(graph, x, time=None):
     sp.Symbol("cov_n" + str(time) + "_" + str(row) + "_" + str(col))
     sp.Symbol("cov2times_n" + str(row) + "_" + str(col))
     sp.Symbol("cov2times_n" + str(time) + str(row) + "_" + str(col))
+    sp.Symbol("d_cov2times_n" + str(row) + "_" + str(col))
+    sp.Symbol("d_cov2times_n" + str(time) + str(row) + "_" + str(col))
     sp.Symbol("ee_" + str(row) + "_" + str(col))
     sp.Symbol("rho_" + str(row) + "_" + str(col))
     sp.Symbol("pder_" + str(row) + "_wrt_" + str(col))
@@ -377,7 +405,7 @@ def print_list_sb(eq_list, graph, verbose=False,
                   time=None, comment_list=None, round=True):
     """
     This method renders in latex, in a jupyter notebook (but not on the
-    console), a list 'eq_list' of sp.Equality. Iff verbose=True, it also
+    console), a list 'eq_list' of sp.Eq. Iff verbose=True, it also
     prints the same thing in ASCII, in both the console and jupyter notebook.
 
     Parameters

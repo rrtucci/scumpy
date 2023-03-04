@@ -15,6 +15,7 @@ class FBackRandomDataMaker(RandomDataMaker):
 
     Attributes
     ----------
+    # alpha_mat is inherited from parent class
     beta_mat: np.array of shape=(dim,dim), where dim = number of nodes.
         The matrix of betas (i.e., feedback gains \beta_{i|j})
     n_max: int
@@ -40,12 +41,19 @@ class FBackRandomDataMaker(RandomDataMaker):
             We consider times n=1,2,3, ..., n_max
         graph: FBackGraph
         mean_eps: list[float]
+            List containing the mean value of each of the gaussian external
+            noise variables. This list has length dim, where dim is the
+            number of nodes.
         sig_eps: list[float]
+            List containing the standard deviation of each of the gaussian
+            external noise variables. This list has length dim, where dim is
+            the number of nodes.
         alpha_mat: np.array of shape=(dim, dim)
         beta_mat: np.array of shape=(dim, dim)
         alpha_bound: float
             must be a positive number.
         beta_bound: float
+            must be a positive number.
         """
         self.n_max = n_max
         dim = graph.num_nds
@@ -92,10 +100,9 @@ class FBackRandomDataMaker(RandomDataMaker):
     def generate_random_alpha_and_beta_mats(graph, alpha_bound=1,
                                             beta_bound=1):
         """
-        In this internal method, the inslice gains \alpha_{i|j} and the
-        feedback gains \beta_{i|j} are generated randomly. Each non-zero
-        \alpha_{ i|j} and \beta_{ i|j} is chosen from the uniform
-        distribution over the interval [-alpha_bound, alpha_bound].
+        This static method generates randomly and returns the inslice gains
+        \alpha_{ i|j} and the feedback gains \beta_{ i|j}. Each non-zero
+        \alpha_{ i|j} and \beta_{ i|j} is chosen using my_random()
 
         Parameters
         ----------
@@ -103,6 +110,7 @@ class FBackRandomDataMaker(RandomDataMaker):
         alpha_bound: float
             must be a positive number.
         beta_bound: float
+            must be a positive number.
 
         Returns
         -------
@@ -125,7 +133,7 @@ class FBackRandomDataMaker(RandomDataMaker):
     def generate_one_random_instance(self):
         """
         This internal method returns a dictionary mapping time n to random
-        values for the nodes 'graph.ord_nodes'.
+        values for the nodes 'graph.ord_nodes', for all n=1,2,3, ..., n_max.
 
         Returns
         -------
@@ -143,7 +151,7 @@ class FBackRandomDataMaker(RandomDataMaker):
                                                  scale=self.sigma_eps[i])
                 if n >= 1:
                     for j in range(dim):
-                        if i>j:
+                        if i > j:
                             nd_values[i] += self.alpha_mat[i, j]*nd_values[j]
                 if n >= 2:
                     for j in range(dim):

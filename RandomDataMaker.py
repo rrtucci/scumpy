@@ -7,6 +7,10 @@ import math
 
 def my_random(bound):
     """
+    For bound <=1, this method returns a float chosen randomly from the
+    uniform distribution over the interval [-bound, bound]. For bound <=1,
+    this method returns an integer chosen randomly from the uniform integer
+    distribution over the interval [-bound, bound].
 
     Parameters
     ----------

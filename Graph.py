@@ -57,7 +57,8 @@ class Graph:
         else:
             self.amputated_arrows = amputated_arrows
             assert set(amputated_arrows).issubset(set(all_arrows))
-            self.arrows = [ed for ed in all_arrows if ed not in amputated_arrows]
+            self.arrows = [ed for ed in all_arrows if
+                           ed not in amputated_arrows]
 
         self.nx_graph = None
         self.ord_nodes = None

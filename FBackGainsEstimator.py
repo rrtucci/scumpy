@@ -58,6 +58,7 @@ class FBackGainsEstimator(GainsEstimator):
                  hidden_nds=None,
                  delta=True):
         """
+        Constructor
 
         Parameters
         ----------
@@ -156,8 +157,8 @@ class FBackGainsEstimator(GainsEstimator):
 
         self.alpha_list = calc.alpha_list
         self.beta_list = calc.beta_list
-        
-    def fix_greek_list(self, name, 
+
+    def fix_greek_list(self, name,
                        greek_list, greek_mat_estimate, greek_cum_err):
         """
         This method modifies the list "greek_list" (which must be either an
@@ -193,7 +194,7 @@ class FBackGainsEstimator(GainsEstimator):
                 row_str, col_str = str0.split("_")[-2:]
                 str1 = "err" + "_" + row_str + "_" + col_str
                 eq = sp.Eq(sp.Symbol(str1),
-                           sp.Symbol(eq.args[0])-sp.Symbol(eq.args[1]))
+                           eq.args[0] - eq.args[1])
             for row, col in product(range(dim), range(dim)):
                 row_nd = self.graph.ord_nodes[row]
                 col_nd = self.graph.ord_nodes[col]
@@ -208,7 +209,7 @@ class FBackGainsEstimator(GainsEstimator):
 
                     sb_str = sb_cov_str(row, col, time=self.time+1)
                     eq = eq.subs(sb_str, self.cov_mat_list[2][row, col])
-                                      
+
             greek_list[i] = eq
 
             str1 = str(eq.args[1])
@@ -229,7 +230,7 @@ class FBackGainsEstimator(GainsEstimator):
                                 true_greek_mat):
         """
         This method returns a list[str] of the same length as "greek_list".
-        The returned lists will be used as comments, to be printed to the
+        The returned list will be used as comments, to be printed to the
         right of each entry, when the entries of "greek_list" are printed.
 
 
@@ -270,8 +271,8 @@ class FBackGainsEstimator(GainsEstimator):
 
         """
         self.fix_greek_list("alpha",
-                       self.alpha_list, 
-                       self.alpha_mat_estimate, 
+                       self.alpha_list,
+                       self.alpha_mat_estimate,
                        self.alpha_cum_err)
 
     def fix_beta_list(self):
@@ -306,7 +307,7 @@ class FBackGainsEstimator(GainsEstimator):
         return FBackGainsEstimator.get_greek_list_comments("alpha",
                                                            self.alpha_list,
                                                            true_alpha_mat)
-        
+
     def get_beta_list_comments(self, true_beta_mat):
         """
         This method returns a list of comments about self.beta_list. To do

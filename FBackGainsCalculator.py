@@ -55,9 +55,9 @@ class FBackGainsCalculator(GainsCalculator):
     Attributes
     ----------
     # alpha_list and alpha_mat are inherited from parent class
-    alpha_list_with_betas: list[sp.Equality]
+    alpha_list_with_betas: list[sp.Eq]
     alpha_mat_with_betas: sp.Matrix
-    beta_list: list[sp.Equality]
+    beta_list: list[sp.Eq]
     beta_mat: sp.Matrix
     delta: bool
 
