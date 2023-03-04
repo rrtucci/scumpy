@@ -15,8 +15,8 @@ class FBackGainsEstimator(GainsEstimator):
     the feedback gain \beta_{i|j} for each arrow x_j->x_i in a linear SCM
     with feedback loops. The estimation algorithm requires as input a file
     which contains a dataset with, for each time n=1,2, \dots, n_{max},
-    the node names (plus string [ n]) as column labels, and with instances
-    of the node values, at time n, as rows.
+    the node names (plus string [ n]) as column labels, and with node
+    values, at time n, as rows.
 
     The input dataset column labels must include ALL node names, and nothing
     else, but these column labels need not be in topological order (as they

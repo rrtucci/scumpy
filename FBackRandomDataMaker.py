@@ -10,7 +10,7 @@ class FBackRandomDataMaker(RandomDataMaker):
     This purpose of this class is to generate, for a linear SCM WITH 
     feedback loops, a synthetic dataset with: (1) column labels= the names 
     of the nodes graph.ord_nodes followed by [n] for n=1,2,3, ...n_max, 
-    (2) instances of node values in each row. To generate this, we require 
+    (2) node values in each row. To generate this, we require 
     'alpha_mat', 'beta_mat', 'graph' and 'sigma_eps'.
 
     Attributes
@@ -167,7 +167,7 @@ class FBackRandomDataMaker(RandomDataMaker):
         This method writes a file which contains a dataset in the
         comma-separated-values (csv) format. The dataset has: (1) column
         labels= the names of the nodes graph.ord_nodes followed by [n] for
-        n=1,2,3, ...n_max, (2) instances of node values in each row.
+        n=1,2,3, ...n_max, (2) node values in each row.
         
         Parameters
         ----------

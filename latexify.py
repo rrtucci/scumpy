@@ -8,18 +8,18 @@ from copy import deepcopy
 """
 
 The file contains a very complete substitution function do_latex_subs() that 
-returns any input x after performing symbolic substitutions of some of the 
-symbols in x. x is usually an sp.Matrix.
+returns any symbolic input x after substituting symbolic parts by LaTeX. x 
+can be an sp.Syybol, sp.Matrix, sp.Eq, etc.
 
 This file also contains various functions for printing matrices (sp.Matrix) 
-and lists (list[sp.Matrix]).
+and lists (list[sp.Matrix]) in LaTeX
 
 """
 
 
 def round_expr(expr, num_digits):
     """
-    This function rounds the numerical parts of any SymPy expression.
+    This function rounds the numerical parts of any symbolic expression.
 
     Parameters
     ----------
@@ -37,7 +37,7 @@ def round_expr(expr, num_digits):
 
 def latex_time_superscript(time):
     """
-    This method returns a superscript for various time inputs
+    This method returns a LaTeX superscript for various time inputs.
 
     Parameters
     ----------
@@ -66,8 +66,9 @@ def latex_time_superscript(time):
 
 def sb_cov_str(row, col, time):
     """
-    This method returns a symbolic string for the entry of the covariance
-    matrix at time "time" and position (row, col).
+    This method returns a symbolic string for the entry at position (row,
+    col) of the 1-time covariance matrix at time "time". Here row and col
+    are ints.
 
     Parameters
     ----------
@@ -94,8 +95,8 @@ def sb_cov_str(row, col, time):
 
 def latex_cov_str(row_nd, col_nd, time):
     """
-    This method returns a latex string for the entry of the covariance
-    matrix at time "time" and position  (row_nd, col_nd). Here row_nd and
+    This method returns a latex string for the entry at position (row_nd,
+    col_nd) of the 1-time covariance matrix at time "time". Here row_nd and
     col_nd are node names.
 
 
@@ -123,12 +124,13 @@ def latex_cov_str(row_nd, col_nd, time):
 
 def sb_cov2times_str(row, col, time, delta=False):
     """
-    This method returns a symbolic string for the entry of the following
-    matrices between times time  and time+1 and at position (row, col).
+    This method returns a symbolic string for the entry at position (row,
+    col) of the following 2-times covariance matrices between times time and
+    time+1. Here row_nd and col_nd are node names.
 
-    if delta=False, 2-times covariance matrix cov2times_n
+    if delta=False, cov2times_n
 
-    if delta=True, 2-times covariance matrix d_cov2times_n
+    if delta=True, d_cov2times_n
 
     Parameters
     ----------
@@ -157,14 +159,13 @@ def sb_cov2times_str(row, col, time, delta=False):
 
 def latex_cov2times_str(row_nd, col_nd, time, delta=False):
     """
-    This method returns a latex string for the entry of the following
-    matrices between times time and time+1 and at position (row_nd,
-    col_nd), where row_nd and col_nd are node names.
+    This method returns a symbolic string for the entry at position (row_nd,
+    col_nd) of the following 2-times covariance matrices between times time
+    and time+1. Here row_nd and col_nd are node names.
 
-    if delta=False, 2-times covariance matrix cov2times_n
+    if delta=False, cov2times_n
 
-    if delta=True, 2-times covariance matrix d_cov2times_n
-
+    if delta=True, d_cov2times_n
 
     Parameters
     ----------
@@ -225,7 +226,7 @@ def do_latex_subs(graph, x, time=None):
     Parameters
     ----------
     graph: Graph
-    x: sp.Symbol or sp.Matrix
+    x: sp.Symbol or sp.Matrix or sp.Eq
     time: None or str or int
 
     Returns
@@ -418,8 +419,9 @@ def print_list_sb(eq_list, graph, verbose=False,
                   time=None, comment_list=None, rounded=True):
     """
     This method renders in latex, in a jupyter notebook (but not on the
-    console), a list 'eq_list' of sp.Eq. Iff verbose=True, it also
-    prints the same thing in ASCII, in both the console and jupyter notebook.
+    console), a list 'eq_list' of type list[sp.Eq]. Iff verbose=True,
+    it also prints the same thing in ASCII, in both the console and jupyter
+    notebook.
 
     Parameters
     ----------

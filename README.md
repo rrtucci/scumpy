@@ -150,7 +150,7 @@ of the DAG. The estimation algorithm
 requires as input a file which 
 contains a dataset with the node 
 names as column labels, and with 
-instances of the node values as rows.
+node values as rows.
 [See this notebook](https://github.com/rrtucci/scumpy/blob/master/jupyter_notebooks/estimating-gains.ipynb)
 
 Exciting news. SCuMpy can now do linear SCM

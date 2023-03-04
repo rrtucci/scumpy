@@ -10,7 +10,8 @@ def my_random(bound):
     For bound <=1, this method returns a float chosen randomly from the
     uniform distribution over the interval [-bound, bound]. For bound >1,
     this method returns an integer chosen randomly from the uniform integer
-    distribution over the interval [-bound, bound].
+    distribution over the set {-ceil(bound), -ceil(bound) +1, ..., 
+    ceil(bound)}.
 
     Parameters
     ----------
@@ -33,11 +34,11 @@ class RandomDataMaker:
     """
     This purpose of this class is to generate, for a linear SCM WITHOUT
     feedback loops, a synthetic dataset with: (1) column labels= the names
-    of the nodes graph.ord_nodes, (2)instances of node values in each row.
-    To generate this, we require 'alpha_mat', 'graph' and 'sigma_eps'.
+    of the nodes graph.ord_nodes, (2) node values in each row. To generate
+    this, we require 'alpha_mat', 'graph', 'mean_eps' and 'sigma_eps'.
 
-    \epsilon_j is a gaussian variable representing the external root node
-    pointing into x_j.
+    \epsilon_j is a gaussian random variable representing the external root
+    node pointing into x_j.
 
     Attributes
     ----------
@@ -63,7 +64,7 @@ class RandomDataMaker:
 
         For this constructor, an alpha_mat not equal to 'None' can be
         submitted, or, if alpha_mat == None, an alpha_mat will be generated
-        randomly using my_random()
+        randomly using my_random() to generate each entry.
 
         Parameters
         ----------
@@ -92,7 +93,7 @@ class RandomDataMaker:
 
         """
         In this internal method, the gains \alpha_{i|j} are generated
-        randomly using my_random().
+        randomly using my_random() to generate each.
 
         Parameters
         ----------
@@ -139,8 +140,8 @@ class RandomDataMaker:
         """
         This method writes a file which contains a dataset in the
         comma-separated-values (csv) format. The dataset has (1) column
-        labels= the names of the nodes graph.ord_nodes, (2)instances of node
-        values in each row.
+        labels= the names of the nodes graph.ord_nodes, (2) node values in
+        each row.
 
         Parameters
         ----------

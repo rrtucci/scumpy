@@ -12,7 +12,7 @@ class GainsEstimator:
     """
     The goal of this class is to estimate the gains \alpha_{i|j} from an
     input file that contains a dataset. The dataset has the node names
-    graph.ord_nodes as column labels, and instances of node values in each row.
+    graph.ord_nodes as column labels, and node values in each row.
 
     The input dataset column labels must include ALL node names, and nothing
     else, but these column labels need not be in topological order (as they
