@@ -16,18 +16,18 @@ class CovMatCalculator:
 
     If list self.conditioned_nds is non-empty, we allow some non-diagonal
     <\epsilon_i, \epsilon_j> to be nonzero, because if we are conditioning
-    on a collider, this can introduce a non-blocked path between two
-    of the \epsilon_j.
+    on a collider, this can introduce a non-blocked path between \epsilon_i
+    and \epsilon_j.
 
     Attributes
     ----------
     conditioned_nds: list[str]
         List of the nodes that we want to condition on
     cov_mat_sb: sp.Matrix
-        a symbol containing the covariance matrix C.
+        an sp.Matrix for the covariance matrix C.
     graph: Graph
     jacobian_sb: sp.Matrix
-        a symbol containing the Jacobian matrix J.
+        an sp.Matrix for the Jacobian matrix J.
     one_minus_A_inv_sb: sp.Matrix
         (1-A).inv(), where A is the matrix of gains \alpha_{i|j}
 
@@ -109,8 +109,8 @@ class CovMatCalculator:
         Parameters
         ----------
         verbose: bool
-        time: None or str
-            must be either None, "one", "n" or "n_plus_one"
+        time: None or str or int
+            must be either None, "one", "n" or "n_plus_one" or int
 
         Returns
         -------
@@ -133,10 +133,8 @@ class CovMatCalculator:
 
     def print_jacobian(self, verbose=False, time=None):
         """
-        This method renders in latex, in a jupyter notebook (but not in the
-        console), the entries, one at a time, of the Jacobian matrix J. Iff
-        verbose=True, it also prints the same thing in ASCII, in both the
-        console and jupyter notebook.
+        This method prints the info in self.jacobian_sb. It does this by
+        calling latexify:print_matrix_sb().
 
         Parameters
         ----------

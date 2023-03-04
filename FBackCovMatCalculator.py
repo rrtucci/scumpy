@@ -1,5 +1,3 @@
-import sympy
-
 from CovMatCalculator import *
 from copy import deepcopy
 
@@ -14,15 +12,20 @@ class FBackCovMatCalculator(CovMatCalculator):
     chapter entitled "LDEN diagrams with feedback loops". In that chapter,
     I show that
 
-    C^n = G^{n-1} C_1 (G^T)^{n-1}
+    C^n = G^{n-1} C^1 (G^T)^{n-1}
+
+    C^1 = (1-A).inv diag(\sigma^2_{\epsilon_i}) (1-A).inv.T
+
+    G = [(1-A).inv]B
 
     where n=1,2,3,... corresponds to time, G is called the growth matrix,
-    and C_1 is the covariance matrix when n=1
+    and C^1 is the covariance matrix when n=1
 
     The class calculates/stores a symbolic representation of the covariance
     matrix C^t= <x^t_i, x^t_j> at time t=1, and of the growth matrix G,
-    both expressed as a function of the inslice arrow gains \alpha_{i,
-    j} and the feedback arrow gains \beta{i|j}.
+    both expressed as a function of the matrix A of inslice arrow gains
+    \alpha_{i, j} and the matrix B of feedback arrow gains \beta{i|j}.
+
 
     Attributes
     ----------
@@ -46,7 +49,7 @@ class FBackCovMatCalculator(CovMatCalculator):
         """
         This method overrides CovMatCalculator.calculate_cov_mat(self).
         It calls that parent method, plus, in addition, it calculates/stores
-        self.one_minus_A_inv for future use.
+        the growth matrix G.
 
         Returns
         -------
@@ -67,7 +70,7 @@ class FBackCovMatCalculator(CovMatCalculator):
         Parameters
         ----------
         verbose: bool
-        time: str or None
+        time: None or str or int
 
         Returns
         -------

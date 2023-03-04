@@ -31,7 +31,7 @@ class GainsEstimator:
         cumulative error, equal to the sum of the absolute values of the
         errors err_i_j in gains_list. This error is calculated only if
         there are no hidden nodes; it's set to zero otherwise.
-    alpha_list: list[sp.Equality]
+    alpha_list: list[sp.Eq]
         A list of equations of the form '\alpha_{i|j} = float' if the graph
         has an arrow x_j->x_i, or of the form 'err_{i,j} = float' if that
         arrow is missing from the graph. 'err_i_j' is an error metric equal
@@ -169,7 +169,8 @@ class GainsEstimator:
                 # print("hhgd", str0.split("_")[-2:])
                 row_str, col_str = str0.split("_")[-2:]
                 str1 = "err" + "_" + row_str + "_" + col_str
-                eq = sp.Eq(sp.Symbol(str1), eq.args[0]-eq.args[1])
+                eq = sp.Eq(sp.Symbol(str1),
+                           sp.Symbol(eq.args[0])-sp.Symbol(eq.args[1]))
             for row, col in product(range(dim), range(dim)):
                 row_nd = self.graph.ord_nodes[row]
                 col_nd = self.graph.ord_nodes[col]

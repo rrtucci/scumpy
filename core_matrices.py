@@ -20,6 +20,10 @@ The names of the entries of the matrices created by this file, are as follows:
     "cov_n_" + str(row) + "_" + str(col)
     "cov_n_plus_one" + str(row) + "_" + str(col)
     "cov_n" + str(n) + "_" + str(row) + "_" + str(col)
+    "cov2times_n" + "_" + str(row) + "_" + str(col)
+    "cov2times_n" + str(n) + "_" + str(row) + "_" + str(col)
+    "d_cov2times_n" + "_" + str(row) + "_" + str(col)
+    "d_cov2times_n" + str(n) + "_" + str(row) + "_" + str(col)
     "ee_" + str(row) + "_" + str(col)
     "rho_" + str(row) + "_" + str(col)
     "pder_" + str(row) + "_wrt_" + str(col)
@@ -40,7 +44,7 @@ def make_sb_mat(dim, mat_str, mat_type="general"):
         the returned matrix has entries cov[i, j].
     mat_type: str
         This flag must be one of the following: "general", "symmetric",
-        "strict_lower_triangular", "diagonal"
+        "strictly_lower_triangular", "diagonal"
 
     Returns
     -------
@@ -57,7 +61,7 @@ def make_sb_mat(dim, mat_str, mat_type="general"):
                 # we only use cov_mat[min(i,j), max(i,j)]
                 # because cov_mat[i, j] is symmetric
                 col.append(sp.Symbol(mat_str % (min(i, j), max(i, j))))
-            elif mat_type == "strict_lower_triangular":
+            elif mat_type == "strictly_lower_triangular":
                 if i > j:
                     col.append(sp.Symbol(mat_str % (i, j)))
                 else:
@@ -131,7 +135,7 @@ def alpha_sb_mat(dim):
 
     """
     return make_sb_mat(dim, "alpha_%d_L_%d",
-                        mat_type="strict_lower_triangular")
+                        mat_type="strictly_lower_triangular")
 
 
 def beta_sb_mat(dim):
@@ -155,9 +159,9 @@ def beta_sb_mat(dim):
 
 def cov_sb_mat(dim, time=None):
     """
-    This method returns the covariance matrix at time t, C^t (of type
-    sp.Matrix) with entries C^t_{i,j}=<x^t_i, x^t_j> = cov_t_i_j. $t$ can be
-    None, "one", "n", "n_plus_one" or an int
+    This method returns the covariance matrix at time t, C^t (of type 
+    sp.Matrix) with entries C^t_{i,j}=<x^t_i, x^t_j> = cov_t_i_j. time can 
+    be None, "one", "n", "n_plus_one" or an int
 
     Parameters
     ----------
@@ -187,6 +191,22 @@ def cov2times_sb_mat(dim, time="n", delta=False):
     This method returns 2-times covariance matrix C^{n,n+1} (of type
     sp.Matrix) with entries C^{n,n+1}_{i,j}=<x^{n}_i, x^{n+1}_j> =
     cov2times_i_j.
+
+    time can be "n", or an int
+    
+    The value of random variable x at time n will be denoted by x^{[ n]}. We 
+    will also use the notation
+
+    \Delta x^{[n]} = x^{[n+1]}- x^{[n]} 
+
+    Set "delta=False" if you want 2-times correlations < x_i^{[n]},
+    x_j^{[n+1]}> in the final result to be expressed as themselves. Set
+    "delta=True" (recommended) if you want 2-times correlations < x_i^{[
+    n]}, x_j^{[n+1]}> in the final result to be replaced by 2 terms,
+    using the identity
+
+    < x_i^{[n]}, x_j^{[n+1]}>= < x_i^{[n]}, x_j^{[n]}> + < x_i^{[n]},
+    \Delta x_j^{[n]}>
 
     Parameters
     ----------
@@ -257,9 +277,7 @@ def rho_sb_mat(dim):
 def jacobian_sb_mat(dim):
     """
     This method returns the Jacobian matrix J (of type sp.Matrix) with
-    enties J_{i, j} = jacobian_i_j = partial derivative of x_i with respect
-    to x_j
-
+    entries J_{i, j} = pder_i_j = partial derivative of x_i with respect to x_j
 
     Parameters
     ----------

@@ -11,9 +11,12 @@ from FBackGainsCalculator import *
 
 class FBackGainsEstimator(GainsEstimator):
     """
-    The goal of this class is to estimate the gains \alpha_{i|j} from an
-    input file that contains a dataset. The dataset has the node names
-    graph.ord_nodes as column labels, and instances of node values in each row.
+    The goal of this class is to estimate the inslice gain \alpha_{i|j} or
+    the feedback gain \beta_{i|j} for each arrow x_j->x_i in a linear SCM
+    with feedback loops. The estimation algorithm requires as input a file
+    which contains a dataset with, for each time n=1,2, \dots, n_{max},
+    the node names (plus string [ n]) as column labels, and with instances
+    of the node values, at time n, as rows.
 
     The input dataset column labels must include ALL node names, and nothing
     else, but these column labels need not be in topological order (as they
@@ -29,14 +32,21 @@ class FBackGainsEstimator(GainsEstimator):
     Attributes
     ----------
     beta_cum_err: float
-    beta_list:
-    beta_mat:
-    beta_mat_est:
-    cov_mat_list:
+        Same as for alpha. See alpha explanation in parent class GainsEstimator
+    beta_list: list[sp.Eq]
+        Same as for alpha. See alpha explanation in parent class GainsEstimator
+    beta_mat: sp.Matrix
+        Same as for alpha. See alpha explanation in parent class GainsEstimator
+    beta_mat_estimate: np.array
+        Same as for alpha. See alpha explanation in parent class GainsEstimator
+    cov_mat_list: list[sp.Matrix, sp.Matrix, sp.Matrix]
+        [cov_mat0, cov2times, cov_mat1] where cov_mat0=covariance matrix at
+        time n, cov2times=the 2-times covariance matrix between times n and
+        n+1, and cov_mat1=covariance matrix at time n+1. This is an internal
+        variable.
     delta: bool
+        see explanation in docstring for class FBackGainsCalculator
     time: None or str or int
-
-
 
     """
 
@@ -52,7 +62,7 @@ class FBackGainsEstimator(GainsEstimator):
         Parameters
         ----------
         time: None or str or int
-        graph: Graph
+        graph: FBackGraph
         df: pd.Dataframe
         solve_symbolically: bool
             solve_symbolically=True if linsolve() is called using a fully
@@ -81,13 +91,13 @@ class FBackGainsEstimator(GainsEstimator):
         self.calculate_gains()
         self.fix_alpha_list()
         self.fix_beta_list()
-        
 
     def set_cov_mat(self, df):
         """
-        This method sets the value of the sp.Matrix called self.cov_mat.
-        Entries of that matrix that have hidden nodes in their indices,
-        are symbolic. All other entries are numeric.
+        This method sets the values of the 3 sp.Matrices in
+        self.cov_mat_list = [cov_mat0, cov2times, cov_mat1]. Entries of
+        these matrix that have hidden nodes in their indices, are symbolic.
+        All other entries are numeric.
 
         Parameters
         ----------
@@ -123,9 +133,12 @@ class FBackGainsEstimator(GainsEstimator):
                     
     def calculate_gains(self):
         """
+        This method creates an instance of FBackGainsCalculator and asks it
+        to fill self.alpha_list and self.beta_list.
 
         Returns
         -------
+        None
 
         """
         dim = self.graph.num_nds
@@ -147,20 +160,30 @@ class FBackGainsEstimator(GainsEstimator):
     def fix_greek_list(self, name, 
                        greek_list, greek_mat_estimate, greek_cum_err):
         """
+        This method modifies the list "greek_list" (which must be either an
+        "alpha_list" or a "beta_list"). For "greek_list": (1) it changes the
+        constraint items (2) it inserts numerical values if
+        solve_symbolically=True. It also calculates from "greek_list",
+        the numpy matrix "greek_mat_estimate" and the float "greek_cum_err".
 
         Parameters
         ----------
-        name
-        greek_list
-        greek_mat_estimate
-        greek_cum_err
+        name: str
+            either "alpha" or "beta"
+        greek_list: list[sp.Eq]
+            either "alpha_list" or "beta_list"
+        greek_mat_estimate: np.array
+            either "alpha_mat_estimate" or "beta_mat_estimate"
+        greek_cum_err: float
+            either "alpha_cum_err" or "beta_cum_err"
 
         Returns
         -------
+        None
 
         """
         dim = self.graph.num_nds
-        len0= len(name)
+        len0 = len(name)
         for i in range(len(greek_list)):
             eq = greek_list[i]
             str0 = str(eq.args[0])
@@ -169,7 +192,8 @@ class FBackGainsEstimator(GainsEstimator):
                 # print("hhgd", str0.split("_")[-2:])
                 row_str, col_str = str0.split("_")[-2:]
                 str1 = "err" + "_" + row_str + "_" + col_str
-                eq = sp.Eq(sp.Symbol(str1), eq.args[0]-eq.args[1])
+                eq = sp.Eq(sp.Symbol(str1),
+                           sp.Symbol(eq.args[0])-sp.Symbol(eq.args[1]))
             for row, col in product(range(dim), range(dim)):
                 row_nd = self.graph.ord_nodes[row]
                 col_nd = self.graph.ord_nodes[col]
@@ -204,15 +228,23 @@ class FBackGainsEstimator(GainsEstimator):
                                 greek_list,
                                 true_greek_mat):
         """
+        This method returns a list[str] of the same length as "greek_list".
+        The returned lists will be used as comments, to be printed to the
+        right of each entry, when the entries of "greek_list" are printed.
+
 
         Parameters
         ----------
-        name
-        greek_list
-        true_greek_mat
+        name: str
+            either "alpha" or "beta"
+        greek_list: list[sp.Eq]
+            either "alpha_list" or "beta_list"
+        true_greek_mat: np.array
+            the alpha (or beta) matrix used to calculate the synthetic data.
 
         Returns
         -------
+        list[str]
 
         """
         comments = []
@@ -230,9 +262,11 @@ class FBackGainsEstimator(GainsEstimator):
 
     def fix_alpha_list(self):
         """
+        This method modifies self.alpha_list by calling self.fix_greek_list()
 
         Returns
         -------
+        None
 
         """
         self.fix_greek_list("alpha",
@@ -242,9 +276,12 @@ class FBackGainsEstimator(GainsEstimator):
 
     def fix_beta_list(self):
         """
+       This method modifies self.beta_list by calling self.fix_greek_list()
+
 
         Returns
         -------
+        None
 
         """
         self.fix_greek_list("beta",
@@ -254,13 +291,16 @@ class FBackGainsEstimator(GainsEstimator):
 
     def get_alpha_list_comments(self, true_alpha_mat):
         """
+        This method returns a list of comments about self.alpha_list. To do
+        this, it calls self.get_greek_list_comments().
 
         Parameters
         ----------
-        true_alpha_mat
+        true_alpha_mat: np.array
 
         Returns
         -------
+        list[str]
 
         """
         return FBackGainsEstimator.get_greek_list_comments("alpha",
@@ -269,13 +309,16 @@ class FBackGainsEstimator(GainsEstimator):
         
     def get_beta_list_comments(self, true_beta_mat):
         """
+        This method returns a list of comments about self.beta_list. To do
+        this, it calls self.get_greek_list_comments().
 
         Parameters
         ----------
-        true_beta_mat
+        true_beta_mat: np.array
 
         Returns
         -------
+        list[str]
 
         """
         return FBackGainsEstimator.get_greek_list_comments("beta",
@@ -284,14 +327,17 @@ class FBackGainsEstimator(GainsEstimator):
 
     def print_alpha_list(self, true_alpha_mat=None, verbose=False):
         """
+        This method prints the info in self.alpha_list. It does this by
+        calling latexify.print_list_sb()
 
         Parameters
         ----------
-        true_alpha_mat
-        verbose
+        true_alpha_mat: np.array
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         comments = self.get_alpha_list_comments(true_alpha_mat)
@@ -301,14 +347,17 @@ class FBackGainsEstimator(GainsEstimator):
     
     def print_beta_list(self, true_beta_mat=None, verbose=False):
         """
+        This method prints the info in self.beta_list. It does this by
+        calling latexify.print_list_sb()
 
         Parameters
         ----------
-        true_beta_mat
-        verbose
+        true_beta_mat: np.array
+        verbose: bool
 
         Returns
         -------
+        sp.Symbol
 
         """
         comments = self.get_beta_list_comments(true_beta_mat)
@@ -338,7 +387,7 @@ if __name__ == "__main__":
         df = pd.read_csv(data_path)
         for solve_symbolically in [False, True]:
             print("************** solve_symbolically=", solve_symbolically)
-            time=1
+            time = 1
             gest = FBackGainsEstimator(time, graph, df,
                                   solve_symbolically=solve_symbolically)
             gest.print_alpha_list(true_alpha_mat=dmaker.alpha_mat,
