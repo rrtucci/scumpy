@@ -416,7 +416,8 @@ def print_matrix_sb(mat, mat_name, graph, verbose=False, time=None):
 
 
 def print_list_sb(eq_list, graph, verbose=False,
-                  time=None, comment_list=None, rounded=True):
+                  time=None, comment_list=None, rounded=True,
+                  prefix_str=None):
     """
     This method renders in latex, in a jupyter notebook (but not on the
     console), a list 'eq_list' of type list[sp.Eq]. Iff verbose=True,
@@ -433,6 +434,8 @@ def print_list_sb(eq_list, graph, verbose=False,
         This List[str] should be of the same length as eq_list
     rounded: bool
         This is True iff the numerical parts of the answer are to be rounded.
+    prefix_str: str
+        prefix string to start each line printed.
 
     Returns
     -------
@@ -442,20 +445,25 @@ def print_list_sb(eq_list, graph, verbose=False,
     if comment_list is None:
         comment_list = [""]*len(eq_list)
     assert len(eq_list) == len(comment_list)
+    if prefix_str is None:
+        prefix_str = ""
     str0 = ""
     x = eq_list
     x_copy = deepcopy(x)
     # print("lllj", type(x))
     if verbose:
         for i in range(len(x)):
-            print(str(x[i]) + "\t" + comment_list[i] + "\n")
+            print(prefix_str + " " + str(x[i]) + "\t" + comment_list[i] + "\n")
     str0 += r"\begin{array}{l}" + "\n"
     for i in range(len(x)):
         if rounded:
             x_copy[i] = round_expr(x_copy[i], 6)
         x_copy[i] = do_latex_subs(graph, x_copy[i], time)
         x_copy[i] = sp.latex(x_copy[i])
-        str0 += x_copy[i] + r"\quad" + comment_list[i] + "\n" + r"\\" + "\n"
+        if  len(prefix_str) != 0:
+            str0 += r"\text{" + prefix_str + r" } "
+        str0 += x_copy[i] + r"\quad" + comment_list[i] + "\n" + r"\\"\
+                       + "\n"
     str0 = str0[:-3]
     str0 += r"\end{array}"
     # print("lluj", str0)

@@ -13,11 +13,19 @@ class FBackGEmanager:
     graph: FBackGraph
     hidden_nds: list[str]
         same meaning as in FBackGainsEstimator
+    mean_alpha_mat: np.array
+        average over time-slices of alpha_mat
+    mean_beta_mat: np.array
+        average over time-slices of beta_mat
     n_max: int
         >=1
     n_to_estimator: dict[int, FBackGainsEstimator]
     solve_symbolically: bool
         same meaning as in FBackGainsEstimator
+    std_of_alpha_mat: np.array
+        standard deviation over time-slices of alpha_mat
+    std_of_beat_mat: np.array
+        standard deviation over time-slices of beta_mat
 
     """
 
@@ -70,6 +78,10 @@ class FBackGEmanager:
                 delta
             )
             self.n_to_estimator[time].calculate_gains()
+            self.mean_alpha_mat = None
+            self.std_of_alpha_mat = None
+            self.mean_beta_mat = None
+            self.std_of_beta_mat = None
 
     def print_greek_lists(self, name, true_greek_mat=None, verbose=False):
         """
@@ -115,7 +127,7 @@ class FBackGEmanager:
     def print_mean_greek_list(self, name, true_greek_mat=None,
                               verbose=False):
         """
-        This method print the average over time n, the alpha_mat (or the
+        This method prints the average of the alpha_mat (or the
         beta_mat) of self.n_to_estimator[n] for n=1,2,3,..., n_max-1.
 
         Parameters
@@ -133,21 +145,57 @@ class FBackGEmanager:
         """
         assert name in ["alpha", "beta"]
         if name == "alpha":
-            av_np = np.mean([self.n_to_estimator[
+            self.mean_alpha_mat = np.mean([self.n_to_estimator[
                                time].alpha_mat_estimate for
                            time in range(1, self.n_max)], axis=0)
+            mat = sp.Matrix(self.mean_alpha_mat)
         else:
-            av_np = np.mean([self.n_to_estimator[
+            self.mean_beta_mat = np.mean([self.n_to_estimator[
                                  time].beta_mat_estimate for
                              time in range(1, self.n_max)], axis=0)
-        mat = sp.Matrix(av_np)
+            mat = sp.Matrix(self.mean_beta_mat)
         eq_list = create_eq_list_from_matrix(mat, name, self.graph,
                                              time=None)
         comments = self.n_to_estimator[1].get_greek_list_comments(
             name, eq_list, true_greek_mat=true_greek_mat)
 
         return print_list_sb(eq_list, self.graph,
-                             comment_list=comments, verbose=verbose)
+                             comment_list=comments, verbose=verbose,
+                             prefix_str="mean of")
+
+    def print_std_of_greek_list(self, name, verbose=False):
+        """
+        This method prints the standard deviation of the alpha_mat ( or the
+        beta_mat) of self.n_to_estimator[n] for n=1,2,3, ..., n_max-1.
+
+        Parameters
+        ----------
+        name: str
+            either "alpha" or "beta"
+        verbose: bool
+
+        Returns
+        -------
+        sp.Symbol
+
+        """
+        assert name in ["alpha", "beta"]
+        if name == "alpha":
+            self.std_of_alpha_mat = np.std([self.n_to_estimator[
+                               time].alpha_mat_estimate for
+                           time in range(1, self.n_max)], axis=0)
+            mat = sp.Matrix(self.std_of_alpha_mat)
+        else:
+            self.std_of_beta_mat = np.std([self.n_to_estimator[
+                                 time].beta_mat_estimate for
+                             time in range(1, self.n_max)], axis=0)
+            mat = sp.Matrix(self.std_of_beta_mat)
+        eq_list = create_eq_list_from_matrix(mat, name, self.graph,
+                                             time=None)
+
+        return print_list_sb(eq_list, self.graph,
+                             comment_list=None, verbose=verbose,
+                             prefix_str="std of ")
 
     def print_alpha_lists(self, true_alpha_mat=None, verbose=False):
         """
@@ -170,7 +218,7 @@ class FBackGEmanager:
     
     def print_mean_alpha_list(self, true_alpha_mat=None, verbose=False):
         """
-        This method prints the average over time n of the alpha_list of
+        This method prints the average of the alpha_list of
         FBackGainsEstimator[n] for n=1, 2,3, ... n_max-1. It does this by
         calling self.print_mean_greek_list().
 
@@ -187,6 +235,23 @@ class FBackGEmanager:
         return self.print_mean_greek_list("alpha", 
                                       true_greek_mat=true_alpha_mat,
                                       verbose=verbose)
+
+    def print_std_of_alpha_list(self, verbose=False):
+        """
+        This method prints the standard deviation of the alpha_list of
+        FBackGainsEstimator[n] for n=1, 2,3, ... n_max-1. It does this by
+        calling self.print_std_of_greek_list().
+
+        Parameters
+        ----------
+        verbose: bool
+
+        Returns
+        -------
+        sp.Symbol
+
+        """
+        return self.print_std_of_greek_list("alpha", verbose=verbose)
 
     def print_beta_lists(self, true_beta_mat=None, verbose=False):
         """
@@ -210,7 +275,7 @@ class FBackGEmanager:
 
     def print_mean_beta_list(self, true_beta_mat=None, verbose=False):
         """
-        This method prints the average over time n of the beta_list of
+        This method prints the average of the beta_list of
         FBackGainsEstimator[n] for n=1, 2,3, ... n_max-1. It does this by
         calling self.print_mean_greek_list().
 
@@ -227,6 +292,23 @@ class FBackGEmanager:
         return self.print_mean_greek_list("beta",
                                           true_greek_mat=true_beta_mat,
                                           verbose=verbose)
+
+    def print_std_of_beta_list(self, verbose=False):
+        """
+        This method prints the standard deviation of the beta_list of
+        FBackGainsEstimator[n] for n=1, 2,3, ... n_max-1. It does this by
+        calling self.print_std_of_greek_list().
+
+        Parameters
+        ----------
+        verbose: bool
+
+        Returns
+        -------
+        sp.Symbol
+
+        """
+        return self.print_std_of_greek_list("beta", verbose=verbose)
 
 
 if __name__ == "__main__":
