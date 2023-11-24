@@ -57,7 +57,6 @@ $$
 
  Linear SCM are described by 
 a system of linear equations of the form
-
 $$\underline{x}_i = \sum_j \alpha_{i|j} \underline{x}_j + \underline {\epsilon}_i$$
 
 where the 
