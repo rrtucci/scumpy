@@ -25,41 +25,52 @@ Let $\underline{a}, \underline{b}$ be any 2
 random variables. (I underline random variables instead
 of the usual convention of capitalizing them.) Then
 
-$$\text{Mean Value of } \underline{a}=
-\langle\underline{a}\rangle$$
+```math
+\text{Mean Value of } \underline{a}=
+\langle\underline{a}\rangle
+```
 
 
-$$\text{Covariance}(\underline{a}, \underline{b})=
+```math
+\text{Covariance}(\underline{a}, \underline{b})=
 \langle\underline{a}, 
-\underline{b}\rangle$$
+\underline{b}\rangle
+```
 
 
-$$\text{Standard Deviation of }\underline{a} =
+```math
+\text{Standard Deviation of }\underline{a} =
 \sigma_{\underline{a}} = \sqrt{
 \langle\underline{a}, 
-\underline{a}\rangle}$$
+\underline{a}\rangle}
+```
 
-$$\text{Correlation}(\underline{a}, \underline{b}) =
+```math
+\text{Correlation}(\underline{a}, \underline{b}) =
 \rho_{
 \underline{a}, \underline{b}
 }=
 \frac{\langle\underline{a}, 
 \underline{b}\rangle}
-{\sigma_{\underline{a}}\sigma_{\underline{b}}}$$
+{\sigma_{\underline{a}}\sigma_{\underline{b}}}
+```
 
-$$\frac{\partial\underline{b}}{
+```math
+\frac{\partial\underline{b}}{
 \partial\underline{a}}=
 \frac{\langle\underline{a}, 
 \underline{b}\rangle}
 {\langle\underline{a}, 
 \underline{a}\rangle}
-$$
+```
 
  Linear SCM are described by 
 a system of linear equations of the form
 
-
-$$\underline{x}_i={\sum}_j{\alpha}_{i|j}\underline{x}_j+\underline{\epsilon}_i$$
+```math
+\underline{x}_{i}={\sum}_{j}{\alpha}_{i|j}\underline{x}_j+\underline
+{\epsilon}_i
+```
 
 
 where the 
