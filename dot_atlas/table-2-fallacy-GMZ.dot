@@ -1,0 +1,5 @@
+digraph GMZ {
+    X->Y,M;
+    M->Y;
+    Z->X,Y
+}

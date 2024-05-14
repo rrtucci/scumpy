@@ -1,0 +1,4 @@
+digraph GZ {
+    X->Y;
+    Z->X,Y;
+}
